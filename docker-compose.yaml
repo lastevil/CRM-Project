@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: postgres_auth_container
+    domainname: postgresAuth
+    image: postgres:13.3
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "Qwe123"
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
