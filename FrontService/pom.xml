@@ -8,5 +8,9 @@
     <artifactId>FrontService</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-
+    <parent>
+        <groupId>org.unicrm.dev</groupId>
+        <artifactId>CRM-Project</artifactId>
+        <version>1.0.0</version>
+    </parent>
 </project>
