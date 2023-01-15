@@ -1,0 +1,24 @@
+server:
+  port: 8705
+  servlet:
+    context-path: /analytic
+spring:
+  application:
+    name: analytic-service
+  datasource:
+    url: jdbc:postgresql://postgres:5432/postgres
+    username: postgres
+    password: Qwe123
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  eureka:
+    instance:
+      hostname: localhost
+    client:
+      serviceUrl:
+        defaultZone: ${EUREKA_URI:http://eurika:8700/eureka}
+        fetchRegistry: false

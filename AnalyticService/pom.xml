@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>AnaliticService</artifactId>
+    <artifactId>AnalyticService</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <parent>
@@ -13,4 +13,16 @@
         <artifactId>CRM-Project</artifactId>
         <version>1.0.0</version>
     </parent>
+    <dependencies>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>
