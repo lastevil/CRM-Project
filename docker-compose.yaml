@@ -2,8 +2,8 @@ version: '3'
 
 services:
   postgres:
-    container_name: postgres_auth_container
-    domainname: postgresAuth
+    container_name: postgres_unicrm_container
+    domainname: postgresUniCRM
     image: postgres:13.3
     environment:
       POSTGRES_USER: "postgres"
