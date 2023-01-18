@@ -1,13 +1,13 @@
-package org.unicrm;
+package org.unicrm.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
-@EnableEurekaClient
 @SpringBootApplication
-public class TicketService {
+@EnableEurekaClient
+public class GatewayApplication {
     public static void main(String[] args) {
-        SpringApplication.run(TicketService.class,args);
+        SpringApplication.run(GatewayApplication.class,args);
     }
 }
