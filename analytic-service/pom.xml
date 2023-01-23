@@ -23,6 +23,11 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
+        <dependency>
+            <groupId>lib</groupId>
+            <artifactId>crm-local-lib</artifactId>
+            <version>0.0.1</version>
+        </dependency>
     </dependencies>
 
 </project>
