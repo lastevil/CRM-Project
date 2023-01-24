@@ -1,0 +1,69 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3
+      author: basilomp
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                - schemaName: tickets_schema
+                - tableName: tickets
+      changes:
+        - createTable:
+            schemaName: tickets_schema
+            tableName: tickets
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: clob
+              - column:
+                  name: assignee
+                  type: bigint
+                  constraints:
+                    referencedColumnNames: id
+                    referencedTableName: users
+                    referencedTableSchemaName: tickets_schema
+                    foreignKeyName: fk_user_assignee
+              - column:
+                  name: reporter
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    referencedColumnNames: id
+                    referencedTableName: users
+                    referencedTableSchemaName: tickets_schema
+                    foreignKeyName: fk_user_reporter
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+              - column:
+                  name: due_date
+                  type: date
+
