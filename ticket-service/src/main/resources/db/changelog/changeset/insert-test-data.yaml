@@ -1,0 +1,50 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4
+      author: basilomp
+      changes:
+        - insert:
+            schemaName: tickets_schema
+            tableName: users
+            columns:
+              - column:
+                  name: name
+                  value: Mikhail
+        - insert:
+            schemaName: tickets_schema
+            tableName: users
+            columns:
+              - column:
+                  name: name
+                  value: Sergey
+        - insert:
+            schemaName: tickets_schema
+            tableName: tickets
+            columns:
+              - column:
+                  name: name
+                  value: DEV-001
+              - column:
+                  name: title
+                  value: Urgent-As-Hell Task
+              - column:
+                    name: status
+                    value: Backlog
+              - column:
+                  name: description
+                  value: lorem
+              - column:
+                  name: assignee
+                  value: 1
+              - column:
+                  name: reporter
+                  value: 2
+              - column:
+                  name: created_at
+                  value: 2023-02-21
+              - column:
+                  name: updated_at
+                  value: 2023-02-21
+              - column:
+                    name: due_date
+                    value: 2023-02-22

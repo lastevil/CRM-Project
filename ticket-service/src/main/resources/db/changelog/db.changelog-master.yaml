@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changeset/create_tickets_schema.yaml
+  - include:
+      file: db/changelog/changeset/create-user-table.yaml
+  - include:
+      file: db/changelog/changeset/create-tickets-table.yaml
+  - include:
+      file: db/changelog/changeset/insert-test-data.yaml

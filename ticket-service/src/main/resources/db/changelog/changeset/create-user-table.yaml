@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2
+      author: basilomp
+      changes:
+        - createTable:
+            schemaName: tickets_schema
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
