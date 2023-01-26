@@ -6,7 +6,7 @@ spring:
   application:
     name: auth-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=auth_schema
+    url: jdbc:postgresql://localhost:5432/unicrmdb?currentSchema=auth_schema
     username: postgres
     password: Qwe123
     driver-class-name: org.postgresql.Driver
