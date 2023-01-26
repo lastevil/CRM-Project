@@ -1,3 +1,4 @@
+CREATE SCHEMA IF NOT EXISTS auth_schema;
 create table departments
 (
     id         bigserial primary key,
@@ -10,7 +11,7 @@ create table users
 (
     id            bigserial primary key,
     username      varchar(36)  not null,
-    second_name   varchar(36)  not null,
+    first_name    varchar(36)  not null,
     last_name     varchar(56),
     password      varchar(255) not null,
     email         varchar(50) unique,

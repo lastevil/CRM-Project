@@ -5,14 +5,14 @@ server:
 spring:
   application:
     name: auth-service
-  liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.xml
-    enabled: true
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres?currentSchema=auth_schema
     username: postgres
     password: Qwe123
     driver-class-name: org.postgresql.Driver
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true
   jpa:
     show-sql: true
     properties:
