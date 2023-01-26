@@ -15,6 +15,14 @@ services:
     volumes:
       - ./postgres_init.sql:/docker-entrypoint-initdb.d/postgres_init.sql
 
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./postgres_init.sql:/docker-entrypoint-initdb.d/postgres_init.sql
+
   zookeeper:
     image: confluentinc/cp-zookeeper:5.4.0
     container_name: zookeeper
