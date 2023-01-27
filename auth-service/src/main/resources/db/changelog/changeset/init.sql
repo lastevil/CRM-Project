@@ -17,7 +17,8 @@ create table users
     email         varchar(50) unique,
     department_id bigint references departments (id),
     created_at    timestamp default current_timestamp,
-    updated_at    timestamp default current_timestamp
+    updated_at    timestamp default current_timestamp,
+    status        varchar(25) not null
 );
 
 create table roles
