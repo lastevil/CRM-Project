@@ -10,10 +10,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.unicrm.auth.dto.JwtRequest;
 import org.unicrm.auth.dto.JwtResponse;
-import org.unicrm.auth.dto.UserDto;
 import org.unicrm.auth.exceptions.AuthenticationException;
 import org.unicrm.auth.services.UserService;
 import org.unicrm.auth.utils.JwtTokenUtil;
+import org.unicrm.lib.dto.UserSimpleDto;
 
 import java.util.List;
 
@@ -40,12 +40,12 @@ public class AuthController {
     }
 
     @GetMapping("/users/{username}")
-    public UserDto getUserByUsername(@PathVariable String username) {
+    public UserSimpleDto getUserByUsername(@PathVariable String username) {
         return userService.findByUsername(username);
     }
 
     @GetMapping("/users")
-    public List<UserDto> getAllUsers() {
+    public List<UserSimpleDto> getAllUsers() {
         return userService.findAll();
     }
 
@@ -54,5 +54,4 @@ public class AuthController {
     public void changeStatus(@PathVariable String username, @PathVariable String status) {
         userService.changeStatus(username, status);
     }
-
 }
