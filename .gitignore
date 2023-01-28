@@ -1,3 +1,4 @@
 /.idea/
-/AuthService/AuthService.iml
 /*/target/
+/auth-service/auth-service.iml
+/crm-local-lib/crm-local-lib.iml
