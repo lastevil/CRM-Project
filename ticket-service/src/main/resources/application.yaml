@@ -5,7 +5,6 @@ server:
 spring:
   application:
     name: ticket-service
-
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres?INIT=CREATE SCHEMA IF NOT EXISTS tickets_schema?currentSchema=tickets_schema
     username: postgres
@@ -14,6 +13,7 @@ spring:
   liquibase:
     change-log: db/changelog/db.changelog-master.yaml
     enabled: true
+#    default-schema: tickets_schema
   jpa:
     show-sql: true
     properties:

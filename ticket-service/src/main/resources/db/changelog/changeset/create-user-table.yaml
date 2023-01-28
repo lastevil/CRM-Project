@@ -2,6 +2,12 @@ databaseChangeLog:
   - changeSet:
       id: 2
       author: basilomp
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+          - tableExists:
+            - schemaName: tickets_schema
+            - tableName: users
       changes:
         - createTable:
             schemaName: tickets_schema

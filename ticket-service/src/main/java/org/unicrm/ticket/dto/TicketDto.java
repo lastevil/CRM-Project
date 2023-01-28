@@ -2,7 +2,10 @@ package org.unicrm.ticket.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.unicrm.ticket.serializer.JsonDateSerializer;
 
 import java.sql.Date;
