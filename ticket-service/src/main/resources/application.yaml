@@ -5,15 +5,15 @@ server:
 spring:
   application:
     name: ticket-service
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres?INIT=CREATE SCHEMA IF NOT EXISTS tickets_schema?currentSchema=tickets_schema
+    url: jdbc:postgresql://localhost:5432/unicrmdb?currentSchema=tickets_schema
     username: postgres
     password: Qwe123
     driver-class-name: org.postgresql.Driver
   liquibase:
-    change-log: db/changelog/db.changelog-master.yaml
+    change-log: db/changelog/db.changelog-master.xml
     enabled: true
-#    default-schema: tickets_schema
   jpa:
     show-sql: true
     properties:

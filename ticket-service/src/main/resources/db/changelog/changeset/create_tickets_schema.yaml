@@ -1,8 +1,0 @@
-databaseChangeLog:
-  - changeSet:
-      id: 1
-      author: basilomp
-      changes:
-        - sql:
-            dbms: postgresql
-            sql: CREATE SCHEMA IF NOT EXISTS tickets_schema;

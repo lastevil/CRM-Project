@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.unicrm.ticket.serializer.JsonDateSerializer;
 
 import javax.persistence.*;
@@ -23,11 +25,10 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column
-    private String name;
-    @Column
     private String title;
     @Column
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private TicketStatus status;
     @Column
     private String description;
     @Column(name = "assignee")
@@ -38,9 +39,11 @@ public class Ticket {
     @JsonSerialize(using = JsonDateSerializer.class)
     private Timestamp createdAt;
     @Column(name = "updated_at")
+    @CreationTimestamp
     @JsonSerialize(using = JsonDateSerializer.class)
     private Timestamp updatedAt;
     @Column(name = "due_date")
+    @UpdateTimestamp
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dueDate;
 }

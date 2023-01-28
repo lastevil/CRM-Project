@@ -2,10 +2,8 @@ package org.unicrm.ticket.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.unicrm.ticket.entity.TicketStatus;
 import org.unicrm.ticket.serializer.JsonDateSerializer;
 
 import java.sql.Date;
@@ -20,7 +18,7 @@ public class TicketDto {
     private Long id;
     private String name;
     private String title;
-    private String status;
+    private TicketStatus status;
     private String description;
     private Long assigneeId;
     private Long reporterId;
