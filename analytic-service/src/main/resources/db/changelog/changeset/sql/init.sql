@@ -1,13 +1,13 @@
 create table if not exists departments(
-    id uuid not null,
+    id   uuid primary key,
     name varchar(255) not null
 );
 
 create table if not exists users
 (
-    id         uuid primary key,
-    first_name varchar(50) not null,
-    last_name  varchar(50) not null,
+    id            uuid primary key,
+    first_name    varchar(50) not null,
+    last_name     varchar(50) not null,
     department_id uuid not null REFERENCES departments (id)
 );
 

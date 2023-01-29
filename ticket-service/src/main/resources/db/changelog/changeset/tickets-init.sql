@@ -1,3 +1,8 @@
+CREATE TABLE ticket_departments (
+                                    department_id BIGINT NOT NULL PRIMARY KEY,
+                                    department_name VARCHAR(50)
+);
+
 CREATE TABLE IF NOT EXISTS users_of_ticket
 (
     id            BIGINT PRIMARY KEY,
@@ -5,12 +10,6 @@ CREATE TABLE IF NOT EXISTS users_of_ticket
     last_name     VARCHAR(36) NOT NULL,
     department_id BIGINT      NOT NULL REFERENCES ticket_departments (department_id)
 );
-
-CREATE TABLE ticket_departments (
-    department_id BIGINT NOT NULL PRIMARY KEY,
-    department_name VARCHAR(50)
-);
-
 CREATE TABLE IF NOT EXISTS tickets
 (
     id    BIGSERIAL PRIMARY KEY,

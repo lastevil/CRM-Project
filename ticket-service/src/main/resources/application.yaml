@@ -7,10 +7,12 @@ spring:
     name: ticket-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/unicrmdb?currentSchema=tickets_schema
+    url: jdbc:postgresql://localhost:5432/unicrmdb
     username: postgres
     password: Qwe123
     driver-class-name: org.postgresql.Driver
+    hikari:
+      schema: tickets_schema
   liquibase:
     change-log: db/changelog/db.changelog-master.xml
     enabled: true
@@ -19,10 +21,10 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-#  eureka:
-#    instance:
-#      hostname: localhost
-#    client:
-#      serviceUrl:
-#        defaultZone: ${EUREKA_URI:http://eurika:8700/eureka}
-#        fetchRegistry: false
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8700/eureka}
+      fetchRegistry: false
