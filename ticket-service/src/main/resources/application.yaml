@@ -19,8 +19,6 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-
-
 #  eureka:
 #    instance:
 #      hostname: localhost
