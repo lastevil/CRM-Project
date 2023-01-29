@@ -29,7 +29,4 @@ public class TicketUsers {
 
     @Column(name = "department_id")
     private Long departmentId;
-
-    @Column(name = "user_role_id")
-    private Long userRole;
 }
