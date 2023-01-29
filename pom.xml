@@ -9,6 +9,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>crm-local-lib</module>
+        <module>ticket-service</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
