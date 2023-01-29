@@ -7,7 +7,6 @@
     <groupId>org.unicrm.dev</groupId>
     <artifactId>front-service</artifactId>
     <version>1.0-SNAPSHOT</version>
-
     <parent>
         <groupId>org.unicrm</groupId>
         <artifactId>CRM-Project</artifactId>

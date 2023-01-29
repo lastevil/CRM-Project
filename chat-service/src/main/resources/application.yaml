@@ -3,27 +3,22 @@ server:
   servlet:
     context-path: /chat
 spring:
-  liquibase:
-    enabled: true
-    change-log:
-       classpath: db/changelog/changelog-master.xml
   application:
     name: chat-service
   datasource:
-#    url: jdbc:postgresql://postgres:5432/unicrm
-    url: jdbc:postgresql://localhost:5432/unicrm
+    url: jdbc:postgresql://localhost:5432/unicrmdb
     username: postgres
-    password: admin
+    password: Qwe123
     driver-class-name: org.postgresql.Driver
+    hikari:
+      schema: chat_schema
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true
   jpa:
     show-sql: true
     properties:
       hibernate:
-        jdbc:
-          lob:
-            non_contextual_creation: true
-        ddl-auto: update
-        dml-auto: update
         dialect: org.hibernate.dialect.PostgreSQLDialect
 eureka:
   instance:
