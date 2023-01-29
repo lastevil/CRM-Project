@@ -15,10 +15,10 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-  eureka:
-    instance:
-      hostname: localhost
-    client:
-      serviceUrl:
-        defaultZone: ${EUREKA_URI:http://eurika:8700/eureka}
-        fetchRegistry: false
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8700/eureka}
+      fetchRegistry: false
