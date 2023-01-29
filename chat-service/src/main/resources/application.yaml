@@ -6,10 +6,15 @@ spring:
   application:
     name: chat-service
   datasource:
-    url: jdbc:postgresql://postgres:5432/postgres
+    url: jdbc:postgresql://localhost:5432/unicrmdb
     username: postgres
     password: Qwe123
     driver-class-name: org.postgresql.Driver
+    hikari:
+      schema: chat_schema
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true
   jpa:
     show-sql: true
     properties:
