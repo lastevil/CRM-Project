@@ -4,23 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
+    <groupId>org.unicrm.dev</groupId>
     <artifactId>front-service</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.7</version>
-    </parent>
 
-<!--    <parent>-->
-<!--        <groupId>org.unicrm.dev</groupId>-->
-<!--        <artifactId>CRM-Project</artifactId>-->
-<!--        <version>1.0.0</version>-->
-<!--    </parent>-->
-    <properties>
-        <java.version>11</java.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-    </properties>
+    <parent>
+        <groupId>org.unicrm</groupId>
+        <artifactId>CRM-Project</artifactId>
+        <version>1.0.0</version>
+    </parent>
 </project>
