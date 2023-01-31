@@ -10,6 +10,10 @@
     <modules>
         <module>crm-local-lib</module>
         <module>ticket-service</module>
+        <module>chat-service</module>
+        <module>front-service</module>
+        <module>discovery-service</module>
+        <module>gateway-service</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

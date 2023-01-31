@@ -27,7 +27,7 @@ spring:
               - PrefixPath=/auth
               - JwtAuthFilter
         - id: chat-service
-          uri: lb://chat-service/
+          uri: lb://chat-service:8703/
           predicates:
             - Path=/chat/**
           filters:
@@ -50,7 +50,17 @@ spring:
             - StripPrefix=1
             - PrefixPath=/analytic
             - JwtAuthFilter
-
+        - id: front
+          uri: lb://localhost:8080
+          predicates:
+            - Path=/front/**
+          filters:
+            - StripPrefix=1
+            - PrefixPath=/front
+            - JwtAuthFilter
+jwt:
+  secret: h2342335233245h234kj5h234h5dsf22af32434hf5gs66dj5st5us23i452k523
+  lifetime: 36000000
 eureka:
   instance:
     hostname: localhost

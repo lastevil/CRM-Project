@@ -4,8 +4,8 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0" charset="UTF-8">
     <title>Чат</title>
-    <link rel="icon" href="image/chimpanzee.png" type="image/png">
-    <link rel="stylesheet" href="main.css" />
+    <link rel="icon" href="image/crm.png" type="image/png">
+    <link rel="stylesheet" href="style.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
@@ -18,12 +18,64 @@
             src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
     <script
             src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-    <script src="index.js"></script>
 
 </head>
 
-<div id="body" ng-app="chat" ng-controller="indexController"
-      style="background-position: center; background-repeat: no-repeat; background-size: cover;">
+<div class="main-crm" ng-app="front" ng-controller="indexController">
+   <div class="container-crm" >
+      <nav class="panel-crm" >
+         <div class="menu-crm 1">
 
+             <div  hidden>
+                 <!--                        <a class="nav-link active" aria-current="page" href="#!/"> Главная </a>-->
+                 <a class="nav-link active" aria-current="page" href="#!/"></a>
+             </div>
+            <div class="cell-crm" >
+               <button class="btn-bd-primary1"></button>
+               <a class="nav-link" href="#!/mytasks"> My tasks </a>
+            </div>
+            <div >
+                <button class="btn-bd-primary1">   </button>
+               <a class="nav-link" href="#!/chat"> Chat </a>
+            </div>
+            <div  >
+                <button class="btn-bd-primary1">   </button>
+               <a class="nav-link" href="#!/analytic"> Analytic </a>
+            </div>
+            <div >
+                <button class="btn-bd-primary1">   </button>
+               <a class="nav-link" href="#!/adminpanel"> Admin panel </a>
+            </div>
+         </div>
+          <div class="menu-crm 2">
+            <div class="menu-item1"></div>
+          </div>
+          <div class="menu-crm 3">
+            <div >
+                <button class="btn-bd-primary1">   </button>
+               <a class="nav-link" href="#!/createtask"> Create task </a>
+            </div>
+            <div >
+                <button class="btn-bd-primary1">   </button>
+                <a class="nav-link" href="#!/user"> User </a>
+            </div>
+
+         </div>
+      </nav>
+      <div class="page-crm">
+         <div class="pageIndex"></div>
+      </div>
+   </div>
+    <ng-view></ng-view>
+
+    <script src="index.js"></script>
+    <script src="chat/chat.js"></script>
+    <script src="adminpanel/adminpanel.js"></script>
+    <script src="analytic/analytic.js"></script>
+    <script src="createtask/createtask.js"></script>
+    <script src="mytasks/mytasks.js"></script>
+<!--    <script src="mytasks/mytasks.js"></script>-->
+    <!--    <script src="auth/auth.js"></script>-->
+    <script src="user/user.js"></script>
 </div>
 </html>

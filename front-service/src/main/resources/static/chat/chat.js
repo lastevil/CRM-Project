@@ -1,4 +1,4 @@
-angular.module('app-chat').controller('chatController', function ($rootScope, $scope, $location) {
+angular.module('front').controller('chatController', function ($rootScope, $scope, $http, $localStorage, $location) {
 
 var usernamePage = document.querySelector('#username-page');
 var usernameForm = document.querySelector('#usernameForm');
@@ -20,6 +20,7 @@ var stompClient = null;
 var username = null;
 var senderId = 0;
 var sessionId = "";
+var context = "/front/";
 
 
 $scope.send = function(event) {
@@ -37,7 +38,7 @@ $scope.send = function(event) {
             chatRoom: null,
             type: 'CHAT'
           };
-          stompClient.send("/app-chat/chat", {}, JSON.stringify(message));
+          stompClient.send(context+"chat", {}, JSON.stringify(message));
 //        var chatMessage = {
 //            sender: username,
 //            senderId: senderId,
@@ -60,7 +61,7 @@ $scope.loadGroup = function(event){
                senderId: senderId,
                type: 'LIST'
            };
-      stompClient.send("/app-chat/chatgroup", {}, JSON.stringify(chatMessage));
+      stompClient.send(context+"chatgroup", {}, JSON.stringify(chatMessage));
    }
 }
 
@@ -71,7 +72,7 @@ $scope.loadUsers = function(event){
                   senderId: senderId,
                   type: 'LIST'
               };
-      stompClient.send("/app-chat/chatusers", {}, JSON.stringify(chatMessage));
+      stompClient.send(context+"chatusers", {}, JSON.stringify(chatMessage));
    }
 }
 
@@ -80,7 +81,7 @@ $scope.connect = function(event) {
  //   username = document.querySelector('#name').value.trim();
  //  $rootScope.user = document.querySelector('#name').value.trim();
     if(document.querySelector('#name').value.trim()) {
-        var socket = new SockJS('http://localhost:8081/app-chat/ws');
+        var socket = new SockJS('http://localhost:8703/chat/ws');
         stompClient = Stomp.over(socket);
         stompClient.connect({}, $scope.onConnected, $scope.onError);
     }
@@ -96,7 +97,7 @@ $scope.onConnected = function() {
     stompClient.subscribe('/user/topic/history', $scope.onMessageReceived);
     stompClient.subscribe('/user/topic/list', $scope.onMessageReceived);
 
-    stompClient.send("/app-chat/chat.register", {},
+    stompClient.send(context+"register", {},
         JSON.stringify({sender: document.querySelector('#name').value.trim(), type: 'JOIN'})
     );
 
@@ -186,7 +187,7 @@ $scope.onMessageReceived = function(payload) {
           stompClient.subscribe('/user/topic/chat', $scope.onMessageReceived);
           $scope.loadGroup();
           $scope.loadUsers();
-          stompClient.send("/app-chat/session", {},
+          stompClient.send(context+"session", {},
                       JSON.stringify({type: 'SESSION', senderId: senderId})
           );
           document.querySelector("#btnConnect").disabled = true;
@@ -252,6 +253,7 @@ $scope.onMessageReceived = function(payload) {
 
     }
 }
+
 $scope.btnGroup = function(group){
    console.log("btnGroup-------------------------------------------");
    nameRecipiend.value = group.title;
@@ -264,7 +266,7 @@ $scope.btnGroup = function(group){
                sender: username,
                type: 'HISTORY'
       };
-   stompClient.send("/app-chat/history", {}, JSON.stringify(message));
+   stompClient.send(context+"history", {}, JSON.stringify(message));
 }
 
 $scope.btnUsers = function(users){
@@ -280,18 +282,19 @@ $scope.btnUsers = function(users){
             recipientName: currentUserName,
             type: 'HISTORY'
    };
-   stompClient.send("/app-chat/history", {}, JSON.stringify(message));
+   stompClient.send(context+"history", {}, JSON.stringify(message));
 }
 
 $scope.btnLoadUsers = function(event){
    console.log("btnLoadUsers");
-   stompClient.send("/app-chat/activeusers", {},
+   stompClient.send(context+"activeusers", {},
        JSON.stringify({type: 'ACTIVEUSERS', senderId: senderId})
    );
-   stompClient.send("/app-chat/groupunread", {},
+   stompClient.send(context+"groupunread", {},
           JSON.stringify({type: 'GROUPUNREAD', senderId: senderId})
    );
 }
+
 $scope.sendFile = function(){
    console.log("sendFile");
 
