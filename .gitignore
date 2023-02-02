@@ -3,3 +3,5 @@
 /*/*.iml
 /auth-service/auth-service.iml
 /crm-local-lib/crm-local-lib.iml
+/discovery-service/discovery-service.iml
+/gateway-service/gateway-service.iml
