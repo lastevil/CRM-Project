@@ -14,7 +14,7 @@ import org.unicrm.auth.entities.User;
 import org.unicrm.auth.exceptions.ResourceNotFoundException;
 import org.unicrm.auth.mappers.EntityDtoMapper;
 import org.unicrm.auth.repositories.UserRepository;
-import org.unicrm.lib.dto.UserSimpleDto;
+import org.unicrm.lib.dto.UserDto;
 
 import java.util.Collection;
 import java.util.List;
@@ -42,13 +42,13 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
-    public UserSimpleDto findById(Long id) {
+    public UserDto findById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format("User with id:'%d' not found", id)));
         return EntityDtoMapper.INSTANCE.toDto(user);
     }
 
     @Transactional(readOnly = true)
-    public UserSimpleDto findByUsername(String username) {
+    public UserDto findByUsername(String username) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
             throw new ResourceNotFoundException(String.format("User '%s' not found", username));
@@ -57,7 +57,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserSimpleDto> findAll() {
+    public List<UserDto> findAll() {
         return userRepository.findAll().stream().map(EntityDtoMapper.INSTANCE::toDto).collect(Collectors.toList());
     }
 
