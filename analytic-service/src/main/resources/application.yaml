@@ -8,7 +8,7 @@ spring:
   kafka:
     bootstrap-servers: "localhost:9092"
     consumer:
-      group-id: "1"
+      group-id: 1
   datasource:
     url: jdbc:postgresql://localhost:5432/unicrmdb
     username: postgres
@@ -24,10 +24,10 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-#eureka:
-#  instance:
-#    hostname: localhost
-#  client:
-#    serviceUrl:
-#      defaultZone: ${EUREKA_URI:http://localhost:8700/eureka}
-#      fetchRegistry: false
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8700/eureka}
+      fetchRegistry: false

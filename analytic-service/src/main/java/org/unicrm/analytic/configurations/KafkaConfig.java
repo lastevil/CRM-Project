@@ -31,7 +31,7 @@ public class KafkaConfig {
         consumer.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, server);
         consumer.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, UUIDDeserializer.class);
         consumer.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        consumer.put(ConsumerConfig.CLIENT_ID_CONFIG, groupId);
+        consumer.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         return consumer;
     }
 

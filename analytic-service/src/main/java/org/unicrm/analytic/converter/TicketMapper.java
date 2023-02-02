@@ -8,7 +8,7 @@ import org.unicrm.analytic.entities.Ticket;
 import org.unicrm.analytic.entities.User;
 import org.unicrm.lib.dto.TicketDto;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface TicketMapper {
     TicketMapper INSTANCE = Mappers.getMapper(TicketMapper.class);
     @Mapping(target = "id", source = "ticketDto.id")
