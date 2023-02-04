@@ -6,5 +6,5 @@ import org.unicrm.analytic.entities.Department;
 
 import java.util.UUID;
 @Repository
-public interface DepartmentRepository extends JpaRepository<Department, UUID> {
+public interface DepartmentRepository extends JpaRepository<Department, Long> {
 }

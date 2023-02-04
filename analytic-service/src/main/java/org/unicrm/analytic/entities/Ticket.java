@@ -21,7 +21,7 @@ public class Ticket {
     @Column(name = "status")
     private String status;
     @ManyToOne
-    @JoinColumn(name = "assigneId")
+    @JoinColumn(name = "assigneeId")
     private User assignee;
     @ManyToOne
     @JoinColumn(name = "departmentId")

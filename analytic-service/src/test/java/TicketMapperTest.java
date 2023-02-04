@@ -1,5 +1,4 @@
 import org.apache.http.util.Asserts;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Test;
 import org.unicrm.analytic.converter.TicketMapper;
 import org.unicrm.analytic.entities.Department;
@@ -19,8 +18,8 @@ public class TicketMapperTest {
         Department assDepartment = new Department();
         Department repDepartment = new Department();
         assDepartment.setName("assDepartment");
-        assDepartment.setId(UUID.randomUUID());
-        repDepartment.setId(UUID.randomUUID());
+        assDepartment.setId(7L);
+        repDepartment.setId(3L);
         repDepartment.setName("repDepartment");
 
         assignee.setId(UUID.randomUUID());

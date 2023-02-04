@@ -11,7 +11,7 @@ public class UserDto {
     private UUID id;
     private String firstName;
     private String lastName;
-    private UUID departmentId;
+    private Long departmentId;
     private String department;
 
 }

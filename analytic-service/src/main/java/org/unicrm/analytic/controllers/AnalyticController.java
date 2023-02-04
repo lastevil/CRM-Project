@@ -11,7 +11,7 @@ import java.util.UUID;
  *
  */
 @RestController
-@RequestMapping("/analytic")
+@RequestMapping("/view")
 @RequiredArgsConstructor
 public class AnalyticController {
     @GetMapping("/userCount")

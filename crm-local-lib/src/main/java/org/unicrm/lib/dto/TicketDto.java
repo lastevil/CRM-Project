@@ -14,7 +14,7 @@ public class TicketDto {
     private String title;
     private String status;
     private UUID assigneeId;
-    private UUID assigneeDepartmentId;
+    private Long assigneeDepartmentId;
     private UUID reporterId;
     private Timestamp createdAt;
     private Timestamp updatedAt;
