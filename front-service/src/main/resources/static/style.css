@@ -6,22 +6,6 @@
    -moz-box-sizing: border-box;
    box-sizing: border-box;
 }
-
-html,#body {
-    height: 100%;
-    overflow: hidden;
-}
-
-#body {
-    font-weight: 400;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 1rem;
-    line-height: 1.58;
-    color: #333;
-    background-color: #f4f4f4;
-    height: 100%;
-    min-height: 100vh;
-}
 .container-crm{
    display: flex;
    height: 100%;
@@ -41,9 +25,6 @@ html,#body {
    justify-content: center;
    flex-direction: column;
    padding: 5px;
- /*  position: absolute;
-   top: 0;
-   left: 0;*/
    padding-left: 0px;
    flex-direction: column;
 }
@@ -54,7 +35,6 @@ html,#body {
    background: url(image/fon.png) repeat;
    position: absolute;
    font-family: 'Bree Serif', serif;
-   /*  min-height: 100vh; flex-direction: column;*/
      display: flex;
    top: 0;
    right: 0;
@@ -78,10 +58,6 @@ html,#body {
    flex-direction: column;
 
    justify-content: center;
- /*  display: flex;
-
-   align-items: center;*/
-
 }
 .menu-crm 1 {
    height: 40%;
@@ -113,17 +89,6 @@ html,#body {
   justify-content: center;
 
 }
-/*
-button.accent {
-    background-color: #ff4743;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.12);
-    color: #fff;
-}*/
-.btn btn-secondary {
-   width: 10px;
-   margin-left: 5px;
-   margin-right: 5px;
-}
 .bi bi-paperclip, .bi bi-send {
    justify-content: center;
 }
@@ -146,29 +111,28 @@ input {
    border: none;
 }
 #chat-all {
-       max-width: 800px;
-       margin-left: auto;
-       margin-right: auto;
-       background-color: #fff;
-       box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
-       margin-top: 30px;
-       height: 550px;
-       position: relative;
+   position: absolute;
+   background-color: #fff;
+   box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
+   top: 0;
+   right: 0;
+   height: 100%;
 }
 #chat-page {
+position: absolute;
+top: 55px;
+right: 0;
    display: flex;
-   height: calc(100% - 110px);
+   height: calc(100% - 55px);
    align-items: stretch;
+   width: 90%;
 }
 #chat-page1 {
-   height: 45px;
-}
-#chat-page2 {
-   height: 65px;
-   padding: 10px;
-   background: url(image/bg.png) repeat;
-   justify-content: center;
-   position: relative;
+position: absolute;
+top: 0;
+   right: 0;
+   height: 55px;
+   width: 90%;
 }
 #username-page {
     text-align: center;
@@ -191,18 +155,20 @@ input {
    background: url(image/bg.png) repeat;
 }
 .chat-box11 {
-   width: 200px;
+   width: 15%; /*200px;*/
    box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
-   padding: 5px;
+   padding: 10px;
+
 }
 .chat-box12 {
-   width: 600px;
+   width: 85%; /*600px;*/
    box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
-   padding: 5px;
+   padding: 10px;
    position: relative;
+
 }
 #chat-user {
-   width: 200px;
+   width: 15%; /*200px;*/
    background: url(image/bg.png) repeat;
    box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
    max-height:100%;
@@ -213,7 +179,7 @@ input {
    overflow-y: scroll;
 }
 .chat-container {
-    width: 600px;
+    width: 85%; /*600px;*/
     background-color: #fff;
     box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
     position: relative;
@@ -226,7 +192,6 @@ input {
     overflow-y: scroll;
     padding: 0 20px 0px 20px;
     list-style-type: none;
-  /*  height: calc(100% - 150px);*/
 }
 #chat-page #messageForm {
     padding: 20px;
@@ -321,11 +286,4 @@ input {
 }
 #chat-page .chat-message p {
     color: #43464b;
-}
-/*h1, h2, h3, h4, h5, h6 {
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-h1 {
-    font-size: 1.7em;
 }

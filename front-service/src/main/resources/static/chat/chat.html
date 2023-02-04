@@ -1,29 +1,7 @@
-<div id="body" ng-app="front" ng-controller="chatController"
-     style="background-position: center; background-repeat: no-repeat; background-size: cover;">
-  <div id="chat-all">
-    <div id="chat-page2">
-
-      <form id="usernameForm" name="usernameForm">
-
-        <div class="form-group">
-          <h6 class="title">Введите логин</h6>
-          <input type="text" id="name" placeholder="Введите имя"
-                 autocomplete="off" class="form-control" />
-          <!--            </div>-->
-          <!--            <div class="form-group">-->
-          <!--            <button type="submit" class="accent username-submit" ng-click="connect()">-->
-          <button id="btnConnect" type="submit" class="btn btn-info" ng-click="connect()">
-            <!--                    <img src="chimpanzee.png" alt="Bootstrap" width="32" height="32">-->
-            <!--                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>-->
-
-            Connect</button>
-          <button id="btnDisconnect" type="submit" class="btn btn-info" ng-click="disconnect()" disabled>Disconnect</button>
-
-        </div>
-      </form>
-
-    </div>
-    <div id="chat-page1">
+<div id="main-crm" ng-app="front" ng-controller="chatController">
+  <div id="page-crm">
+    <div class="chat-all">
+        <div id="chat-page1">
       <div class="chat-box1">
         <div class="chat-box11" >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
@@ -32,20 +10,18 @@
           <button id="btn-user" type="submit" class="btn btn-info"  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
 
             {{user}}</button>
-          <!--                <button id="btn-user1" type="submit" class="btn btn-info" ng-click="loadGroupAndUsers()">USERS</button>-->
-        </div>
+         </div>
         <div  class="chat-box12">
           <input type="text" id="nameRecipiend" value="" disabled class="form-control" align="center" />
         </div>
       </div>
     </div>
-    <div id="chat-page" >
+        <div id="chat-page" >
 
       <div id="chat-user" class="chat-user" >
-        <button id="btn-load-users" class="btn btn-success" ng-click="btnLoadUsers()" disabled>
+        <button id="btn-load-users" class="btn btn-success" ng-click="btnLoadUsers()" >
           Загрузить пользователей</button>
         <ul id="group"  >
-          <!--   style="background: #cdcdcd"     <div class="chatAll">-->
           <li  ng-repeat="g in ligroup" class="green">
             <button id="btn-all" class="btn btn-success" ng-click="btnGroup(g)">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
@@ -53,7 +29,6 @@
               </svg>
               {{g.title}}</button>
           </li>
-          <!--        </div>-->
         </ul>
         <ul id="users" >
           <li ng-repeat="u in liusers">
@@ -87,7 +62,6 @@
                   <path d="M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0V3z"/>
                 </svg>
               </button>
-              <!--                        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Отправить"-->
               <button id="send" type="submit" class="btn btn-secondary" ng-click="send()" >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
                   <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
@@ -98,6 +72,7 @@
         </form>
       </div>
 
+    </div>
     </div>
   </div>
 </div>

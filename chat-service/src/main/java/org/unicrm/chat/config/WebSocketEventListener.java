@@ -23,12 +23,9 @@ public class WebSocketEventListener implements ApplicationListener<SessionSubscr
 
     @Autowired
     private SimpMessageSendingOperations messagingTemplate;
-//    @Autowired
-//    private SimpMessagingTemplate messagingTemplate1;
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-     //   System.out.println("Клиент подключился headerAccessor.getSessionId() = "+headerAccessor.getSessionId());
         logger.info("Received a new web socket connection");
     }
     @EventListener
@@ -36,12 +33,7 @@ public class WebSocketEventListener implements ApplicationListener<SessionSubscr
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         if (headerAccessor.getSessionAttributes().get("username") != null){
             putSessionId((Long) headerAccessor.getSessionAttributes().get("username"),headerAccessor.getSessionId());
-         //   List<Long> d = findAllIdUsers();
-         //   System.out.println("HashMap = "+getSessionId((Long) headerAccessor.getSessionAttributes().get("username")));
         }
-//        System.out.println(" Клиент подписался headerAccessor.getSessionId() = "+headerAccessor.getSessionId());
-//        System.out.println("Клиент подписался username = "+String.valueOf(headerAccessor.getSessionAttributes().get("username")));
-      //  this.messagingTemplate.convertAndSend("/topic/share", messageObject);
 
     }
     @EventListener
@@ -64,8 +56,6 @@ public class WebSocketEventListener implements ApplicationListener<SessionSubscr
 
     @Override
     public void onApplicationEvent(SessionSubscribeEvent event) {
-
-       // System.out.println("onApplicationEvent = ");
     }
     public void putSessionId(Long id, String sessionId){
         mapSessionId.put(id, sessionId);
@@ -81,14 +71,10 @@ public class WebSocketEventListener implements ApplicationListener<SessionSubscr
         return mapSessionId.get(id);
     }
 
-//    public void setSessionId(Long id, String sessionId) {
-//        mapSessionId = mapSessionId;
-//    }
     public List<Long> findAllIdUsers(){
         List<Long> list = new ArrayList<>();
         for (Map.Entry<Long, String> set : mapSessionId.entrySet()){
             list.add(set.getKey());
-          //  System.out.println("MAP key = "+set.getKey() +" getValue = "+set.getValue());
         }
         return list;
     }

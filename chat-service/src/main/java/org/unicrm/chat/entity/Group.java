@@ -16,17 +16,6 @@ public class Group {
     @Column
     private String title;
 
-//    @ManyToMany(fetch = FetchType.LAZY)
-//    @JoinTable(name = "users_groups",
-//            joinColumns = @JoinColumn(name = "group_id"),
-//            inverseJoinColumns = @JoinColumn(name = "user_id"))
-//    private List<User> users;
-
-
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "chatGroup")
-//    @OrderBy("title")
-//    private List<User> users;
-
     public Group() {
     }
 
@@ -45,19 +34,4 @@ public class Group {
     public void setTitle(String title) {
         this.title = title;
     }
-
-//    public List<User> getUsers() {
-//        return users;
-//    }
-//
-//    public void setUsers(List<User> users) {
-//        this.users = users;
-//    }
-//    public List<User> getUsers() {
-//        return users;
-//    }
-//
-//    public void setUsers(List<User> users) {
-//        this.users = users;
-//    }
 }

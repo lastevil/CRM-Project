@@ -5,8 +5,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-//@Data
-//@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,26 +20,8 @@ public class User {
     @Column(name = "login")
     private String login;
 
-//    @ManyToMany(fetch = FetchType.LAZY)
-//    @JoinTable(name = "users_groups",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "group_id"))
-//    private List<Group> groups;
-
-//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-//    @JoinColumn(name = "group_id")
-//    private Group group;
-
     public User() {
     }
-
-//    public List<Group> getGroups() {
-//        return groups;
-//    }
-//
-//    public void setGroups(List<Group> groups) {
-//        this.groups = groups;
-//    }
 
     public Long getId() {
         return id;

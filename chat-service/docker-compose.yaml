@@ -1,6 +1,24 @@
 version: '3'
 
 services:
+  postgres:
+    image: postgres:9.6
+    container_name: postgres_unicrm_container
+    domainname: postgresUniCRM
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: "unicrmdb"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "Qwe123"
+    volumes:
+      - ./postgres_init.sql:/docker-entrypoint-initdb.d/postgres_init.sql
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-U", "postgres" ]
+      interval: 5s
+      timeout: 1s
+      retries: 2
+
   mongo:
     image: mongo
     restart: always

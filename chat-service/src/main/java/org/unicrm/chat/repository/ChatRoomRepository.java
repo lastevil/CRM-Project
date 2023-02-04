@@ -19,7 +19,6 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
             "and c.recipient_id = :sender_id ",
             nativeQuery = true)
     List<ChatRoom> findBySenderIdAndRecipientId(@Param("sender_id") Long senderId, @Param("recipient_id") Long recipientId);
-  //  Optional<ChatRoom> findBySenderIdAndRecipientId(@Param("sender_id") Long senderId, @Param("recipient_id") Long recipientId);
 
     @Modifying
     @Query(value = "insert into chatroom (chatdate,message,status,recipient_id,sender_id) " +

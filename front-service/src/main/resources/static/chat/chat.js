@@ -24,7 +24,6 @@ var context = "/front/";
 
 
 $scope.send = function(event) {
-   console.log("send------------------------------------------");
     var messageContent = messageInput.value.trim();
 
     if(messageContent && stompClient ) {
@@ -39,23 +38,11 @@ $scope.send = function(event) {
             type: 'CHAT'
           };
           stompClient.send(context+"chat", {}, JSON.stringify(message));
-//        var chatMessage = {
-//            sender: username,
-//            senderId: senderId,
-//            content: messageInput.value,
-//            recipientId: currentUserId,
-//            recipientName: currentUserName,
-//            groupId: currentGroupId,
-//            type: 'CHAT'
-//        };
-//        stompClient.send("/app-chat/chat.send", {}, JSON.stringify(chatMessage));
         messageInput.value = '';
     }
 }
 
 $scope.loadGroup = function(event){
-   console.log("loadGroup------------------------------------");
-
    if(stompClient) {
    var chatMessage = {
                senderId: senderId,
@@ -66,7 +53,7 @@ $scope.loadGroup = function(event){
 }
 
 $scope.loadUsers = function(event){
-   console.log("loadUsers--------------------------------");
+
    if(stompClient) {
    var chatMessage = {
                   senderId: senderId,
@@ -77,9 +64,7 @@ $scope.loadUsers = function(event){
 }
 
 $scope.connect = function(event) {
-   console.log("connect--------------------------------------------");
- //   username = document.querySelector('#name').value.trim();
- //  $rootScope.user = document.querySelector('#name').value.trim();
+
     if(document.querySelector('#name').value.trim()) {
         var socket = new SockJS('http://localhost:8703/chat/ws');
         stompClient = Stomp.over(socket);
@@ -88,15 +73,11 @@ $scope.connect = function(event) {
 }
 
 $scope.onConnected = function() {
-   console.log("onConnected-------------------------------------------");
 
     stompClient.subscribe('/topic/public', $scope.onMessageReceived);
     stompClient.subscribe('/user/topic/session', $scope.onMessageReceived);
- //   stompClient.subscribe('/topic/list', $scope.onMessageReceived);
-
     stompClient.subscribe('/user/topic/history', $scope.onMessageReceived);
     stompClient.subscribe('/user/topic/list', $scope.onMessageReceived);
-
     stompClient.send(context+"register", {},
         JSON.stringify({sender: document.querySelector('#name').value.trim(), type: 'JOIN'})
     );
@@ -114,17 +95,16 @@ $scope.onCreateChatLi = function(type, sendId, chatdate, sender, recipientName, 
          dateHistory = dateHistory + chatdate[i];
       }
 
-//   if(type != 'HISTORY'){
       messageElement.classList.add('chat-message');
- //  }
+
    var usernameElement = document.createElement('span');
 
    if(sendId == senderId){
      messageElement.classList.add('userI');
-   //  var usernameText = document.createTextNode(chatdate+'  '+sender);
+
    }else{
       messageElement.classList.add('user');
-   //   var usernameText = document.createTextNode(recipientName);
+
       if(type == 'HISTORY'){
          var usernameText = document.createTextNode(dateHistory + '   ' + sender);
          usernameElement.appendChild(usernameText);
@@ -153,13 +133,13 @@ $scope.onCreateChatLi = function(type, sendId, chatdate, sender, recipientName, 
 }
 
 $scope.onMessageReceived = function(payload) {
-    console.log("onMessageReceived-----------------------------------------");
+
     var message = JSON.parse(payload.body);
-    console.log("message = "+payload.body);
+
 
     if (message.type == 'SESSION'){
        sessionId = message.recipientName;
-       console.log("sessionId = "+sessionId);
+
        if(sessionId != null){
           stompClient.subscribe('/queue/'+sessionId, $scope.onMessageReceived);
        }
@@ -175,8 +155,6 @@ $scope.onMessageReceived = function(payload) {
        }
 
     }else if(message.type == 'NOTIFICATION') {
-
-       // alert("Уведомление "+message.body);
 
     } else if(message.type == 'JOIN') {
        if (username == null) {
@@ -237,7 +215,6 @@ $scope.onMessageReceived = function(payload) {
 
     }else if(message.type == 'ACTIVEUSERS') {
        var list_li = ulusers.querySelectorAll('li');
-       console.log("list_li.length = "+list_li.length);
        for(let j=0; j<message.allIdUsers.length; j++){
           for(let i=0; i<list_li.length; i++){
              if (message.allIdUsers[j] == $scope.liusers[i].id){
@@ -255,7 +232,6 @@ $scope.onMessageReceived = function(payload) {
 }
 
 $scope.btnGroup = function(group){
-   console.log("btnGroup-------------------------------------------");
    nameRecipiend.value = group.title;
    currentGroupId = group.id;
    currentUserId = null;
@@ -270,7 +246,6 @@ $scope.btnGroup = function(group){
 }
 
 $scope.btnUsers = function(users){
-   console.log("btnUsers-------------------------------------------");
    nameRecipiend.value = users.nicName;
    currentGroupId = null;
    currentUserId = users.id;
@@ -286,7 +261,6 @@ $scope.btnUsers = function(users){
 }
 
 $scope.btnLoadUsers = function(event){
-   console.log("btnLoadUsers");
    stompClient.send(context+"activeusers", {},
        JSON.stringify({type: 'ACTIVEUSERS', senderId: senderId})
    );
@@ -296,12 +270,9 @@ $scope.btnLoadUsers = function(event){
 }
 
 $scope.sendFile = function(){
-   console.log("sendFile");
-
 }
 
 $scope.disconnect = function() {
-    console.log("disconnect");
     if (stompClient !== null) {
         stompClient.disconnect();
     }
@@ -318,7 +289,6 @@ $scope.disconnect = function() {
 }
 
 $scope.onError = function(error) {
-   console.log("onError--------------------------------------------");
     connectingElement.textContent = 'Соединение не установлено.';
     connectingElement.style.color = 'red';
 }
