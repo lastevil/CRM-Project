@@ -10,9 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.unicrm.auth.dto.JwtRequest;
 import org.unicrm.auth.dto.JwtResponse;
-import org.unicrm.auth.dto.UserRegDto;
-import org.unicrm.auth.dto.UserVerificationDto;
-import org.unicrm.auth.entities.Status;
 import org.unicrm.auth.exceptions.AuthenticationException;
 import org.unicrm.auth.services.UserService;
 import org.unicrm.auth.utils.JwtTokenUtil;
@@ -42,14 +39,9 @@ public class AuthController {
         return new JwtResponse(token);
     }
 
-    @PostMapping("/registration")
-    public void saveNewUser(@RequestBody UserRegDto userRegDto) {
-        userService.saveNewUser(userRegDto);
-    }
-
     @GetMapping("/users/{username}")
     public UserDto getUserByUsername(@PathVariable String username) {
-        return userService.getByUsername(username);
+        return userService.findByUsername(username);
     }
 
     @GetMapping("/users")
@@ -58,26 +50,8 @@ public class AuthController {
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @GetMapping("/users/status/{username}/{status}")
-    public void changeStatus(@PathVariable String username, @PathVariable Status status) {
+    @GetMapping("/users/{username}/{status}")
+    public void changeStatus(@PathVariable String username, @PathVariable String status) {
         userService.changeStatus(username, status);
-    }
-
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @GetMapping("/users/departments/{username}/{departmentTitle}")
-    public void assignDepartment(@PathVariable String username, @PathVariable String departmentTitle) {
-        userService.assignDepartment(username, departmentTitle);
-    }
-
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @GetMapping("/users/roles/{username}/{roleName}")
-    public void addRoleToUser(@PathVariable String username, @PathVariable String roleName) {
-        userService.addRole(username, roleName);
-    }
-
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @PostMapping("users/verification")
-    public void userVerification(@RequestBody UserVerificationDto userVerificationDto){
-        userService.userVerification(userVerificationDto.getUsername(), userVerificationDto.getStatus(), userVerificationDto.getDepartmentTitle());
     }
 }
