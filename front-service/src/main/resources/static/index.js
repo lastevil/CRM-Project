@@ -63,7 +63,7 @@ angular.module('front').controller('indexController', function ($rootScope, $sco
                    $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.marchMarketUser.token;
                }
            }
-const contextPath = 'http://localhost:8701/gateway/auth/api/v1/';
+const contextPath = 'http://localhost:8701/auth/api/v1/auth';
 
 $scope.tryToAuth = function () {
         $rootScope.username = $scope.user.username;

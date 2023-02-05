@@ -3,6 +3,14 @@ server:
   servlet:
     context-path: /gateway
 
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8700/eureka}
+      fetchRegistry: false
+
 spring:
   application:
     name: gateway-service
@@ -18,16 +26,16 @@ spring:
               - DELETE
             allowedHeaders: "*"
       routes:
-        - - id: auth-service
-            uri: lb://auth-service/
-            predicates:
-              - Path=/auth/**
-            filters:
-              - StripPrefix=1
-              - PrefixPath=/auth
-              - JwtAuthFilter
+        - id: auth-service
+          uri: lb://auth-service/
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=1
+            - PrefixPath=/auth
+            - JwtAuthFilter
         - id: chat-service
-          uri: lb://chat-service:8703/
+          uri: lb://chat-service/
           predicates:
             - Path=/chat/**
           filters:
@@ -50,21 +58,6 @@ spring:
             - StripPrefix=1
             - PrefixPath=/analytic
             - JwtAuthFilter
-        - id: front
-          uri: lb://localhost:8080
-          predicates:
-            - Path=/front/**
-          filters:
-            - StripPrefix=1
-            - PrefixPath=/front
-            - JwtAuthFilter
 jwt:
   secret: h2342335233245h234kj5h234h5dsf22af32434hf5gs66dj5st5us23i452k523
-  lifetime: 36000000
-eureka:
-  instance:
-    hostname: localhost
-  client:
-    serviceUrl:
-      defaultZone: ${EUREKA_URI:http://localhost:8700/eureka}
-      fetchRegistry: false
+  lifetime: 3600000
