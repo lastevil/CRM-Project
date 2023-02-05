@@ -3,9 +3,9 @@ package org.unicrm.ticket.entity;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.UUIDSerializer;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.unicrm.ticket.serializer.JsonDateSerializer;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -14,15 +14,21 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(schema = "tickets_schema", name = "ticket_departments")
-public class TicketDepartment {
+@Builder
+@Table(name = "users_of_ticket")
+public class TicketUser {
 
     @Id
-    @Column(name = "department_id")
     @JsonSerialize(using = UUIDSerializer.class)
-    private UUID departmentId;
+    private UUID id;
 
-    @Column(name = "department_name")
-    private String departmentName;
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
+   @ManyToOne
+   @JoinColumn(name = "department_id")
+   private TicketDepartment department;
 }
-
