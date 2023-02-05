@@ -1,4 +1,42 @@
 <div id="main-crm" ng-app="front" ng-controller="chatController">
+  <div class="container-crm" >
+    <nav class="panel-crm" >
+      <div class="menu-crm 1">
+        <div class="cell-crm" >
+          <button class="btn-bd-primary1"></button>
+          <a class="nav-link active" href="#!/mytasks"> My tasks </a>
+        </div>
+        <div >
+          <button class="btn-bd-primary1"></button>
+          <a class="nav-link" href="#!/chat"> Chat </a>
+        </div>
+        <div  >
+          <button class="btn-bd-primary1"></button>
+          <a class="nav-link" href="#!/analytic"> Analytic </a>
+        </div>
+        <div >
+          <button class="btn-bd-primary1"></button>
+          <a class="nav-link" href="#!/adminpanel"> Admin panel </a>
+        </div>
+      </div>
+      <div class="menu-crm 2">
+        <div class="menu-item1"></div>
+      </div>
+      <div class="menu-crm 3">
+        <div >
+          <button class="btn-bd-primary1">   </button>
+          <a class="nav-link" href="#!/createtask"> Create task </a>
+        </div>
+        <div >
+          <button class="btn-bd-primary1">   </button>
+          <a class="nav-link" href="#!/user"> User </a>
+        </div>
+      </div>
+    </nav>
+    <div class="page-crm">
+      <div class="pageIndex"></div>
+    </div>
+  </div>
   <div id="page-crm">
     <div class="chat-all">
         <div id="chat-page1">
@@ -9,8 +47,8 @@
           </svg>
           <button id="btn-user" type="submit" class="btn btn-info"  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
 
-            {{user}}</button>
-         </div>
+            {{user.username}}</button>
+          </div>
         <div  class="chat-box12">
           <input type="text" id="nameRecipiend" value="" disabled class="form-control" align="center" />
         </div>
