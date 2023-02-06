@@ -80,4 +80,10 @@ public class AuthController {
     public void userVerification(@RequestBody UserVerificationDto userVerificationDto){
         userService.userVerification(userVerificationDto.getUsername(), userVerificationDto.getStatus(), userVerificationDto.getDepartmentTitle());
     }
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @GetMapping("/users/not_active")
+    public List<UserDto> findAllByStatusEqualsNoActive() {
+        return userService.findAllByStatusEqualsNoActive();
+    }
 }

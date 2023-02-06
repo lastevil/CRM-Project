@@ -9,8 +9,7 @@ create table departments
 
 create table users
 (
-    id            bigserial primary key,
-    uuid          uuid DEFAULT gen_random_uuid () not null,
+    uuid          uuid primary key,
     username      varchar(36) unique not null,
     first_name    varchar(36) not null,
     last_name     varchar(56),
@@ -32,7 +31,7 @@ create table roles
 
 create table users_roles
 (
-    user_id    bigint not null references users (id),
+    user_id    uuid not null references users (uuid),
     role_id    bigint not null references roles (id),
     created_at timestamp default current_timestamp,
     updated_at timestamp default current_timestamp,

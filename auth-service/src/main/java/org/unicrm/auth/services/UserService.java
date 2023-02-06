@@ -8,6 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.unicrm.auth.dto.UserRegDto;
@@ -35,6 +36,7 @@ public class UserService implements UserDetailsService {
     private final DepartmentService departmentService;
     private final RoleService roleService;
     private final KafkaTemplate<UUID, UserDto> kafkaTemplate;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)
@@ -53,12 +55,6 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
-    public UserDto findById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format("User with id:'%d' not found", id)));
-        return EntityDtoMapper.INSTANCE.toDto(user);
-    }
-
-    @Transactional(readOnly = true)
     public UserDto getByUsername(String username) {
         return EntityDtoMapper.INSTANCE.toDto(findByUsername(username));
     }
@@ -66,10 +62,9 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void saveNewUser(UserRegDto userRegDto) {
         User user = EntityDtoMapper.INSTANCE.toEntity(userRegDto);
-        user.setUuid(UUID.randomUUID());
         String[] username = userRegDto.getEmail().split("@");
         user.setUsername(username[0]);
-//        user.setPassword(passwordEncoder.encode(userRegDto.getPassword()));
+        user.setPassword(passwordEncoder.encode(userRegDto.getPassword()));
         Role roleUser = roleService.findRoleByName("ROLE_USER");
         List<Role> userRoles = new ArrayList<>();
         userRoles.add(roleUser);
@@ -78,12 +73,11 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-//    Временный вариант меттода, нужна оптимизация:
     @Transactional
     public void userVerification(String username, Status status, String departmentTitle) {
-        changeStatus(username, status);
-        assignDepartment(username, departmentTitle);
         User user = findByUsername(username);
+        user.setStatus(status);
+        user.setDepartment(departmentService.findDepartmentByTitle(departmentTitle));
         kafkaTemplate.send("UserTopic", UUID.randomUUID(), EntityDtoMapper.INSTANCE.toDto(user));
     }
 
@@ -115,5 +109,10 @@ public class UserService implements UserDetailsService {
             throw new ResourceNotFoundException(String.format("User '%s' not found", username));
         }
         return user;
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserDto> findAllByStatusEqualsNoActive() {
+       return userRepository.findAllByStatusEquals(Status.NOT_ACTIVE).stream().map(EntityDtoMapper.INSTANCE::toDto).collect(Collectors.toList());
     }
 }

@@ -12,7 +12,7 @@
                  relativeToChangelogFile="true"
                  splitStatements="true"
                  stripComments="true"
-                 path="sql/init.sql"/>
+                 path="sql/V0001.sql"/>
     </changeSet>
 
 </databaseChangeLog>
