@@ -12,6 +12,7 @@ import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
+import org.unicrm.lib.dto.UserSimpleDto;
 import org.unicrm.ticket.dto.TicketDto;
 
 import java.util.HashMap;
@@ -58,13 +59,13 @@ public class TicketKafkaConfig {
     }
 
     @Bean
-    public ConsumerFactory<Long, TicketDto> consumerFactory() {
+    public ConsumerFactory<Long, UserSimpleDto> consumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfig());
     }
 
     @Bean
     public KafkaListenerContainerFactory<?> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<Long, TicketDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        ConcurrentKafkaListenerContainerFactory<Long, UserSimpleDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }

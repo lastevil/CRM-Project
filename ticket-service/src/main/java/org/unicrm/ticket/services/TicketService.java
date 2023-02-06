@@ -1,6 +1,7 @@
 package org.unicrm.ticket.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.unicrm.ticket.dto.TicketDto;
@@ -25,16 +26,18 @@ import java.util.stream.Collectors;
 public class TicketService {
 
     private final TicketRepository ticketRepository;
+    private final TicketMapperInterface ticketMapper = TicketMapperInterface.INSTANCE;
+    private final TicketUserMapper userMapper = TicketUserMapper.INSTANCE;
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 
     public List<TicketDto> findAll() {
-        return ticketRepository.findAll().stream().map(TicketMapperInterface.INSTANCE::toDto).collect(Collectors.toList());
+        return ticketRepository.findAll().stream().map(ticketMapper::toDto).collect(Collectors.toList());
     }
 
     public TicketDto findTicketById(UUID id) {
         Ticket ticket = ticketRepository.findById(id).orElse(null);
-        return TicketMapperInterface.INSTANCE.toDto(ticket);
+        return ticketMapper.toDto(ticket);
     }
 
     public void deleteById(UUID id) {
@@ -43,7 +46,7 @@ public class TicketService {
 
     public Ticket createTicket(TicketDto ticketDto) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        Ticket ticket = TicketMapperInterface.INSTANCE.toEntity(ticketDto);
+        Ticket ticket = ticketMapper.toEntity(ticketDto);
         ticket.setCreatedAt(timestamp);
         return ticketRepository.save(ticket);
     }
@@ -63,21 +66,21 @@ public class TicketService {
     }
 
     public List<TicketDto> findTicketsByAssignee(TicketUserDto userDto) {
-        return ticketRepository.findAllByAssignee(TicketUserMapper.INSTANCE.toEntity(userDto))
-                .stream().map(TicketMapperInterface.INSTANCE::toDto)
+        return ticketRepository.findAllByAssignee(userMapper.toEntity(userDto))
+                .stream().map(ticketMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     //TODO: Fix
     public List<TicketDto> findTicketsByDepartment(TicketDepartment ticketDepartment) {
         return ticketRepository.findAllByDepartment(ticketDepartment.getDepartmentId())
-                .stream().map(TicketMapperInterface.INSTANCE::toDto)
+                .stream().map(ticketMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     public List<TicketDto> findTicketsByAssigneeAndStatus(TicketUserDto assignee, String status) {
         return ticketRepository.findAllByAssigneeIdAndStatus(assignee.getId(), status)
-                .stream().map(TicketMapperInterface.INSTANCE::toDto)
+                .stream().map(ticketMapper::toDto)
                 .collect(Collectors.toList());
     }
 

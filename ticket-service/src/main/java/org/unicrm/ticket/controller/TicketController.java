@@ -1,8 +1,6 @@
 package org.unicrm.ticket.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.unicrm.ticket.dto.TicketDto;
 import org.unicrm.ticket.dto.TicketUserDto;
@@ -16,9 +14,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/tickets")
 public class TicketController {
-
-    @Autowired
-    private KafkaTemplate<Long, TicketDto> kafkaTemplate;
 
     private final TicketService ticketService;
 
