@@ -1,11 +1,17 @@
 package org.unicrm.analytic.dto;
 
+import lombok.Data;
+import org.unicrm.analytic.api.Status;
+import org.unicrm.analytic.api.TimeInterval;
+
 import java.util.UUID;
 
+@Data
 public class CurrentInformation {
-    /**
-     * определится с контрактом для фронта
-     */
     UUID userId;
-    UUID departmentId;
+    Long departmentId;
+    Status status;
+    TimeInterval timeInterval;
+    int page;
+    int countElements;
 }

@@ -15,5 +15,5 @@ public interface TicketRepository extends JpaRepository<Ticket, UUID> {
     Page<Ticket> findAllByAssigneeIdWithStatus(Pageable pageable, UUID id, String status);
 
     @Query(value = "select t from Ticket t where t.department.id=?2 and t.status like ?3")
-    Page<Ticket> findAllByAssigneeDepartmentWithStatus(Pageable pageable, UUID id, String status);
+    Page<Ticket> findAllByAssigneeDepartmentWithStatus(Pageable pageable, Long id, String status);
 }
