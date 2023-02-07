@@ -13,7 +13,7 @@ import org.unicrm.auth.dto.JwtResponse;
 import org.unicrm.auth.exceptions.AuthenticationException;
 import org.unicrm.auth.services.UserService;
 import org.unicrm.auth.utils.JwtTokenUtil;
-import org.unicrm.lib.dto.UserSimpleDto;
+import org.unicrm.lib.dto.UserDto;
 
 import java.util.List;
 
@@ -40,12 +40,12 @@ public class AuthController {
     }
 
     @GetMapping("/users/{username}")
-    public UserSimpleDto getUserByUsername(@PathVariable String username) {
+    public UserDto getUserByUsername(@PathVariable String username) {
         return userService.findByUsername(username);
     }
 
     @GetMapping("/users")
-    public List<UserSimpleDto> getAllUsers() {
+    public List<UserDto> getAllUsers() {
         return userService.findAll();
     }
 
