@@ -14,10 +14,11 @@ public interface TicketMapper {
     TicketMapper INSTANCE = Mappers.getMapper(TicketMapper.class);
 
     @Mapping(target = "id", source = "ticketDto.id")
+    @Mapping(target = "title",source = "ticketDto.title")
     @Mapping(target = "reporter", source = "reporter")
     @Mapping(target = "assignee", source = "assignee")
-    @Mapping(target = "department", source = "assigneeDepartment")
-    Ticket fromTicketDto(TicketDto ticketDto, User reporter, User assignee, Department assigneeDepartment);
+    @Mapping(target = "department", source = "ticketDepartment")
+    Ticket fromTicketDto(TicketDto ticketDto, User reporter, User assignee, Department ticketDepartment);
 
     @Mapping(target = "assignee.id",source = "assignee.id")
     @Mapping(target = "assignee.firstName",source = "assignee.firstName")
@@ -26,6 +27,6 @@ public interface TicketMapper {
     @Mapping(target = "reporter.firstName",source = "reporter.firstName")
     @Mapping(target = "reporter.lastName",source = "reporter.lastName")
     @Mapping(target = "department.id",source = "department.id")
-    @Mapping(target = "department.name",source = "department.name")
+    @Mapping(target = "department.title",source = "department.title")
     TicketFrontDto fromEntityToFrontDto(Ticket ticket);
 }

@@ -19,7 +19,7 @@ public class UserMapperTest {
         userDto.setLastName("LastName");
         Long depId = 5L;
         userDto.setDepartmentId(depId);
-        userDto.setDepartment("TestDepartment");
+        userDto.setDepartmentTitle("TestDepartment");
 
         Department department = DepartmentMapper.INSTANCE.fromUserDto(userDto);
 

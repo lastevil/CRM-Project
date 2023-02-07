@@ -1,6 +1,6 @@
 create table if not exists departments(
     id   bigint primary key,
-    name varchar(255) not null
+    title varchar(255) not null
 );
 
 create table if not exists users

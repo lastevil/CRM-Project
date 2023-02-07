@@ -18,6 +18,6 @@ public class Department {
     @Id
     @Column(name = "id")
     Long id;
-    @Column(name = "name")
-    String name;
+    @Column(name = "title")
+    String title;
 }

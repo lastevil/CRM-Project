@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/view")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 //@Tag(name = "Аналитика", description = "Контроллер обработки запросов по статистике")
 public class AnalyticController {

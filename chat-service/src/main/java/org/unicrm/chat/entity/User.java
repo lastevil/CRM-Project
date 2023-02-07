@@ -54,7 +54,4 @@ public class User {
     public void setNicName(String nicName) {
         this.nicName = nicName;
     }
-
-
-
 }

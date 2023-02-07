@@ -17,10 +17,10 @@ public class DepartmentService {
 
     @Transactional(readOnly = true)
     public Department findDepartmentByTitle(String departmentTitle) {
-       Department department = departmentRepository.findDepartmentByTitle(departmentTitle);
-       if (department == null) {
-           throw new ResourceNotFoundException(String.format("Department '%s' not found", departmentTitle));
-       }
-       return department;
+        Department department = departmentRepository.findDepartmentByTitle(departmentTitle);
+        if (department == null) {
+            throw new ResourceNotFoundException(String.format("Department '%s' not found", departmentTitle));
+        }
+        return department;
     }
 }

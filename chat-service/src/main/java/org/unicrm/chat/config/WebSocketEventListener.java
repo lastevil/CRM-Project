@@ -79,17 +79,3 @@ public class WebSocketEventListener implements ApplicationListener<SessionSubscr
         return list;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -14,9 +14,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByLogin(String login);
 
-    @Override
-    Optional<User> findById(Long userId);
-
     @Query(value = "select * from users u, groups g, users_groups ug " +
             "where u.id = ug.user_id and g.id = ug.group_id and g.id = :group_id",
             nativeQuery = true)

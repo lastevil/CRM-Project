@@ -38,10 +38,6 @@
             <version>${mapstruct.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.unicrm.dev</groupId>
             <artifactId>crm-local-lib</artifactId>
             <version>0.0.1</version>

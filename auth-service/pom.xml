@@ -29,7 +29,6 @@
       <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-          <version>${eureka-server.version}</version>
        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

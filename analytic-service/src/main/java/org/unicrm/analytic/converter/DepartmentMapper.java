@@ -13,7 +13,7 @@ public interface DepartmentMapper {
     DepartmentMapper INSTANCE = Mappers.getMapper(DepartmentMapper.class);
 
     @Mapping(target = "id", source = "departmentId")
-    @Mapping(target = "name", source = "department")
+    @Mapping(target = "title", source = "departmentTitle")
     Department fromUserDto(UserDto userDto);
 
     DepartmentFrontDto fromEntityToFrontDto(Department d);

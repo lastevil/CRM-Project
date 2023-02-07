@@ -22,7 +22,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--  Eurica  -->
         <spring-cloud.version>2021.0.5</spring-cloud.version>
-        <eureka-server.version>4.0.0</eureka-server.version>
         <!--  Auth  -->
         <jjwt.version>0.9.1</jjwt.version>
         <!--  All Services  -->

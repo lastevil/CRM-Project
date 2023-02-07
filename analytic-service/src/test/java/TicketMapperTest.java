@@ -22,10 +22,10 @@ public class TicketMapperTest {
         User reporter = new User();
         Department assDepartment = new Department();
         Department repDepartment = new Department();
-        assDepartment.setName("assDepartment");
+        assDepartment.setTitle("assDepartment");
         assDepartment.setId(7L);
         repDepartment.setId(3L);
-        repDepartment.setName("repDepartment");
+        repDepartment.setTitle("repDepartment");
 
         assignee.setId(UUID.randomUUID());
         assignee.setFirstName("FirstTest");

@@ -35,10 +35,10 @@ public class AnalyticService {
         if (userDto.getId() != null) {
             Department department = facade.getDepartmentMapper().fromUserDto(userDto);
             User user = facade.getUserMapper().fromUserDto(userDto, department);
-            if (!facade.getDepartmentRepository().existsById(department.getId())) {
+            if (userDto.getDepartmentId() != null) {
                 facade.getDepartmentRepository().save(department);
             }
-            if (!facade.getUserRepository().existsById(user.getId())) {
+            if (userDto.getId() != null) {
                 facade.getUserRepository().save(user);
             }
         }
@@ -97,7 +97,7 @@ public class AnalyticService {
         User user = facade.getUserRepository().findById(userDto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Пользователь с id " + userDto.getId() + " не найден"));
         Department department = facade.getDepartmentRepository().findById(userDto.getDepartmentId())
-                .orElseThrow(() -> new ResourceNotFoundException("Департамент с id " + userDto.getDepartmentId() + " не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("Департамент с id " + userDto.getDepartmentTitle() + " не найден"));
         user.setDepartment(department);
         facade.getUserRepository().save(user);
     }

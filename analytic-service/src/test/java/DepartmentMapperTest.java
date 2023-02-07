@@ -15,7 +15,7 @@ public class DepartmentMapperTest {
         userDto.setFirstName("FirstName");
         userDto.setLastName("LastName");
         userDto.setDepartmentId(9L);
-        userDto.setDepartment("TestDepartment");
+        userDto.setDepartmentTitle("TestDepartment");
 
         Department department = DepartmentMapper.INSTANCE.fromUserDto(userDto);
 
@@ -25,7 +25,7 @@ public class DepartmentMapperTest {
 
         Asserts.notNull(department,"department is null");
         Asserts.check(userDto.getDepartmentId().equals(department.getId()),"wrong id");
-        Asserts.check(userDto.getDepartment().equals(department.getName()),"wrong name");
+        Asserts.check(userDto.getDepartmentTitle().equals(department.getTitle()),"wrong name");
     }
 
     @Test
@@ -40,6 +40,6 @@ public class DepartmentMapperTest {
 
         Asserts.notNull(dto,"dto is null!");
         Asserts.check(dto.getId().equals(department.getId()),"wrong id");
-        Asserts.check(dto.getName().equals(department.getName()),"wrong department name");
+        Asserts.check(dto.getTitle().equals(department.getTitle()),"wrong department name");
     }
 }

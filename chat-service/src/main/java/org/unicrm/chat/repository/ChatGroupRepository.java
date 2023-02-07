@@ -13,9 +13,6 @@ import java.util.Optional;
 
 @Repository
 public interface ChatGroupRepository extends JpaRepository<ChatGroup, Long> {
-    @Query(value = "select * from chatgroup",
-            nativeQuery = true)
-    List<ChatGroup> findAll();
 
     @Modifying
     @Query(value = "insert into chatgroup (chatdate,message,status,group_id,sender_id,recipient_id) " +

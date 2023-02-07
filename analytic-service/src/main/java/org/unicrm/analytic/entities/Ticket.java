@@ -15,6 +15,7 @@ public class Ticket {
     @Column(name = "id")
     @JsonSerialize(using = UUIDSerializer.class)
     private UUID id;
+    @Column(name = "title")
     private String title;
     @Column(name = "status")
     private String status;
