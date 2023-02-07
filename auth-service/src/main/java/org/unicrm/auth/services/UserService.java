@@ -1,8 +1,6 @@
 package org.unicrm.auth.services;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,8 +9,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.unicrm.auth.dto.UserRegDto;
-import org.unicrm.auth.entities.Department;
 import org.unicrm.auth.entities.Role;
 import org.unicrm.auth.entities.Status;
 import org.unicrm.auth.entities.User;
@@ -21,18 +17,14 @@ import org.unicrm.auth.mappers.EntityDtoMapper;
 import org.unicrm.auth.repositories.UserRepository;
 import org.unicrm.lib.dto.UserDto;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class UserService implements UserDetailsService {
-
-    private final UserRepository userRepository;
+private final UserRepository userRepository;
     private final DepartmentService departmentService;
     private final RoleService roleService;
     private final KafkaTemplate<UUID, UserDto> kafkaTemplate;

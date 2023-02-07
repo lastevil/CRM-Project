@@ -5,6 +5,7 @@ server:
 spring:
   application:
     name: chat-service
+
   datasource:
     url: jdbc:postgresql://localhost:5432/unicrmdb
     username: postgres

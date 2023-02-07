@@ -55,4 +55,3 @@
 	<li>Swagger</li>
 	<li>Docker</li>
 	<li>Postgresql</li>
-</ul>
