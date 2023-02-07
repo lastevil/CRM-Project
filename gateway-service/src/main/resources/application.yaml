@@ -1,0 +1,60 @@
+server:
+  port: 8701
+  servlet:
+    context-path: /gateway
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:8080"
+            allowedMethods:
+              - GET
+              - POST
+              - DELETE
+            allowedHeaders: "*"
+      routes:
+        - - id: auth-service
+            uri: lb://auth-service/
+            predicates:
+              - Path=/auth/**
+            filters:
+              - StripPrefix=1
+              - PrefixPath=/auth
+              - JwtAuthFilter
+        - id: chat-service
+          uri: lb://chat-service/
+          predicates:
+            - Path=/chat/**
+          filters:
+            - StripPrefix=1
+            - PrefixPath=/chat
+            - JwtAuthFilter
+        - id: ticket-service
+          uri: lb://ticket-service/
+          predicates:
+            - Path=/ticket/**
+          filters:
+            - StripPrefix=1
+            - PrefixPath=/ticket
+            - JwtAuthFilter
+        - id: order-service
+          uri: lb://analytic-service/
+          predicates:
+            - Path=/analytic/**
+          filters:
+            - StripPrefix=1
+            - PrefixPath=/analytic
+            - JwtAuthFilter
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8700/eureka}
+      fetchRegistry: false
