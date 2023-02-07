@@ -15,6 +15,7 @@ public interface EntityDtoMapper {
 
     User toEntity(UserRegDto userRegDto);
 
+    @Mapping(source = "uuid", target = "id")
     @Mapping(source = "department.id", target = "departmentId")
     @Mapping(source = "department.title", target = "departmentTitle")
     UserDto toDto(User user);
