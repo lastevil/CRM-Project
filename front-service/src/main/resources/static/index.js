@@ -24,7 +24,7 @@
                 controller: 'createtaskController'
             })
             .when('/mytasks', {
-
+              //  templateUrl: 'mytasks/mytasks.html',
                 templateUrl: 'mytasks/mytasks.html',
                 controller: 'mytasksController'
             })
@@ -63,28 +63,43 @@ angular.module('front').controller('indexController', function ($rootScope, $sco
                    $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.marchMarketUser.token;
                }
            }
-const contextPath = 'http://localhost:8701/auth/api/v1/auth';
+const contextPath = 'http://localhost:8701/auth/api/v1/';
+
+document.querySelector("#username-page-reg").style.visibility = 'hidden';
+document.querySelector("#err").style.visibility = 'hidden';
+document.querySelector("#errAuth").style.visibility = 'hidden';
+
 
 $scope.tryToAuth = function () {
         $rootScope.username = $scope.user.username;
-        $http.post(contextPath, $scope.user)
+        console.log(contextPath+'auth', $scope.user);
+        $http.post(contextPath+'auth', $scope.user)
             .then(function successCallback(response) {
-            alert("$scope.user.username = "+$scope.user.username);
                 if (response.data.token) {
                     $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.token;
                     $localStorage.webMarketUser = {username: $scope.user.username, token: response.data.token};
-
-                    $scope.user.username = null;
-                    $scope.user.password = null;
                 }
                 $location.path('mytasks');
             }, function errorCallback(response) {
-            console.log(response);
-            $location.path('mytasks');
+                document.querySelector("#errAuth").style.visibility = 'visible';
             });
-    };
+}
+
+$scope.registr = function(){
+   document.querySelector("#username-page-reg").style.visibility = 'visible';
+   document.querySelector("#username-page").style.visibility = 'hidden';
+}
+
+$scope.tryToReg = function () {
+console.log(contextPath + 'registration', $scope.new_user);
+           $http.post(contextPath + 'registration', $scope.new_user)
+               .then(function successCallback(response) {
+                  document.querySelector("#username-page-reg").style.visibility = 'hidden';
+                  document.querySelector("#username-page").style.visibility = 'visible';
+               }, function errorCallback(response) {
+                  document.querySelector("#err").style.visibility = 'visible';
+               });
+}
 
 });
-
-
 
