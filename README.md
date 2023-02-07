@@ -55,3 +55,5 @@
 	<li>Swagger</li>
 	<li>Docker</li>
 	<li>Postgresql</li>
+	<li>MongoDB</li>
+</ul>
