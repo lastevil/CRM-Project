@@ -1,13 +1,10 @@
 package org.unicrm.analytic.entities;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.UUIDSerializer;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -16,6 +13,7 @@ import java.util.UUID;
 public class Ticket {
     @Id
     @Column(name = "id")
+    @JsonSerialize(using = UUIDSerializer.class)
     private UUID id;
     private String title;
     @Column(name = "status")

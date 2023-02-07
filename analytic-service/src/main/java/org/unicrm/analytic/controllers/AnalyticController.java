@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.unicrm.analytic.dto.CurrentInformation;
 import org.unicrm.analytic.api.TimeInterval;
 import org.unicrm.analytic.dto.DepartmentFrontDto;
+import org.unicrm.analytic.dto.TicketFrontDto;
 import org.unicrm.analytic.dto.UserFrontDto;
 import org.unicrm.analytic.services.AnalyticService;
 import org.unicrm.lib.dto.TicketDto;
@@ -26,15 +27,19 @@ public class AnalyticController {
     // Тестирование контроллера нецелесообразно в виду единственной логики - передача всей логики сервису.
     private final AnalyticService service;
 
-    @GetMapping("/userTicketsTimeIntervalWithStatus/{timeInterval}/{status}")
-    public void getTicketsForTheTime(CurrentInformation userInfo, @PathVariable TimeInterval timeInterval, @PathVariable String status) {
+    @GetMapping("/user-tickets")
+    public Page<TicketFrontDto> getUserTicketsForTheTimeWithStatus(@RequestBody CurrentInformation information) {
+        return service.getTicketByAssignee(information);
     }
 
-    @GetMapping("/department/{id}/{page}/{count}")
-    public Page<UserFrontDto> getDepartmentEmployees(@PathVariable Long id,
-                                                     @PathVariable int page,
-                                                     @PathVariable int count) {
-        return service.getUsersFromDepartment(id, page, count);
+    @GetMapping("/department-tickets")
+    public Page<TicketFrontDto> getDepartmentTicketsForTheTimeWithStatus(@RequestBody CurrentInformation information) {
+        return service.getTicketByAssigneeDepartment(information);
+    }
+
+    @GetMapping("/users-of-department")
+    public Page<UserFrontDto> getDepartmentEmployees(CurrentInformation information) {
+        return service.getUsersFromDepartment(information);
     }
 
     @GetMapping("/departments")

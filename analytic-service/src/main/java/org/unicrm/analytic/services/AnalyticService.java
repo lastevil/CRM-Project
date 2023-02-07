@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.unicrm.analytic.dto.CurrentInformation;
 import org.unicrm.analytic.dto.DepartmentFrontDto;
 import org.unicrm.analytic.dto.TicketFrontDto;
 import org.unicrm.analytic.dto.UserFrontDto;
@@ -19,7 +20,6 @@ import org.unicrm.analytic.services.utils.AnalyticFacade;
 import org.unicrm.lib.dto.TicketDto;
 import org.unicrm.lib.dto.UserDto;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -44,7 +44,6 @@ public class AnalyticService {
         }
     }
 
-    //ToDo: добавить сбор перечисления EnumSet для статусов и интегрировать их в взаимодействие.
     @KafkaListener(topics = "ticketTopic", containerFactory = "ticketKafkaListenerContainerFactory")
     @Transactional
     void createTicket(TicketDto ticketDto) {
@@ -63,21 +62,26 @@ public class AnalyticService {
         facade.getTicketRepository().save(ticket);
     }
 
-    public Page<TicketFrontDto> getTicketByAssignee(UUID id, String status, int page) {
-        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("createdAt"));
-        return facade.getTicketRepository().findAllByAssigneeIdWithStatus(pageable, id, status)
+    public Page<TicketFrontDto> getTicketByAssignee(CurrentInformation information) {
+        Pageable pageable = PageRequest
+                .of(information.getPage() - 1, information.getCountElements(), Sort.by("createdAt"));
+        //ToDo: проверка на интервал
+        return facade.getTicketRepository()
+                .findAllByAssigneeIdWithStatus(pageable, information.getUserId(), information.getStatus().getValue())
                 .map(ticket -> facade.getTicketMapper().fromEntityToFrontDto(ticket));
     }
 
-    public Page<TicketFrontDto> getTicketByAssigneeDepartment(UUID id, String status, int page, int count) {
-        Pageable pageable = PageRequest.of(page - 1, count, Sort.by("createdAt"));
-        return facade.getTicketRepository().findAllByAssigneeDepartmentWithStatus(pageable, id, status)
+    public Page<TicketFrontDto> getTicketByAssigneeDepartment(CurrentInformation information) {
+        Pageable pageable = PageRequest.of(information.getPage() - 1, information.getCountElements(), Sort.by("createdAt"));
+        //ToDo: проверка на интервал
+        return facade.getTicketRepository()
+                .findAllByAssigneeDepartmentWithStatus(pageable, information.getDepartmentId(), information.getStatus().getValue())
                 .map(ticket -> facade.getTicketMapper().fromEntityToFrontDto(ticket));
     }
 
-    public Page<UserFrontDto> getUsersFromDepartment(Long id, int page, int count) {
-        Pageable pageable = PageRequest.of(page - 1, count, Sort.by("lastName"));
-        return facade.getUserRepository().findAllByDepartmentId(pageable, id)
+    public Page<UserFrontDto> getUsersFromDepartment(CurrentInformation information) {
+        Pageable pageable = PageRequest.of(information.getPage() - 1, information.getCountElements(), Sort.by("lastName"));
+        return facade.getUserRepository().findAllByDepartmentId(pageable, information.getDepartmentId())
                 .map(u -> facade.getUserMapper().fromEntityToFrontDto(u));
     }
 
