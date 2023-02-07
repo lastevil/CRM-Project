@@ -12,6 +12,6 @@ public class UserDto {
     private String firstName;
     private String lastName;
     private Long departmentId;
-    private String title;
+    private String department;
 
 }
