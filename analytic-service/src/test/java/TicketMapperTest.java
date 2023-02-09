@@ -13,29 +13,24 @@ import org.unicrm.lib.dto.TicketDto;
 
 import java.sql.Timestamp;
 import java.util.UUID;
-@SpringBootTest(classes = {TicketMapper.class, DepartmentMapper.class, UserMapper.class, TicketDto.class, Ticket.class, User.class,Department.class})
+
+@SpringBootTest(classes = {TicketMapper.class, TicketDto.class, Ticket.class, User.class, Department.class})
 public class TicketMapperTest {
 
     @Test
     public void convertFromTicketDto() {
-        User assignee = new User();
-        User reporter = new User();
-        Department assDepartment = new Department();
-        Department repDepartment = new Department();
-        assDepartment.setTitle("assDepartment");
-        assDepartment.setId(7L);
-        repDepartment.setId(3L);
-        repDepartment.setTitle("repDepartment");
-
-        assignee.setId(UUID.randomUUID());
-        assignee.setFirstName("FirstTest");
-        assignee.setLastName("Assigner");
-        assignee.setDepartment(assDepartment);
-
-        reporter.setId(UUID.randomUUID());
-        reporter.setFirstName("SecondTest");
-        reporter.setLastName("Reporter");
-        reporter.setDepartment(repDepartment);
+        Department assDepartment = Department.builder()
+                .id(7L).title("assDepartment").build();
+        Department repDepartment = Department.builder()
+                .id(3L).title("repDepartment").build();
+        User assignee = User.builder()
+                .id(UUID.randomUUID()).firstName("FirstTest")
+                .lastName("Assigner").department(assDepartment)
+                .build();
+        User reporter = User.builder()
+                .id(UUID.randomUUID()).firstName("SecondTest")
+                .lastName("Reporter").department(repDepartment)
+                .build();
 
         TicketDto ticketDto = new TicketDto();
         ticketDto.setId(UUID.randomUUID());
@@ -65,21 +60,22 @@ public class TicketMapperTest {
     public void convertFromEntityToFrontDto() {
 
         Ticket ticket = new Ticket();
-        Department department = new Department(1L, "Test Department");
-        User assignee = new User();
-        assignee.setId(UUID.randomUUID());
-        assignee.setFirstName("Assignee");
-        assignee.setLastName("Test");
-        assignee.setDepartment(department);
-        User reporter = new User();
-        reporter.setId(UUID.randomUUID());
-        reporter.setLastName("Reporter");
-        reporter.setFirstName("Booble");
-        reporter.setDepartment(department);
+        Department assDepartment = Department.builder()
+                .id(7L).title("assDepartment").build();
+        Department repDepartment = Department.builder()
+                .id(3L).title("repDepartment").build();
+        User assignee = User.builder()
+                .id(UUID.randomUUID()).firstName("FirstTest")
+                .lastName("Assigner").department(assDepartment)
+                .build();
+        User reporter = User.builder()
+                .id(UUID.randomUUID()).firstName("SecondTest")
+                .lastName("Reporter").department(repDepartment)
+                .build();
         ticket.setStatus("test");
         ticket.setId(UUID.randomUUID());
         ticket.setAssignee(assignee);
-        ticket.setDepartment(department);
+        ticket.setDepartment(assDepartment);
         ticket.setReporter(reporter);
         ticket.setCreatedAt(new Timestamp(3));
         ticket.setUpdatedAt(new Timestamp(4));

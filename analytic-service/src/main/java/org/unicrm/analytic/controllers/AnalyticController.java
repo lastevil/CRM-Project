@@ -52,14 +52,4 @@ public class AnalyticController {
         return service.getUser(id);
     }
 
-    //под вопросом необходимость этих методов!!!
-    @PostMapping("/ticket-status")
-    public void changeTicketStatus(@RequestBody TicketDto ticketDto) {
-        service.updateTicketStatus(ticketDto);
-    }
-
-    @PostMapping("/change-user-department")
-    public void changeUserDepartment(@RequestBody UserDto userDto) {
-        service.changeUserDepartment(userDto);
-    }
 }

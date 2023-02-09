@@ -2,12 +2,15 @@ package org.unicrm.analytic.entities;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.UUIDSerializer;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.UUID;
 @Data
 @Entity
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 public class User {
     @Id
     @Column(name = "id")

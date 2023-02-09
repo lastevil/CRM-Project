@@ -2,7 +2,7 @@ package org.unicrm.analytic.entities;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.UUIDSerializer;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -10,6 +10,9 @@ import java.util.UUID;
 
 @Entity
 @Data
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 public class Ticket {
     @Id
     @Column(name = "id")

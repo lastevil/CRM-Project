@@ -5,6 +5,8 @@ public enum Status {
     IN_PROGRESS("В работе"),
     DONE("Выполнено"),
     ACCEPTED("Принято"),
+    DELETED("Удалено"),
+    OVERDUE("Просрочено"),
     CLOSED("Закрыто");
     private final String value;
 
