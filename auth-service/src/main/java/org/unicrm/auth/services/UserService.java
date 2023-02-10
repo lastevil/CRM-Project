@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.unicrm.auth.dto.UpdatedUserDto;
 import org.unicrm.auth.dto.UserRegDto;
 import org.unicrm.auth.entities.Department;
 import org.unicrm.auth.entities.Role;
@@ -70,6 +71,20 @@ public class UserService implements UserDetailsService {
         userRoles.add(roleUser);
         user.setRoles(userRoles);
         user.setStatus(Status.NOT_ACTIVE);
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void updateUser(UpdatedUserDto updatedUserDto) {
+        User user = findByUsername(updatedUserDto.getUsername());
+        if (updatedUserDto.getEmail() != null) {
+            String[] username = updatedUserDto.getEmail().split("@");
+            user.setUsername(username[0]);
+        }
+        if (updatedUserDto.getUsername() != null) user.setFirstName(updatedUserDto.getFirstName());
+        if (updatedUserDto.getLastName() != null) user.setLastName(updatedUserDto.getLastName());
+        if (updatedUserDto.getPassword() != null) user.setPassword(passwordEncoder.encode(updatedUserDto.getPassword()));
+        kafkaTemplate.send("UserTopic", UUID.randomUUID(), EntityDtoMapper.INSTANCE.toDto(user));
         userRepository.save(user);
     }
 
