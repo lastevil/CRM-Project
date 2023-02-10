@@ -1,3 +1,5 @@
+package converters;
+
 import org.apache.http.util.Asserts;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

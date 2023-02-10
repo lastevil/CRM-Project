@@ -1,14 +1,13 @@
+package converters;
+
 import org.apache.http.util.Asserts;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.unicrm.analytic.converter.DepartmentMapper;
-import org.unicrm.analytic.converter.TicketMapper;
 import org.unicrm.analytic.converter.UserMapper;
 import org.unicrm.analytic.dto.UserFrontDto;
 import org.unicrm.analytic.entities.Department;
-import org.unicrm.analytic.entities.Ticket;
 import org.unicrm.analytic.entities.User;
-import org.unicrm.lib.dto.TicketDto;
 import org.unicrm.lib.dto.UserDto;
 
 import java.util.UUID;

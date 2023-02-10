@@ -1,6 +1,5 @@
 package org.unicrm.analytic.dto;
 
-import lombok.Builder;
 import lombok.Data;
 import org.unicrm.analytic.api.Status;
 import org.unicrm.analytic.api.TimeInterval;

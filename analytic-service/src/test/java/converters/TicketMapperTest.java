@@ -1,24 +1,26 @@
+package converters;
+
 import org.apache.http.util.Asserts;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.unicrm.analytic.converter.DepartmentMapper;
 import org.unicrm.analytic.converter.TicketMapper;
-import org.unicrm.analytic.converter.UserMapper;
 import org.unicrm.analytic.dto.TicketFrontDto;
 import org.unicrm.analytic.entities.Department;
 import org.unicrm.analytic.entities.Ticket;
 import org.unicrm.analytic.entities.User;
 import org.unicrm.lib.dto.TicketDto;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @SpringBootTest(classes = {TicketMapper.class, TicketDto.class, Ticket.class, User.class, Department.class})
-public class TicketMapperTest {
+class TicketMapperTest {
 
+    @Autowired
+    User user;
     @Test
-    public void convertFromTicketDto() {
+    void convertFromTicketDto() {
         Department assDepartment = Department.builder()
                 .id(7L).title("assDepartment").build();
         Department repDepartment = Department.builder()
@@ -32,16 +34,12 @@ public class TicketMapperTest {
                 .lastName("Reporter").department(repDepartment)
                 .build();
 
-        TicketDto ticketDto = new TicketDto();
-        ticketDto.setId(UUID.randomUUID());
-        ticketDto.setStatus("Status");
-        ticketDto.setTitle("Title");
-        ticketDto.setCreatedAt(new Timestamp(4));
-        ticketDto.setReporterId(reporter.getId());
-        ticketDto.setAssigneeId(assignee.getId());
-        ticketDto.setAssigneeDepartmentId(assDepartment.getId());
-        ticketDto.setDueDate(new Timestamp(6));
-        ticketDto.setUpdatedAt(new Timestamp(1));
+        TicketDto ticketDto = TicketDto.builder()
+                .id(UUID.randomUUID()).status("Status").title("Title")
+                .assigneeDepartmentId(assDepartment.getId()).assigneeId(assignee.getId())
+                .reporterId(reporter.getId())
+                .createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).dueDate(LocalDateTime.now())
+                .build();
 
         Ticket ticket = TicketMapper.INSTANCE.fromTicketDto(ticketDto, reporter, assignee, assDepartment);
         System.out.println(ticketDto);
@@ -57,9 +55,7 @@ public class TicketMapperTest {
     }
 
     @Test
-    public void convertFromEntityToFrontDto() {
-
-        Ticket ticket = new Ticket();
+    void convertFromEntityToFrontDto() {
         Department assDepartment = Department.builder()
                 .id(7L).title("assDepartment").build();
         Department repDepartment = Department.builder()
@@ -72,14 +68,10 @@ public class TicketMapperTest {
                 .id(UUID.randomUUID()).firstName("SecondTest")
                 .lastName("Reporter").department(repDepartment)
                 .build();
-        ticket.setStatus("test");
-        ticket.setId(UUID.randomUUID());
-        ticket.setAssignee(assignee);
-        ticket.setDepartment(assDepartment);
-        ticket.setReporter(reporter);
-        ticket.setCreatedAt(new Timestamp(3));
-        ticket.setUpdatedAt(new Timestamp(4));
-        ticket.setDueDate(new Timestamp(6));
+        Ticket ticket = Ticket.builder().status("test")
+                .id(UUID.randomUUID()).assignee(assignee).department(assDepartment)
+                .reporter(reporter).createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now())
+                .dueDate(LocalDateTime.now()).build();
 
         TicketFrontDto dto = TicketMapper.INSTANCE.fromEntityToFrontDto(ticket);
 

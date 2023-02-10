@@ -1,7 +1,6 @@
 package org.unicrm.analytic.services;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +9,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.unicrm.analytic.api.Status;
+import org.unicrm.analytic.api.TimeInterval;
 import org.unicrm.analytic.dto.CurrentInformation;
 import org.unicrm.analytic.dto.DepartmentFrontDto;
 import org.unicrm.analytic.dto.TicketFrontDto;
@@ -23,19 +23,19 @@ import org.unicrm.analytic.services.utils.AnalyticFacade;
 import org.unicrm.lib.dto.TicketDto;
 import org.unicrm.lib.dto.UserDto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Log4j
 public class AnalyticService {
     private final AnalyticFacade facade;
 
     @KafkaListener(topics = "userTopic", containerFactory = "userKafkaListenerContainerFactory")
     @Transactional
-    void createOrUpdateUserAndDepartment(UserDto userDto) {
+    public void createOrUpdateUserAndDepartment(UserDto userDto) {
         if (userDto.getId() == null) {
             throw new InvalidKafkaDtoException("Wrong data");
         } else {
@@ -80,16 +80,18 @@ public class AnalyticService {
 
     @KafkaListener(topics = "ticketTopic", containerFactory = "ticketKafkaListenerContainerFactory")
     @Transactional
-    void createOrUpdateTicket(TicketDto ticketDto) {
+    public void createOrUpdateTicket(TicketDto ticketDto) {
         Ticket ticket;
         if (facade.getTicketRepository().existsById(ticketDto.getId())) {
-            if(ticketDto.getStatus().equals(Status.DELETED.getValue())){
+            if (ticketDto.getStatus().equals(Status.DELETED.getValue())) {
                 facade.getTicketRepository().deleteById(ticketDto.getId());
             }
             ticket = updateTicket(ticketDto);
         } else {
-
-            ticket = createTicket(ticketDto);
+            if (ticketDto.getAssigneeId() != null && ticketDto.getAssigneeDepartmentId() != null) {
+                ticket = createTicket(ticketDto);
+            } else
+                throw new InvalidKafkaDtoException("Wrong data");
         }
         facade.getTicketRepository().save(ticket);
     }
@@ -107,37 +109,34 @@ public class AnalyticService {
     }
 
     private Ticket createTicket(TicketDto ticketDto) {
-        if (ticketDto.getAssigneeId() != null && ticketDto.getAssigneeDepartmentId() != null) {
-            Department department = facade.getDepartmentRepository().findById(ticketDto.getAssigneeDepartmentId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Департамент исполнителя не найден в базе"));
-            User reporter = facade.getUserRepository().findById(ticketDto.getReporterId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Заявитель не найден в базе"));
-            User assignee;
-            if (ticketDto.getAssigneeId() != null) {
-                assignee = facade.getUserRepository().findById(ticketDto.getAssigneeId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Исполнитель не найден в базе"));
-            } else {
-                assignee = null;
-            }
-            return facade.getTicketMapper().fromTicketDto(ticketDto, reporter, assignee, department);
-        } else
-            throw new InvalidKafkaDtoException("Wrong data");
+        Department department = facade.getDepartmentRepository().findById(ticketDto.getAssigneeDepartmentId())
+                .orElseThrow(() -> new ResourceNotFoundException("Департамент исполнителя не найден в базе"));
+        User reporter = facade.getUserRepository().findById(ticketDto.getReporterId())
+                .orElseThrow(() -> new ResourceNotFoundException("Заявитель не найден в базе"));
+        User assignee;
+        if (ticketDto.getAssigneeId() != null) {
+            assignee = facade.getUserRepository().findById(ticketDto.getAssigneeId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Исполнитель не найден в базе"));
+        } else {
+            assignee = null;
+        }
+        return facade.getTicketMapper().fromTicketDto(ticketDto, reporter, assignee, department);
     }
 
     public Page<TicketFrontDto> getTicketByAssignee(CurrentInformation information) {
         Pageable pageable = PageRequest
                 .of(information.getPage() - 1, information.getCountElements(), Sort.by("createdAt"));
-        //ToDo: проверка на интервал
+        LocalDateTime between = getTimeForInterval(information.getTimeInterval());
         return facade.getTicketRepository()
-                .findAllByAssigneeIdWithStatus(pageable, information.getUserId(), information.getStatus().getValue())
+                .findAllByAssigneeIdWithStatus(pageable, information.getUserId(), information.getStatus().getValue(), between, LocalDateTime.now())
                 .map(ticket -> facade.getTicketMapper().fromEntityToFrontDto(ticket));
     }
 
     public Page<TicketFrontDto> getTicketByAssigneeDepartment(CurrentInformation information) {
         Pageable pageable = PageRequest.of(information.getPage() - 1, information.getCountElements(), Sort.by("createdAt"));
-        //ToDo: проверка на интервал
+        LocalDateTime between = getTimeForInterval(information.getTimeInterval());
         return facade.getTicketRepository()
-                .findAllByAssigneeDepartmentWithStatus(pageable, information.getDepartmentId(), information.getStatus().getValue())
+                .findAllByAssigneeDepartmentWithStatus(pageable, information.getDepartmentId(), information.getStatus().getValue(), between, LocalDateTime.now())
                 .map(ticket -> facade.getTicketMapper().fromEntityToFrontDto(ticket));
     }
 
@@ -158,5 +157,23 @@ public class AnalyticService {
                 facade.getUserRepository().findById(id)
                         .orElseThrow(() -> new ResourceNotFoundException("Пользователь с id " + id + " не найден"))
         );
+    }
+
+    private LocalDateTime getTimeForInterval(TimeInterval interval) {
+        switch (interval) {
+            case WEEK:
+                return LocalDateTime.now().minusWeeks(1);
+            case MONTH:
+                return LocalDateTime.now().minusMonths(1);
+            case THREE_MONTH:
+                return LocalDateTime.now().minusMonths(3);
+            case HALF_YEAR:
+                return LocalDateTime.now().minusMonths(6);
+            case YEAR:
+                return LocalDateTime.now().minusYears(1);
+            case DAY:
+            default:
+                return LocalDateTime.now().minusDays(1);
+        }
     }
 }

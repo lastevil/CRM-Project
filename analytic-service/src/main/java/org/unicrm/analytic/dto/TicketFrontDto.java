@@ -2,8 +2,7 @@ package org.unicrm.analytic.dto;
 
 import lombok.Data;
 
-
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.UUID;
 @Data
 public class TicketFrontDto {
@@ -19,9 +18,9 @@ public class TicketFrontDto {
 
     private UserFrontDto reporter;
 
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 
-    private Timestamp updatedAt;
+    private LocalDateTime updatedAt;
 
-    private Timestamp dueDate;
+    private LocalDateTime dueDate;
 }
