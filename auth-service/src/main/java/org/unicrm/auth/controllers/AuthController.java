@@ -1,5 +1,7 @@
 package org.unicrm.auth.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +19,7 @@ import org.unicrm.auth.utils.JwtTokenUtil;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 @Slf4j
+@Tag(name = "Auth", description = "Controller for authorization and registration")
 public class AuthController {
 
     private final UserService userService;
@@ -24,6 +27,7 @@ public class AuthController {
     private final JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/auth")
+    @Operation(summary = "authorization request")
     public JwtResponse createAuthToken(@RequestBody JwtRequest authRequest) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
@@ -36,6 +40,7 @@ public class AuthController {
     }
 
     @PostMapping("/registration")
+    @Operation(summary = "registration request")
     public void saveNewUser(@RequestBody UserRegDto userRegDto) {
         userService.saveNewUser(userRegDto);
     }

@@ -9,6 +9,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class UserDto {
     private UUID id;
+    private String username;
     private String firstName;
     private String lastName;
     private Long departmentId;

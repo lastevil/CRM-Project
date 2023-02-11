@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.unicrm.auth.dto.UpdatedUserDto;
 import org.unicrm.auth.dto.UserRegDto;
-import org.unicrm.auth.entities.Department;
 import org.unicrm.auth.entities.Role;
 import org.unicrm.auth.entities.Status;
 import org.unicrm.auth.entities.User;
@@ -79,43 +78,32 @@ public class UserService implements UserDetailsService {
         User user = findByUsername(updatedUserDto.getUsername());
         if (updatedUserDto.getEmail() != null) {
             String[] username = updatedUserDto.getEmail().split("@");
-            user.setUsername(username[0]);
         }
         if (updatedUserDto.getUsername() != null) user.setFirstName(updatedUserDto.getFirstName());
         if (updatedUserDto.getLastName() != null) user.setLastName(updatedUserDto.getLastName());
         if (updatedUserDto.getPassword() != null) user.setPassword(passwordEncoder.encode(updatedUserDto.getPassword()));
-        kafkaTemplate.send("UserTopic", UUID.randomUUID(), EntityDtoMapper.INSTANCE.toDto(user));
         userRepository.save(user);
+        kafkaTemplate.send("UserTopic", UUID.randomUUID(), EntityDtoMapper.INSTANCE.toDto(user));
     }
 
     @Transactional
     public void userVerification(String username, Status status, String departmentTitle) {
         User user = findByUsername(username);
-        user.setStatus(status);
-        user.setDepartment(departmentService.findDepartmentByTitle(departmentTitle));
-        kafkaTemplate.send("UserTopic", UUID.randomUUID(), EntityDtoMapper.INSTANCE.toDto(user));
-    }
-
-    @Transactional
-    public void changeStatus(String username, Status status) {
-        try {
-            findByUsername(username).setStatus(status);
-        } catch (IllegalArgumentException e) {
-            throw new ResourceNotFoundException("incorrect status selected");
+        if (status != null) {
+            try {
+                user.setStatus(status);
+            } catch (IllegalArgumentException e) {
+                throw new ResourceNotFoundException("incorrect status selected");
+            }
         }
+        if (departmentTitle != null) user.setDepartment(departmentService.findDepartmentByTitle(departmentTitle));
+        kafkaTemplate.send("UserTopic", UUID.randomUUID(), EntityDtoMapper.INSTANCE.toDto(user));
     }
 
     @Transactional
     public void addRole(String username, String roleName) {
         User user = findByUsername(username);
         user.getRoles().add(roleService.findRoleByName(roleName));
-    }
-
-    @Transactional
-    public void assignDepartment(String username, String departmentTitle) {
-        User user = findByUsername(username);
-        Department department = departmentService.findDepartmentByTitle(departmentTitle);
-        user.setDepartment(department);
     }
 
     private User findByUsername(String username) {
