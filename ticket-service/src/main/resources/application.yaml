@@ -23,7 +23,7 @@ spring:
   kafka:
     consumer:
       group-id: 1
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: "localhost:9092"
 eureka:
   instance:
     hostname: localhost

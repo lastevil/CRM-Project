@@ -3,10 +3,8 @@ package org.unicrm.ticket.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import org.springframework.context.annotation.Bean;
 import org.unicrm.ticket.dto.TicketDto;
 import org.unicrm.ticket.entity.Ticket;
-
 
 @Mapper(componentModel = "spring")
 public interface TicketMapperInterface {
@@ -18,6 +16,5 @@ public interface TicketMapperInterface {
     @Mapping(source = "departmentId", target = "departmentId")
     Ticket toEntity(TicketDto ticketDto);
     TicketDto toDto(Ticket ticket);
-
 
 }

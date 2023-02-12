@@ -1,4 +1,4 @@
-package org.unicrm.ticket.controller;
+package org.unicrm.ticket.configs;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -7,6 +7,7 @@ import org.apache.kafka.common.serialization.LongSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
@@ -17,9 +18,11 @@ import org.unicrm.ticket.dto.TicketDto;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Configuration
-public class TicketKafkaConfig {
+@EnableKafka
+public class KafkaConfig {
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
@@ -33,17 +36,16 @@ public class TicketKafkaConfig {
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class);
-
         return props;
     }
 
     @Bean
-    public ProducerFactory<Long, TicketDto> producerFactory() {
+    public ProducerFactory<UUID, TicketDto> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfig());
     }
 
     @Bean
-    public KafkaTemplate<Long, TicketDto> kafkaTemplate() {
+    public KafkaTemplate<UUID, TicketDto> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
@@ -59,14 +61,14 @@ public class TicketKafkaConfig {
     }
 
     @Bean
-    public ConsumerFactory<Long, UserDto> consumerFactory() {
+    public ConsumerFactory<UUID, UserDto> userKafkaContainerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfig());
     }
 
     @Bean
-    public KafkaListenerContainerFactory<?> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<Long, UserDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
+    public KafkaListenerContainerFactory<?> userKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<UUID, UserDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(userKafkaContainerFactory());
         return factory;
     }
 
