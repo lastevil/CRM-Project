@@ -12,14 +12,16 @@ import org.unicrm.lib.dto.UserDto;
 
 import java.util.UUID;
 @SpringBootTest(classes = {UserMapper.class, UserFrontDto.class, User.class, Department.class, UserDto.class})
-public class UserMapperTest {
+class UserMapperTest {
     @Test
-    public void convertFromUserDto() {
+    void convertFromUserDto() {
         UserDto userDto = new UserDto();
         UUID id = UUID.randomUUID();
         userDto.setId(id);
+        userDto.setUsername("login");
         userDto.setFirstName("FirstName");
         userDto.setLastName("LastName");
+
         Long depId = 5L;
         userDto.setDepartmentId(depId);
         userDto.setDepartmentTitle("TestDepartment");
@@ -33,12 +35,13 @@ public class UserMapperTest {
         Asserts.notNull(user, "user is empty!");
         Asserts.check(user.getId().equals(userDto.getId()), "wrong id");
         Asserts.check(user.getDepartment().equals(department), "wrong department");
+        Asserts.check(user.getUsername().equals(userDto.getUsername()),"wrong username");
         Asserts.check(user.getFirstName().equals(userDto.getFirstName()), "wrong FirstName");
         Asserts.check(user.getLastName().equals(userDto.getLastName()), "wrong FirstName");
     }
 
     @Test
-    public void convertEntityToFrontDto() {
+    void convertEntityToFrontDto() {
         User user = new User();
         user.setId(UUID.randomUUID());
         user.setFirstName("First");

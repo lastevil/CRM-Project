@@ -16,9 +16,9 @@ import org.unicrm.lib.dto.UserDto;
 import java.util.UUID;
 
 @SpringBootTest(classes = {DepartmentMapper.class, UserDto.class, Department.class, UserFrontDto.class, DepartmentFrontDto.class})
-public class DepartmentMapperTest {
+class DepartmentMapperTest {
     @Test
-    public void convertFromUserDto() {
+    void convertFromUserDto() {
         UserDto userDto = new UserDto();
         userDto.setId(UUID.randomUUID());
         userDto.setFirstName("FirstName");
@@ -38,7 +38,7 @@ public class DepartmentMapperTest {
     }
 
     @Test
-    public void convertFromEntityToFrontDto() {
+    void convertFromEntityToFrontDto() {
         Department department = Department.builder()
                 .id(1L).title("Test").build();
 
