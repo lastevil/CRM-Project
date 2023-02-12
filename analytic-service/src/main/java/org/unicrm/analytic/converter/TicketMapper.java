@@ -28,5 +28,8 @@ public interface TicketMapper {
     @Mapping(target = "reporter.lastName",source = "reporter.lastName")
     @Mapping(target = "department.id",source = "department.id")
     @Mapping(target = "department.title",source = "department.title")
+    @Mapping(target = "createdAt",source = "ticket.createdAt",dateFormat = "dd-MM-yyyy hh:mm:ss" )
+    @Mapping(target = "updatedAt",source ="ticket.updatedAt", dateFormat = "dd-MM-yyyy hh:mm:ss")
+    @Mapping(target = "dueDate",source = "ticket.dueDate", dateFormat = "dd-MM-yyyy hh:mm:ss")
     TicketFrontDto fromEntityToFrontDto(Ticket ticket);
 }

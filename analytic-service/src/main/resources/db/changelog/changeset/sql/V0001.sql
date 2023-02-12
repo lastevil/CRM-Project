@@ -7,9 +7,9 @@ create table if not exists departments
 create table if not exists users
 (
     id            uuid primary key,
-    first_name    varchar(50) not null,
-    last_name     varchar(50) not null,
-    department_id bigint      not null REFERENCES departments (id)
+    first_name    varchar(50)  not null,
+    last_name     varchar(50)  not null,
+    department_id bigint       not null REFERENCES departments (id)
 );
 
 create table if not exists tickets

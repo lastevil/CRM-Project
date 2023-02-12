@@ -19,5 +19,4 @@ public class AnalyticFacade {
     private final UserMapper userMapper;
     private final DepartmentMapper departmentMapper;
     private final TicketMapper ticketMapper;
-
 }

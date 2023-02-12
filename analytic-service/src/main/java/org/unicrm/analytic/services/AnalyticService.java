@@ -10,10 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.unicrm.analytic.api.Status;
 import org.unicrm.analytic.api.TimeInterval;
-import org.unicrm.analytic.dto.CurrentInformation;
-import org.unicrm.analytic.dto.DepartmentFrontDto;
-import org.unicrm.analytic.dto.TicketFrontDto;
-import org.unicrm.analytic.dto.UserFrontDto;
+import org.unicrm.analytic.dto.*;
 import org.unicrm.analytic.entities.Department;
 import org.unicrm.analytic.entities.Ticket;
 import org.unicrm.analytic.entities.User;
@@ -42,6 +39,118 @@ public class AnalyticService {
             Department department = departmentSaveOrUpdate(userDto);
             userSaveOrUpdate(userDto, department);
         }
+    }
+
+
+    @KafkaListener(topics = "ticketTopic", containerFactory = "ticketKafkaListenerContainerFactory")
+    @Transactional
+    public void createOrUpdateTicket(TicketDto ticketDto) {
+        Ticket ticket;
+        if (facade.getTicketRepository().existsById(ticketDto.getId())) {
+            if (ticketDto.getStatus().equals(Status.DELETED.getValue())) {
+                facade.getTicketRepository().deleteById(ticketDto.getId());
+            }
+            ticket = updateTicket(ticketDto);
+        } else {
+            if (ticketDto.getAssigneeId() != null && ticketDto.getAssigneeDepartmentId() != null) {
+                ticket = createTicket(ticketDto);
+            } else
+                throw new InvalidKafkaDtoException("Wrong data");
+        }
+        facade.getTicketRepository().save(ticket);
+    }
+
+    public Page<TicketFrontDto> getTicketByAssignee(UUID userId, Status status, CurrentPage currentPage) {
+        Pageable pageable = PageRequest
+                .of(currentPage.getPage() - 1, currentPage.getCountElements(), Sort.by("createdAt"));
+        LocalDateTime between = getTimeForInterval(currentPage.getTimeInterval());
+        return facade.getTicketRepository()
+                .findAllByAssigneeIdWithStatus(pageable, userId, status.getValue(), between, LocalDateTime.now())
+                .map(ticket -> facade.getTicketMapper().fromEntityToFrontDto(ticket));
+    }
+
+    public Page<TicketFrontDto> getTicketByAssigneeDepartment(Long departmentId, Status status, CurrentPage currentPage) {
+        Pageable pageable = PageRequest.of(currentPage.getPage() - 1, currentPage.getCountElements(), Sort.by("createdAt"));
+        LocalDateTime between = getTimeForInterval(currentPage.getTimeInterval());
+        return facade.getTicketRepository()
+                .countByAssigneeDepartmentWithStatus(pageable, departmentId, status.getValue(), between, LocalDateTime.now())
+                .map(ticket -> facade.getTicketMapper().fromEntityToFrontDto(ticket));
+    }
+
+    public Page<UserFrontDto> getUsersFromDepartment(Long departmentId, CurrentPage currentPage) {
+        Pageable pageable = PageRequest.of(currentPage.getPage() - 1, currentPage.getCountElements(), Sort.by("lastName"));
+        return facade.getUserRepository().findAllByDepartmentId(pageable, departmentId)
+                .map(u -> facade.getUserMapper().fromEntityToFrontDto(u));
+    }
+
+    public List<DepartmentFrontDto> getDepartments() {
+        return facade.getDepartmentRepository().findAll().stream()
+                .map(d -> facade.getDepartmentMapper().fromEntityToFrontDto(d))
+                .collect(Collectors.toList());
+    }
+
+    public UserFrontDto getUser(UUID id) {
+        return facade.getUserMapper().fromEntityToFrontDto(
+                facade.getUserRepository().findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("Пользователь с id " + id + " не найден"))
+        );
+    }
+
+    private LocalDateTime getTimeForInterval(TimeInterval interval) {
+        switch (interval) {
+            case WEEK:
+                return LocalDateTime.now().minusWeeks(1);
+            case MONTH:
+                return LocalDateTime.now().minusMonths(1);
+            case THREE_MONTH:
+                return LocalDateTime.now().minusMonths(3);
+            case HALF_YEAR:
+                return LocalDateTime.now().minusMonths(6);
+            case YEAR:
+                return LocalDateTime.now().minusYears(1);
+            case DAY:
+            default:
+                return LocalDateTime.now().minusDays(1);
+        }
+    }
+
+    @Transactional
+    public GlobalInfo getUserInfo(UUID userId, TimeInterval time) {
+        return GlobalInfo.builder()
+                .ticketCountDone(facade.getTicketRepository()
+                        .countByAssigneeIdWithStatus(userId, Status.DONE.getValue(), getTimeForInterval(time), LocalDateTime.now()))
+                .ticketCountInProgress(facade.getTicketRepository()
+                        .countByAssigneeIdWithStatus(userId, Status.IN_PROGRESS.getValue(), getTimeForInterval(time), LocalDateTime.now()))
+                .ticketCountAccepted(facade.getTicketRepository()
+                        .countByAssigneeIdWithStatus(userId, Status.ACCEPTED.getValue(), getTimeForInterval(time), LocalDateTime.now()))
+                .ticketCountOverdue(facade.getTicketRepository()
+                        .countByAssigneeIdWithStatus(userId, Status.OVERDUE.getValue(), getTimeForInterval(time), LocalDateTime.now()))
+                .build();
+    }
+
+    public GlobalInfo getDepartmentInfo(Long departmentId, TimeInterval beginTime) {
+        return GlobalInfo.builder()
+                .ticketCountDone(facade.getTicketRepository()
+                        .countByAssigneeDepartmentWithStatus(departmentId, Status.DONE.getValue(), getTimeForInterval(beginTime), LocalDateTime.now()))
+                .ticketCountInProgress(facade.getTicketRepository()
+                        .countByAssigneeDepartmentWithStatus(departmentId, Status.IN_PROGRESS.getValue(), getTimeForInterval(beginTime), LocalDateTime.now()))
+                .ticketCountAccepted(facade.getTicketRepository()
+                        .countByAssigneeDepartmentWithStatus(departmentId, Status.ACCEPTED.getValue(), getTimeForInterval(beginTime), LocalDateTime.now()))
+                .ticketCountOverdue(facade.getTicketRepository()
+                        .countByAssigneeDepartmentWithStatus(departmentId, Status.OVERDUE.getValue(), getTimeForInterval(beginTime), LocalDateTime.now()))
+                .build();
+    }
+
+    public Integer getUserTicketCountByIntervalWithStatus(UUID userId, Status status, CurrentPage currentPage) {
+        LocalDateTime time = getTimeForInterval(currentPage.getTimeInterval());
+        return facade.getTicketRepository().countByAssigneeIdWithStatus(userId,
+                status.getValue(), time, LocalDateTime.now());
+    }
+
+    public Integer getUDepartmentTicketCountByIntervalWithStatus(Long departmentId, Status status, CurrentPage information) {
+        LocalDateTime time = getTimeForInterval(information.getTimeInterval());
+        return facade.getTicketRepository().countByAssigneeDepartmentWithStatus(departmentId,
+                status.getValue(), time, LocalDateTime.now());
     }
 
     private Department departmentSaveOrUpdate(UserDto dto) {
@@ -78,24 +187,6 @@ public class AnalyticService {
         facade.getUserRepository().save(user);
     }
 
-    @KafkaListener(topics = "ticketTopic", containerFactory = "ticketKafkaListenerContainerFactory")
-    @Transactional
-    public void createOrUpdateTicket(TicketDto ticketDto) {
-        Ticket ticket;
-        if (facade.getTicketRepository().existsById(ticketDto.getId())) {
-            if (ticketDto.getStatus().equals(Status.DELETED.getValue())) {
-                facade.getTicketRepository().deleteById(ticketDto.getId());
-            }
-            ticket = updateTicket(ticketDto);
-        } else {
-            if (ticketDto.getAssigneeId() != null && ticketDto.getAssigneeDepartmentId() != null) {
-                ticket = createTicket(ticketDto);
-            } else
-                throw new InvalidKafkaDtoException("Wrong data");
-        }
-        facade.getTicketRepository().save(ticket);
-    }
-
     private Ticket updateTicket(TicketDto ticketDto) {
         Ticket ticket = facade.getTicketRepository().findById(ticketDto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Задача с id " + ticketDto.getId() + " не найдена"));
@@ -123,57 +214,5 @@ public class AnalyticService {
         return facade.getTicketMapper().fromTicketDto(ticketDto, reporter, assignee, department);
     }
 
-    public Page<TicketFrontDto> getTicketByAssignee(CurrentInformation information) {
-        Pageable pageable = PageRequest
-                .of(information.getPage() - 1, information.getCountElements(), Sort.by("createdAt"));
-        LocalDateTime between = getTimeForInterval(information.getTimeInterval());
-        return facade.getTicketRepository()
-                .findAllByAssigneeIdWithStatus(pageable, information.getUserId(), information.getStatus().getValue(), between, LocalDateTime.now())
-                .map(ticket -> facade.getTicketMapper().fromEntityToFrontDto(ticket));
-    }
 
-    public Page<TicketFrontDto> getTicketByAssigneeDepartment(CurrentInformation information) {
-        Pageable pageable = PageRequest.of(information.getPage() - 1, information.getCountElements(), Sort.by("createdAt"));
-        LocalDateTime between = getTimeForInterval(information.getTimeInterval());
-        return facade.getTicketRepository()
-                .findAllByAssigneeDepartmentWithStatus(pageable, information.getDepartmentId(), information.getStatus().getValue(), between, LocalDateTime.now())
-                .map(ticket -> facade.getTicketMapper().fromEntityToFrontDto(ticket));
-    }
-
-    public Page<UserFrontDto> getUsersFromDepartment(CurrentInformation information) {
-        Pageable pageable = PageRequest.of(information.getPage() - 1, information.getCountElements(), Sort.by("lastName"));
-        return facade.getUserRepository().findAllByDepartmentId(pageable, information.getDepartmentId())
-                .map(u -> facade.getUserMapper().fromEntityToFrontDto(u));
-    }
-
-    public List<DepartmentFrontDto> getDepartments() {
-        return facade.getDepartmentRepository().findAll().stream()
-                .map(d -> facade.getDepartmentMapper().fromEntityToFrontDto(d))
-                .collect(Collectors.toList());
-    }
-
-    public UserFrontDto getUser(UUID id) {
-        return facade.getUserMapper().fromEntityToFrontDto(
-                facade.getUserRepository().findById(id)
-                        .orElseThrow(() -> new ResourceNotFoundException("Пользователь с id " + id + " не найден"))
-        );
-    }
-
-    private LocalDateTime getTimeForInterval(TimeInterval interval) {
-        switch (interval) {
-            case WEEK:
-                return LocalDateTime.now().minusWeeks(1);
-            case MONTH:
-                return LocalDateTime.now().minusMonths(1);
-            case THREE_MONTH:
-                return LocalDateTime.now().minusMonths(3);
-            case HALF_YEAR:
-                return LocalDateTime.now().minusMonths(6);
-            case YEAR:
-                return LocalDateTime.now().minusYears(1);
-            case DAY:
-            default:
-                return LocalDateTime.now().minusDays(1);
-        }
-    }
 }
