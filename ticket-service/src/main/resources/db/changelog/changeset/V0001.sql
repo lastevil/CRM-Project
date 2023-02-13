@@ -20,8 +20,9 @@ CREATE TABLE IF NOT EXISTS tickets
     description   TEXT,
     assignee      UUID REFERENCES users_of_ticket (id),
     reporter      UUID REFERENCES users_of_ticket (id) NOT NULL,
-    department_id UUID                        NOT NULL,
-    created_at    TIMESTAMP                            NOT NULL,
-    updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    due_date      DATE
+    department_id UUID                                 NOT NULL,
+    created_at    TIMESTAMP WITHOUT TIME ZONE          NOT NULL,
+    updated_at    TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    due_date      DATE,
+    is_overdue BOOLEAN NOT NULL
 );

@@ -7,8 +7,8 @@ public enum TicketStatus {
     BACKLOG("Запланировано"),
     IN_PROGRESS("В работе"),
     DONE("Выполнено"),
-
     ACCEPTED("Принято"),
+    DELETED("Удалено"),
     CLOSED("Закрыто");
 
     private final String value;
