@@ -29,7 +29,6 @@
       <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-          <version>${eureka-server.version}</version>
        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -40,6 +39,11 @@
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${mapstruct.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.unicrm.dev</groupId>

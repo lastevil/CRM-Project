@@ -30,14 +30,6 @@ public class ChatRoom { //new SimpleDateFormat("dd.MM.yyyy HH:mm").format(new Da
     @Column(name = "sender_id")
     private Long senderId;
 
-//    @OneToOne(mappedBy = "id")//fetch = FetchType.LAZY,cascade = CascadeType.PERSIST
-//    @JoinColumn(name = "recipient_id")
-//    private User recipientId;
-//
-//    @OneToOne(mappedBy = "id")
-//    @JoinColumn(name = "sender_id")
-//    private User senderId;
-
     public ChatRoom() {}
 
     public Long getId() {

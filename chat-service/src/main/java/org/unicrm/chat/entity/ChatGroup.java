@@ -7,8 +7,6 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "chatgroup")
-//@Data
-//@NoArgsConstructor
 public class ChatGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

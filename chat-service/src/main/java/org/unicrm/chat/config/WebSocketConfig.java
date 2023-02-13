@@ -1,7 +1,6 @@
 package org.unicrm.chat.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-//import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -52,8 +51,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         }
                         return true;
                     }})
-             //   .setAllowedOrigins("*")
-             //   .setAllowedOriginPatterns("*")
                 .withSockJS();
     }
 

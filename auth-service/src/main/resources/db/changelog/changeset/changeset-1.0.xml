@@ -5,14 +5,24 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="1.0" author="pk">
+    <changeSet id="1.1.0" author="pk">
         <sqlFile dbms="postgresql"
                  encoding="utf8"
                  endDelimiter=";"
                  relativeToChangelogFile="true"
                  splitStatements="true"
                  stripComments="true"
-                 path="init.sql"/>
+                 path="V0001.sql"/>
+    </changeSet>
+
+    <changeSet id="1.2.0" author="pk">
+        <sqlFile dbms="postgresql"
+                 encoding="utf8"
+                 endDelimiter=";"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true"
+                 path="V0002.sql"/>
     </changeSet>
 
 </databaseChangeLog>

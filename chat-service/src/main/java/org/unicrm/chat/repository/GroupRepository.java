@@ -11,8 +11,6 @@ import java.util.List;
 
 @Repository
 public interface GroupRepository extends JpaRepository<Group, Long> {
-    List<Group> findAll();
-
     @Query(value = "select g.id, g.title from users u, groups g, users_groups ug " +
             "where u.id = ug.user_id and g.id = ug.group_id and u.id = :id",
             nativeQuery = true)

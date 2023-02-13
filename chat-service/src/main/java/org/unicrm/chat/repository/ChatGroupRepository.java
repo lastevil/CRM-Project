@@ -13,9 +13,6 @@ import java.util.Optional;
 
 @Repository
 public interface ChatGroupRepository extends JpaRepository<ChatGroup, Long> {
-    @Query(value = "select * from chatgroup",
-            nativeQuery = true)
-    List<ChatGroup> findAll();
 
     @Modifying
     @Query(value = "insert into chatgroup (chatdate,message,status,group_id,sender_id,recipient_id) " +
@@ -32,18 +29,4 @@ public interface ChatGroupRepository extends JpaRepository<ChatGroup, Long> {
     List<ChatGroup> findByGroupIdAndRecipientId(Long groupId, Long recipientId);
 
     Optional<ChatGroup> findByChatdateAndRecipientId(String chatdate, Long recipientId);
-
-
-
-//    Optional<ChatGroup> findBySenderIdAndGroupIdAndChatdate(Long senderId, Long groupId, String chatdate);
 }
-//select
-//	groups.title
-//from
-//	users,
-//	groups,
-//	users_groups ug
-//where
-//	users.id=ug.user_id
-//	and groups.id=ug.group_id
-//	and users.login='user4'

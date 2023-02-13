@@ -5,7 +5,6 @@ server:
 spring:
   application:
     name: ticket-service
-
   datasource:
     url: jdbc:postgresql://localhost:5432/unicrmdb
     username: postgres
@@ -21,6 +20,10 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    consumer:
+      group-id: 1
+    bootstrap-servers: localhost:9092
 eureka:
   instance:
     hostname: localhost

@@ -1,37 +1,65 @@
 package org.unicrm.analytic.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
 import org.unicrm.analytic.dto.CurrentInformation;
-import org.unicrm.analytic.entitys.TimeInterval;
-import org.unicrm.lib.dto.UserSimpleDto;
+import org.unicrm.analytic.api.TimeInterval;
+import org.unicrm.analytic.dto.DepartmentFrontDto;
+import org.unicrm.analytic.dto.TicketFrontDto;
+import org.unicrm.analytic.dto.UserFrontDto;
+import org.unicrm.analytic.services.AnalyticService;
+import org.unicrm.lib.dto.TicketDto;
+import org.unicrm.lib.dto.UserDto;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
+//@Tag(name = "Аналитика", description = "Контроллер обработки запросов по статистике")
 public class AnalyticController {
-    /**
-     * примерные данные необходимые для таблиц или графиков.
-     * 1) колличество выполненых, просроченых и задач в работе отделом, пользователем
-     * 1.1) данные за день, неделю, месяц, год?(по дате подачи заявки)
-     * 2) время выполнения задач пользователем/отделом
-     * 3) своя статистика
-     * 4) для руководителей(колличество пользователей всего в отделе активных и неактивных)
-     */
-    @GetMapping("/userCount")
-    public void getActiveUsersCount(){}
-    @GetMapping("/userTicketsTimeIntervalWithStatus/{timeInterval}/{status}")
-    public void getTicketsForTheTime(CurrentInformation userInfo, @PathVariable TimeInterval timeInterval, @PathVariable String status){};
-    @GetMapping("/department/{id}")
-    public void getDepartmentInformation(@PathVariable Long id){}
-    @GetMapping("/userInfo/{id}")
-    public void getUserInformation(@PathVariable String id){}
-    @PostMapping("/ticketStatus/{ticketId}/{status}")
-    public void changeUserStatus(@PathVariable UUID ticketId, @PathVariable String status){}
-    @PostMapping("/userDepartment")
-    public void changeUserDepartment(UserSimpleDto userDto){}
+    //ToDo: интегрировать считывание ролей из заголовков.
+    // Определится с необходимость некоторых методов.
+    // Определить необходимость дополнительных ДТО.
+    // Начинать добавлять автодокументацию.
+    // Тестирование контроллера нецелесообразно в виду единственной логики - передача всей логики сервису.
+    private final AnalyticService service;
+
+    @GetMapping("/user-tickets")
+    public Page<TicketFrontDto> getUserTicketsForTheTimeWithStatus(@RequestBody CurrentInformation information) {
+        return service.getTicketByAssignee(information);
+    }
+
+    @GetMapping("/department-tickets")
+    public Page<TicketFrontDto> getDepartmentTicketsForTheTimeWithStatus(@RequestBody CurrentInformation information) {
+        return service.getTicketByAssigneeDepartment(information);
+    }
+
+    @GetMapping("/users-of-department")
+    public Page<UserFrontDto> getDepartmentEmployees(CurrentInformation information) {
+        return service.getUsersFromDepartment(information);
+    }
+
+    @GetMapping("/departments")
+    public @ResponseBody List<DepartmentFrontDto> getDepartments() {
+        return service.getDepartments();
+    }
+
+    @GetMapping("/user-info/{id}")
+    public @ResponseBody UserFrontDto getUserInformation(@PathVariable UUID id) {
+        return service.getUser(id);
+    }
+
+    //под вопросом необходимость этих методов!!!
+    @PostMapping("/ticket-status")
+    public void changeTicketStatus(@RequestBody TicketDto ticketDto) {
+        service.updateTicketStatus(ticketDto);
+    }
+
+    @PostMapping("/change-user-department")
+    public void changeUserDepartment(@RequestBody UserDto userDto) {
+        service.changeUserDepartment(userDto);
+    }
 }

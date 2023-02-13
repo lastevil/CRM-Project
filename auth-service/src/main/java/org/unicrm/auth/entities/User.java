@@ -1,15 +1,19 @@
 package org.unicrm.auth.entities;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.UUIDSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -18,10 +22,13 @@ import java.util.Collection;
 @Builder
 @Table(name = "users")
 public class User {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @GenericGenerator(name = "UUIDGenerator", strategy = "uuid2")
+    @GeneratedValue(generator = "UUIDGenerator")
+    @JsonSerialize(using = UUIDSerializer.class)
+    @Column(name = "uuid")
+    private UUID uuid;
 
     @Column(name = "username")
     private String username;
