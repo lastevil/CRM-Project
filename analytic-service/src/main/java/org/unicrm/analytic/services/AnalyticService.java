@@ -33,6 +33,7 @@ public class AnalyticService {
     @KafkaListener(topics = "userTopic", containerFactory = "userKafkaListenerContainerFactory")
     @Transactional
     public void createOrUpdateUserAndDepartment(UserDto userDto) {
+        System.out.println(userDto);
         if (userDto.getId() == null) {
             throw new InvalidKafkaDtoException("Wrong data");
         } else {

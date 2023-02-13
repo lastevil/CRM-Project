@@ -15,6 +15,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "tickets")
 public class Ticket {
     @Id
     @Column(name = "id")
@@ -25,13 +26,13 @@ public class Ticket {
     @Column(name = "status")
     private String status;
     @ManyToOne
-    @JoinColumn(name = "assigneeId")
+    @JoinColumn(name = "assignee_id")
     private User assignee;
     @ManyToOne
-    @JoinColumn(name = "departmentId")
+    @JoinColumn(name = "department_id")
     private Department department;
     @ManyToOne
-    @JoinColumn(name = "reporterId")
+    @JoinColumn(name = "reporter_id")
     private User reporter;
     @Column(name = "created_at")
     private LocalDateTime createdAt;

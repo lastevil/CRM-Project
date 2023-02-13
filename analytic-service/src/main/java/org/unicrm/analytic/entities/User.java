@@ -14,6 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
+@Table(name = "users")
 public class User {
     @Id
     @Column(name = "id")
@@ -21,9 +22,9 @@ public class User {
     private UUID id;
     @Column(name = "username")
     private String username;
-    @Column(name = "firstName")
+    @Column(name = "first_name")
     private String firstName;
-    @Column(name = "lastName")
+    @Column(name = "last_name")
     private String lastName;
     @ManyToOne
     @JoinColumn(name = "department_id")

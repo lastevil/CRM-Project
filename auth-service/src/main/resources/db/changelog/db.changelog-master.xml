@@ -11,5 +11,6 @@
 
     <include file="changeset/changeset-1.0.xml" relativeToChangelogFile="true"/>
     <include file="changeset/changeset-2.0.xml" relativeToChangelogFile="true"/>
+    <include file="changeset/changeset-3.0.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

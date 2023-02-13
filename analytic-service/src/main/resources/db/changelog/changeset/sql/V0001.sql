@@ -7,9 +7,9 @@ create table if not exists departments
 create table if not exists users
 (
     id            uuid primary key,
-    first_name    varchar(50)  not null,
-    last_name     varchar(50)  not null,
-    department_id bigint       not null REFERENCES departments (id)
+    first_name    varchar(50) not null,
+    last_name     varchar(50) not null,
+    department_id bigint      not null REFERENCES departments (id)
 );
 
 create table if not exists tickets
@@ -21,5 +21,6 @@ create table if not exists tickets
     department_id bigint       not null REFERENCES departments (id),
     reporter_id   uuid         not null REFERENCES users (id),
     created_at    TIMESTAMP    not null,
-    updated_at    TIMESTAMP
+    updated_at    TIMESTAMP,
+    due_date      timestamp
 );
