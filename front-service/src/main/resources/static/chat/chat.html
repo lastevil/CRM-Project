@@ -34,83 +34,89 @@
       </div>
     </nav>
     <div class="page-crm">
-      <div class="pageIndex"></div>
-    </div>
-  </div>
-  <div id="page-crm">
-    <div class="chat-all">
-        <div id="chat-page1">
-      <div class="chat-box1">
-        <div class="chat-box11" >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
-            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"/>
-          </svg>
-          <button id="btn-user" type="submit" class="btn btn-info"  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
-
-            {{user.username}}</button>
-          </div>
-        <div  class="chat-box12">
-          <input type="text" id="nameRecipiend" value="" disabled class="form-control" align="center" />
-        </div>
+       <div class="header">
+        <h2 class="title" style="text-align: center;">Чат</h2>
       </div>
-    </div>
-        <div id="chat-page" >
-
-      <div id="chat-user" class="chat-user" >
-        <button id="btn-load-users" class="btn btn-success" ng-click="btnLoadUsers()" >
-          Загрузить пользователей</button>
-        <ul id="group"  >
-          <li  ng-repeat="g in ligroup" class="green">
-            <button id="btn-all" class="btn btn-success" ng-click="btnGroup(g)">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
-                <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8Zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022ZM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816ZM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0Zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/>
-              </svg>
-              {{g.title}}</button>
-          </li>
-        </ul>
-        <ul id="users" >
-          <li ng-repeat="u in liusers">
-            <button id="btn-users" type="button" class="btn btn-secondary position-relative" ng-click="btnUsers(u)">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
-                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"/>
-              </svg>
-              {{u.nicName}}
-              <span id="badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" >
-                           {{u.count}}
+       <div class="chat-content">
+          <div id="chat-page1">
+             <div class="chat-header">
+                <div class="chat-box11" >
+                    <input type="text" id="btn-user" value="" disabled class="form-control" align="center" />
+                </div>
+                <div  class="chat-box12">
+                   <input type="text" id="nameRecipiend" value="" disabled class="form-control" align="center" />
+                </div>
+             </div>
+          </div>
+          <div id="chat-page" >
+             <div class="chat-user" >
+                <button id="btn-load-users" class="btn btn-success" type="button" ng-click="btnLoadUsers()" disabled >
+                   Загрузить пользователей
+                </button>
+                <ul id="group"  >
+                  <div class="groupli">
+                    <li  ng-repeat="g in ligroup" class="green">
+                      <button id="btn-all" type="button" class="btn btn-secondary position-relative" ng-click="btnGroup(g)" style="background: green;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
+                         <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8Zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022ZM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816ZM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0Zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/>
+                        </svg>
+                        {{g.title}}
+                        <span id="badgeGroup" class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+                         <span class="visually-hidden"></span>
                         </span>
-            </button>
-          </li>
-        </ul>
+                      </button>
+                    </li>
+                  </div>
+                </ul>
+                <ul id="users" >
+                  <div class="userli">
+                    <li ng-repeat="u in liusers">
+                      <button id="btn-users" type="button" class="btn btn-secondary position-relative" ng-click="btnUsers(u)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                         <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"/>
+                        </svg>
+                        {{u.nickName}}
+                        <span id="badge" class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+                        <span class="visually-hidden"></span>
+                        </span>
+                      </button>
+                    </li>
+                  </div>
+                </ul>
 
-      </div>
-      <div class="chat-container">
-        <div class="connecting"></div>
-        <ul id="messageArea">
+             </div>
+             <div class="chat-container">
+               <div class="connecting" style="visible: hidden;"></div>
+               <ul id="messageArea">
 
-        </ul>
-
-        <form id="messageForm" name="messageForm" nameForm="messageForm">
-          <div class="form-group">
-            <div class="input-group clearfix">
-              <input type="text" id="message" width="" placeholder="Введите сообщение..."
-                     autocomplete="off" class="form-control" />
-              <button type="button" class="btn btn-secondary" ng-click="sendFile()" data-bs-placement="top" data-bs-title="Прикрепить файл"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-paperclip" viewBox="0 0 16 16">
-                  <path d="M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0V3z"/>
-                </svg>
-              </button>
-              <button id="send" type="submit" class="btn btn-secondary" ng-click="send()" >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
-                  <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
-                </svg>
-              </button>
-            </div>
+               </ul>
+               <form id="messageForm" name="messageForm" nameForm="messageForm">
+                 <div class="form-group1">
+                   <div class="input-group clearfix">
+                       <div style="margin-right: 5px; width: calc(100% - 110px);">
+                         <input type="text" id="message" width="" placeholder="Введите сообщение..."
+                           autocomplete="off" class="form-control" />
+                       </div>
+                       <div style="margin-right: 5px;">
+                         <button type="button" class="btn btn-secondary" ng-click="sendFile()" data-bs-placement="top" data-bs-title="Прикрепить файл">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-paperclip" viewBox="0 0 16 16">
+                             <path d="M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0V3z"/>
+                           </svg>
+                         </button>
+                       </div>
+                       <div>
+                         <button id="send" type="submit" class="btn btn-secondary" ng-click="send()" >
+                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+                             <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
+                           </svg>
+                         </button>
+                       </div>
+                   </div>
+                 </div>
+               </form>
+             </div>
           </div>
-        </form>
-      </div>
-
-    </div>
+       </div>
     </div>
   </div>
 </div>

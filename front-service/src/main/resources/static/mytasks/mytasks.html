@@ -33,13 +33,134 @@
                 </div>
             </div>
         </nav>
-        <div class="page-crm">
-            <div class="pageIndex"></div>
+        <div class="page-crm" >
+           <div class="header">
+                    <h2 class="title" style="text-align: center;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard2-check" viewBox="0 0 16 16">
+                            <path d="M9.5 0a.5.5 0 0 1 .5.5.5.5 0 0 0 .5.5.5.5 0 0 1 .5.5V2a.5.5 0 0 1-.5.5h-5A.5.5 0 0 1 5 2v-.5a.5.5 0 0 1 .5-.5.5.5 0 0 0 .5-.5.5.5 0 0 1 .5-.5h3Z"/>
+                            <path d="M3 2.5a.5.5 0 0 1 .5-.5H4a.5.5 0 0 0 0-1h-.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1H12a.5.5 0 0 0 0 1h.5a.5.5 0 0 1 .5.5v12a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-12Z"/>
+                            <path d="M10.854 7.854a.5.5 0 0 0-.708-.708L7.5 9.793 6.354 8.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3Z"/>
+                        </svg>
+                        Заявки
+                    </h2>
+                </div>
+           <div class="mytasks-content">
+              <div class="btn-new">
+                  <div>
+                 <button id="btn-mytasks-new" type="button" class="btn btn-success" onclick="newTicket()" data-bs-toggle="modal" data-bs-target="#newTicket">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                    </svg>
+                    Создать
+                 </button>
+                  </div>
+              </div>
+              <div class="btn-button">
+                <div class="btnAll">
+                    <button id="btn-mytasks-executor" type="button" class="btn btn-success" onclick="">Исполнитель</button>
+                </div>
+                <div class="btnAll">
+                    <button id="btn-mytasks-responsible" type="button" class="btn btn-success" onclick="">Ответственный</button>
+                </div>
+                <div class="btnAll">
+                    <button id="btn-mytasks-department" type="button" class="btn btn-success" onclick="">Отдел</button>
+                </div>
+                <div class="btnAll">
+                    <button id="btn-mytasks-status" type="button" class="btn btn-success" onclick="">Статус</button>
+                </div>
+              </div>
+              <div>
+                  <table id="tableTasks" class="table" border=""  bgcolor="#d0d0d0" >
+                      <thead>
+                      <tr bg-light>
+                          <th>Заголовок</th>
+                          <th>Отдел</th>
+                          <th>Исполнитель</th>
+                          <th>Ответственный</th>
+                          <th>Статус</th>
+                          <th>Выполнить до</th>
+                          <th>Создано</th>
+                          <th>Обновлено</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <form>
+                          <tr ng-repeat="t in ticketPage" bgcolor="ghostwhite">
+                              <td>{{t.title}}</td>
+                              <td>{{t.assigneeDepartmentId}}</td>
+                              <td>{{t.assigneeId}}</td>
+                              <td>{{t.reporterId}}</td>
+                              <td>{{t.status}}</td>
+                              <td>{{t.dueDate}}</td>
+                              <td>{{t.createdAt}}</td>
+                              <td>{{t.updatedAt}}</td>
+                          </tr>
+                      </form>
+                      </tbody>
+                  </table>
+                  <nav id="navStore" aria-label="Page navigation example">
+                      <ul class="pagination">
+                          <li class="page-item">
+                              <a class="page-link" aria-label="Previous" ng-click="prevPage()">
+                                  <span aria-hidden="true">&laquo;</span>
+                              </a>
+                          </li>
+
+                          <li class="page-item" ng-repeat="pageIndex in paginationArray">
+                              <button class="page-link" ng-click="loadProductsPage(pageIndex)">{{pageIndex}}</button>
+                          </li>
+
+                          <li class="page-item">
+                              <a class="page-link" aria-label="Next" ng-click="nextPage()">
+                                  <span aria-hidden="true">&raquo;</span>
+                              </a>
+                          </li>
+                      </ul>
+                  </nav>
+              </div>
+           </div>
+
+
+
         </div>
     </div>
-    <div class="page-crm" >
-        <div class="mytasks">
-            <h1>My tasks</h1>
+    <div class="modal fade" id="newTicket" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" >Новая заявка</h5>
+                </div>
+                <div class="modal-body">
+                    <form class="form-create" novalidate ng-submit="createNewTicket()">
+                        <div class="mb-3">
+                            <label for="newAssignee" class="col-form-label">Исполнитель</label>
+                            <select id="newAssignee" class="form-control"  ng-model="new_Ticket.assigneeId"></select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newReporter" class="col-form-label">Ответственный</label>
+                            <select id="newReporter" class="form-control"  ng-model="new_Ticket.reporterId"></select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newDepartment" class="col-form-label">Отдел</label>
+                            <select id="newDepartment" class="form-control"  ng-model="new_Ticket.assigneeDepartmentId"></select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newDueDate" class="col-form-label">Выполнить до</label>
+                            <input type="date" class="form-control" id="newDueDate" ng-model="new_Ticket.dueDate">
+                        </div>
+                        <div class="mb-3">
+                            <label for="newTitle" class="col-form-label">Описание</label>
+                            <textarea class="form-control" id="newTitle" ng-model="new_Ticket.title"></textarea>
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-primary">Создать</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
         </div>
     </div>
+
 </div>

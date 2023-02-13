@@ -34,12 +34,71 @@
    </div>
   </nav>
   <div class="page-crm">
-   <div class="pageIndex"></div>
-  </div>
- </div>
- <div class="page-crm">
-  <div class="user">
-   <h1>User</h1>
+   <div class="header">
+      <h2 class="title" style="text-align: center;">Пользователи</h2>
+   </div>
+   <div class="user-content">
+      <div class="user-img">
+          <div class="div-img">
+             <img id="img" src="image/chimpanzee.png" alt="photo">
+          </div>
+          <div class="btn-img">
+              <button id="btn-user-img" type="button" class="btn btn-primary" onclick="">Сменить фото</button>
+          </div>
+      </div>
+      <div class="user-details" >
+          <form novalidate ng-submit="updateLastName()" >
+              <div class="input-group mb-3">
+                  <label  class="input-group-text">Фамилия</label>
+                  <input id="user_lastName" type="text" class="form-control" value="" ng-model="user_details.lastName">
+              </div>
+              <div>
+                  <button type="submit" class="btn btn-primary">Изменить</button>
+              </div>
+          </form>
+          <form novalidate ng-submit="updateFirstName()" >
+              <div class="input-group mb-3">
+                  <label  class="input-group-text">Имя</label>
+                  <input id="user_firstName" type="text" class="form-control" value="" ng-model="user_details.firstName">
+              </div>
+              <div>
+                  <button type="submit" class="btn btn-primary">Изменить</button>
+              </div>
+          </form>
+          <form novalidate ng-submit="updateEmail()" >
+              <div class="input-group mb-3">
+                  <label  class="input-group-text">Email</label>
+                  <input id="user_email" type="email" class="form-control" value="" ng-model="user_details.email">
+              </div>
+              <div>
+                  <button type="submit" class="btn btn-primary">Изменить</button>
+              </div>
+          </form>
+          <div>
+              <label id="user_departmentTitle" class="title"></label>
+          </div>
+      </div>
+      <div class="user-password">
+          <h5 class="title">Смена пароля</h5>
+          <form class="form-create" >
+             <input id="oldPass" type="password" class="form-control" placeholder="Старый пароль" ng-model="new_password.old_pass" autocomplete="off" required/>
+             <input id="newPass1" type="password" class="form-control" placeholder="Новый пароль" ng-model="new_password.new_pass" autocomplete="off" required/>
+             <input id="newPass2" type="password" class="form-control" placeholder="Новый пароль"  autocomplete="off" required/>
+             <button id="btn-user-password" type="submit" class="btn btn-primary" ng-click="">Сменить пароль</button>
+          </form>
+      </div>
+   </div>
   </div>
  </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+

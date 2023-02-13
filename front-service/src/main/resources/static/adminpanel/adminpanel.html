@@ -34,12 +34,61 @@
             </div>
         </nav>
         <div class="page-crm">
-            <div class="pageIndex"></div>
+            <div class="header">
+                <h2 class="title" style="text-align: center;">Администрирование</h2>
+            </div>
+            <div class="admin-content">
+               <div class="department">
+                   <h5 class="title" align="center">Добавить отдел</h5>
+                   <form class="form-create-department" novalidate ng-submit="createNewDepartment()">
+                       <div class="input-group mb-3">
+                           <label  class="input-group-text">Название</label>
+                           <input type="text" class="form-control" placeholder="Название отдела" ng-model="new_department.title">
+                       </div>
+                       <button type="submit" class="btn btn-primary">Добавить</button>
+                   </form>
+                   <h5 class="title" align="center">Редактировать отдел</h5>
+                       <div class="input-group mb-3">
+                           <label  class="input-group-text">Выберите отдел</label>
+                           <select id="selectDepartment" class="form-control" placeholder="Отдел" ng-model="selectDepartmentTitle"></select>
+                       </div>
+                   <form class="form-edit-department" novalidate ng-submit="editDepartment()">
+                       <div class="input-group mb-3">
+                           <label  class="input-group-text">Название</label>
+                           <input type="text" class="form-control" placeholder="Название отдела" ng-model="new_department.title">
+                       </div>
+                       <button type="submit" class="btn btn-primary">Редактировать</button>
+                   </form>
+               </div>
+               <div class="admin_user">
+                   <h5 class="title" align="center">Пользователи</h5>
+                   <div class="input-group mb-3">
+                       <label  class="input-group-text">Выберите пользователя</label>
+                       <select id="selectUser" class="form-control"  ng-model="selectDepartmentTitle"></select>
+                   </div>
+                   <div class="status">
+                       <form class="form-edit-status" novalidate ng-submit="editStatus()">
+                           ACTIVE <input type="radio" name="status" checked value="ACTIVE"><br>
+                           NOT_ACTIVE <input type="radio" name="status" value="NOT_ACTIVE"><br>
+                           DELETED <input type="radio" name="status" value="DELETED"><br>
+                           <button type="submit" class="btn btn-primary" >Сменить статус</button>
+                       </form>
+                   </div>
+                   <div class="status">
+                       <form>
+                           <div class="input-group mb-3">
+                               <label  class="input-group-text">Выберите отдел</label>
+                               <select id="selDepartment" class="form-control" placeholder="Отдел" ng-model="selectDepartmentTitle"></select>
+                           </div>
+                           <div>
+                               <button type="submit" class="btn btn-primary">Сменить отдел</button>
+                           </div>
+                       </form>
+                   </div>
+
+               </div>
+            </div>
         </div>
     </div>
-    <div class="page-crm">
-        <div class="adminpanel">
-            <h1>Admin panel</h1>
-        </div>
-    </div>
+
 </div>

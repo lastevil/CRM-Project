@@ -24,7 +24,6 @@
                 controller: 'createtaskController'
             })
             .when('/mytasks', {
-              //  templateUrl: 'mytasks/mytasks.html',
                 templateUrl: 'mytasks/mytasks.html',
                 controller: 'mytasksController'
             })
@@ -38,29 +37,30 @@
     }
 
     function run($rootScope, $http, $localStorage) {
-        if ($localStorage.marchMarketUser) {//если в локальном хранилище есть юзер, то он восстанавливается при входе
-            $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.marchMarketUser.token;
+        if ($localStorage.webUserToken) {//если в локальном хранилище есть юзер, то он восстанавливается при входе
+            $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.webUserToken.token;
         }
     }
 })();
 
 angular.module('front').controller('indexController', function ($rootScope, $scope, $http, $localStorage, $location) {
-        if ($localStorage.marchMarketUser) {
+        if ($localStorage.webUserToken) {
+
                try {
-               console.log("$localStorage.marchMarketUser = "+$localStorage.marchMarketUser);
-                   let jwt = $localStorage.marchMarketUser.token;
+                   let jwt = $localStorage.webUserToken.token;
                    let payload = JSON.parse(atob(jwt.split('.')[1]));
                    let currentTime = parseInt(new Date().getTime() / 1000);
                    if (currentTime > payload.exp) {
-                       console.log("Token is expired!!!");
-                       delete $localStorage.marchMarketUser;
+                       alert("Token is expired!!!");
+                       delete $localStorage.webUserToken;
                        $http.defaults.headers.common.Authorization = '';
                    }
+
                } catch (e) {
                }
 
-               if ($localStorage.marchMarketUser) {
-                   $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.marchMarketUser.token;
+               if ($localStorage.webUserToken) {
+                   $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.webUserToken.token;
                }
            }
 const contextPath = 'http://localhost:8701/auth/api/v1/';
@@ -68,16 +68,17 @@ const contextPath = 'http://localhost:8701/auth/api/v1/';
 document.querySelector("#username-page-reg").style.visibility = 'hidden';
 document.querySelector("#err").style.visibility = 'hidden';
 document.querySelector("#errAuth").style.visibility = 'hidden';
-
+var stompClient = null;
 
 $scope.tryToAuth = function () {
-        $rootScope.username = $scope.user.username;
-        console.log(contextPath+'auth', $scope.user);
         $http.post(contextPath+'auth', $scope.user)
             .then(function successCallback(response) {
                 if (response.data.token) {
-                    $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.token;
-                    $localStorage.webMarketUser = {username: $scope.user.username, token: response.data.token};
+                    $localStorage.webUserToken = {token: response.data.token};
+                    let jwt = $localStorage.webUserToken.token;
+                    let payload = JSON.parse(atob(jwt.split('.')[1]));
+                    $localStorage.username = payload.sub;
+                    $localStorage.userRoles = payload.roles;
                 }
                 $location.path('mytasks');
             }, function errorCallback(response) {
@@ -91,7 +92,6 @@ $scope.registr = function(){
 }
 
 $scope.tryToReg = function () {
-console.log(contextPath + 'registration', $scope.new_user);
            $http.post(contextPath + 'registration', $scope.new_user)
                .then(function successCallback(response) {
                   document.querySelector("#username-page-reg").style.visibility = 'hidden';
