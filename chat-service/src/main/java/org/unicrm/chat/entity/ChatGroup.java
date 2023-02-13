@@ -1,17 +1,24 @@
 package org.unicrm.chat.entity;
 
-import org.unicrm.chat.entity.Group;
-import org.unicrm.chat.entity.User;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 @Table(name = "chatgroup")
+@Data
+@Builder
+@AllArgsConstructor
 public class ChatGroup {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @GenericGenerator(name = "UUIDGenerator", strategy = "uuid2")
+    @GeneratedValue(generator = "UUIDGenerator")
+    @Column(name = "uuid")
+    private UUID uuid;
 
     @Column(name = "chatdate")
     private String chatdate;
@@ -26,67 +33,11 @@ public class ChatGroup {
     private Long groupId;
 
     @Column(name = "sender_id")
-    private Long senderId;
+    private UUID senderId;
 
     @Column(name = "recipient_id")
-    private Long recipientId;
+    private UUID recipientId;
 
     public ChatGroup() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getSenderId() {
-        return senderId;
-    }
-
-    public void setSenderId(Long senderId) {
-        this.senderId = senderId;
-    }
-
-    public Long getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
-    }
-
-    public String getChatdate() {
-        return chatdate;
-    }
-
-    public void setChatdate(String chatdate) {
-        this.chatdate = chatdate;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public Long getRecipientId() {
-        return recipientId;
-    }
-
-    public void setRecipientId(Long recipientId) {
-        this.recipientId = recipientId;
     }
 }

@@ -8,8 +8,10 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.messaging.converter.DefaultContentTypeResolver;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.MessageConverter;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.util.MimeTypeUtils;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -22,12 +24,15 @@ import java.util.Map;
 
 @Configuration
 @EnableWebSocketMessageBroker
+@CrossOrigin
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker( "/topic","/queue");
-        config.setApplicationDestinationPrefixes("/app-chat");
+        config.setApplicationDestinationPrefixes("/chat");
         config.setUserDestinationPrefix("/user");
+
     }
 
     @Override
@@ -35,7 +40,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry
                 .addEndpoint("/ws")
                 .setHandshakeHandler(new DefaultHandshakeHandler(){
-
                     public boolean beforeHandshake(
                             ServerHttpRequest request,
                             ServerHttpResponse response,
@@ -51,7 +55,15 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         }
                         return true;
                     }})
+                .setAllowedOriginPatterns("*")
+
                 .withSockJS();
+    }
+
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        WebSocketMessageBrokerConfigurer.super.configureClientInboundChannel(registration);
+
     }
 
     public boolean configureMessageConverters(List<MessageConverter> messageConverters) {

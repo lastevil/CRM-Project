@@ -84,6 +84,7 @@ public class UserService implements UserDetailsService {
         if (updatedUserDto.getPassword() != null) user.setPassword(passwordEncoder.encode(updatedUserDto.getPassword()));
         userRepository.save(user);
         kafkaTemplate.send("userTopic", UUID.randomUUID(), EntityDtoMapper.INSTANCE.toDto(user));
+
     }
 
     @Transactional

@@ -24,17 +24,10 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
-
-            System.out.println("request.getPath() = "+request.getPath());
-            System.out.println("request.getMethodValue() = "+request.getMethodValue());
-            if (request.getHeaders().containsKey("username")) {
-                return this.onError(exchange, "Invalid header username", HttpStatus.BAD_REQUEST);
-            }
-
             if (!isAuthMissing(request)) {
                 final String token = getAuthHeader(request);
                 if (jwtUtil.isInvalid(token)) {
-                    return this.onError(exchange, "Authorization header is invalid", HttpStatus.UNAUTHORIZED);
+                    return this.onError(exchange, "Authorization header is invalid");
                 }
                 populateRequestWithHeaders(exchange, token);
             }
@@ -45,9 +38,9 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
     public static class Config {
     }
 
-    private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
+    private Mono<Void> onError(ServerWebExchange exchange, String err) {
         ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(httpStatus);
+        response.setStatusCode(HttpStatus.UNAUTHORIZED);
         return response.setComplete();
     }
 
@@ -67,7 +60,7 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
 
     private void populateRequestWithHeaders(ServerWebExchange exchange, String token) {
         Claims claims = jwtUtil.getAllClaimsFromToken(token);
-        System.out.println(claims);
+        System.out.println("Test");
         exchange.getRequest().mutate()
                 .header("username", claims.getSubject())
 //                .header("role", String.valueOf(claims.get("role")))

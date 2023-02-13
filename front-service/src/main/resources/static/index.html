@@ -27,14 +27,43 @@
             <h1 class="title">Авторизация</h1>
             <form id="usernameForm" name="usernameForm">
                 <div class="form-group">
-                    <input type="text" id="name" ng-model="user.username" placeholder="Введите логин" autocomplete="off"
-                           class="form-control" onfocus="this.value=''" required/>
+                    <input type="text" id="name" ng-model="user.username" placeholder="Введите логин"
+                           class="form-control" autocomplete="off" required/>
                     <input type="password" id="password" ng-model="user.password" placeholder="Введите пароль"
-                           autocomplete="off" class="form-control"onfocus="this.value=''"  required/>
+                           class="form-control" autocomplete="off" required/>
+                    <h6 id="errAuth">Авторизация не прошла.</h6>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="accent username-submit" ng-click="tryToAuth()">Вход</button>
+                    <button type="submit" class="btn btn-primary" ng-click="tryToAuth()">Вход</button>
+                    <button type="submit" class="btn btn-primary" ng-click="registr()">Регистрация</button>
                 </div>
+            </form>
+        </div>
+    </div>
+    <div id="username-page-reg">
+        <div id="reg" class="username-page-container" >
+            <h1 class="title">Регистрация</h1>
+            <form class="form-create" >
+                <div class="input-group mb-3">
+                    <label  class="input-group-text">Имя</label>
+                    <input type="text" class="form-control" placeholder="Имя" ng-model="new_user.firstName" autocomplete="off" required/>
+                </div>
+                <div class="input-group mb-3">
+                    <label  class="input-group-text">Фамилия</label>
+                    <input type="text" class="form-control" placeholder="Фамилия" ng-model="new_user.lastName" autocomplete="off" required/>
+                </div>
+                <div class="input-group mb-3">
+                    <label  class="input-group-text">Пароль</label>
+                    <input type="password" class="form-control" placeholder="Пароль" ng-model="new_user.password" autocomplete="off" required/>
+                </div>
+                <div class="input-group mb-3">
+                    <label  class="input-group-text">Email</label>
+                    <input type="email" class="input email" placeholder="mail@mail.ru" ng-model="new_user.email" autocomplete="off" required/>
+                </div>
+                <div>
+                    <h6 id="err">Регистрация не прошла.</h6>
+                </div>
+                <button type="submit" class="btn btn-primary" ng-click="tryToReg()">Отправить</button>
             </form>
         </div>
     </div>

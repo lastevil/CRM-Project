@@ -1,20 +1,19 @@
 --liquibase formatted sql
 --changeset lidij:create_table_users
-create table users (
-   id serial primary key,
-   nicname varchar(36) not null,
-   password varchar(80) not null,
-   login varchar(36) not null
+create table if not exists users (
+   uuid          uuid primary key,
+   username      varchar(36) unique not null,
+   nickname      varchar(80) not null
 );
 
 --changeset lidij:create_table_groups
-create table groups (
-   id serial primary key,
+create table if not exists groups (
+   id bigserial primary key,
    title varchar(30) not null unique
 );
 --changeset lidij:create_table_users_groups
-create table users_groups (
-   user_id bigint not null references users (id),
+create table if not exists users_groups (
+   user_id uuid not null references users (uuid),
    group_id bigint not null references groups (id),
    primary key (user_id, group_id)
 );

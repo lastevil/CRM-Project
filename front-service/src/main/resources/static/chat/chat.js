@@ -14,15 +14,42 @@ var currentUserId = null;
 var currentUserName = null;
 var currentGroupId = 1; //  !=0 - группа, ==0 - user
 var stompClient = null;
-var username = $rootScope.username;
+var username = '';
 var senderId = 0;
 var sessionId = "";
-var context = "/app-front/";
+var context = "/chat/";
 var countUsers = 0;
+var nickName = '';
+var userReg = '';
+
+const contextPathChat = 'http://localhost:8701/chat/api/v1/';
+const contextPathAuth = 'http://localhost:8701/auth/api/v1/';
+
+$scope.userDetails = function(){
+    $http.get(contextPathAuth+'users/'+ $localStorage.username)
+       .then(function successCallback(response) {
+          nickName = response.data.lastName + ' ' + response.data.firstName;
+          userReg = {userName: $localStorage.username,
+                     nickName: nickName};
+
+          $scope.regUser(userReg);
+       }, function errorCallback(response) {
+          alert(response.data);
+       });
+}
+
+$scope.regUser = function(userReg){
+   $http.post(contextPathChat+'registration',JSON.stringify(userReg))
+          .then(function successCallback(response) {
+             $scope.connect(event);
+          }, function errorCallback(response) {
+             alert(response.data);
+          });
+}
 
 $scope.connect = function(event) { // установить соединение с сервером
     if (stompClient == null) {
-          var socket = new SockJS('http://localhost:8701/front/ws');
+          var socket = new SockJS('http://localhost:8703/chat/ws');
           stompClient = Stomp.over(socket);
           stompClient.connect({}, $scope.onConnected, $scope.onError);
     }
@@ -36,7 +63,7 @@ $scope.onConnected = function() {
     stompClient.subscribe('/user/topic/list', $scope.onMessageList);
     stompClient.subscribe('/user/topic/activeusers', $scope.onMessageActiveusers);
     stompClient.send(context+"register", {},
-        JSON.stringify({senderName: username, type: 'JOIN'})
+        JSON.stringify({senderName: $localStorage.username, type: 'JOIN'})
     );
 }
 
@@ -115,17 +142,17 @@ $scope.onMessageSession = function(payload) {
    var message = JSON.parse(payload.body);
 
    sessionId = message.session;
-   console.log("sessionId = "+sessionId);
    if(sessionId != null){
       stompClient.subscribe('/queue/'+sessionId, $scope.onMessageReceived);
    }
+   $scope.loadGroup();
+   $scope.loadUsers();
    document.querySelector("#btn-load-users").disabled = false;
 }
 
 $scope.onMessageHistory = function(payload) {
    // получить историю выбранной группы или пользователя
    var message = JSON.parse(payload.body);
-   console.log("message = "+payload.body);
    if (message.senderName == username) {
       messageArea.innerHTML = '';
       if(message.groupId == null){
@@ -147,13 +174,13 @@ $scope.onMessageList = function(payload) {
    //получить список всех пользователей
    var message = JSON.parse(payload.body);
 
-   var buttElement = document.createElement('li');
    if('groups' in message) {
          $scope.ligroup = message.groups;
    }
    if('users' in message) {
          $scope.liusers = message.users;
    }
+
 }
 
 $scope.onMessageActiveusers = function(payload) { //получить пользователей online
@@ -175,29 +202,18 @@ $scope.onMessageActiveusers = function(payload) { //получить польз�
               list_li[i].querySelector('#badgeGroup').style.visibility = 'hidden';
            }
         }
-   document.querySelector("#btn-load-users").style.display = 'none';
-   document.querySelector("#btn-load-users").style.visibility = 'hidden';
 }
 
 $scope.onMessageReceived = function(payload) { //получить сообщение от сервера
-    console.log("onMessageReceived-----------------------------------------");
     var message = JSON.parse(payload.body);
     if(message.type == 'JOIN') {
-       if (username == null) {
-         if(message.senderName != null && message.senderId != null) {
+       if (username == '') {
           username = message.senderName;
           senderId = message.senderId;
-          btnUser.innerText = message.senderName;
+          btnUser.value = message.senderName;
           stompClient.subscribe('/user/topic/chat', $scope.onMessageReceived);
-          $scope.loadGroup();
-          $scope.loadUsers();
           stompClient.send(context+"session", {}, JSON.stringify({senderId: senderId})
           );
-          document.querySelector("#btnConnect").disabled = true;
-          document.querySelector("#btnDisconnect").disabled = false;
-          }else{
-             alert("Неверно введен логин");
-          }
        }else if(message.senderName != username) {
           var list_li = ulusers.querySelectorAll('li');
           for(let i=0; i<list_li.length; i++){
@@ -291,8 +307,9 @@ $scope.btnUsers = function(users){ //при выборе пользовател�
 }
 
 $scope.btnLoadUsers = function(event){ //загрузить пользователей online
-   stompClient.send(context+"activeusers", {}, JSON.stringify({})
-   );
+     stompClient.send(context+"activeusers", {}, JSON.stringify({}));//загрузить пользователей online
+     document.querySelector("#btn-load-users").style.display = 'none';
+     document.querySelector("#btn-load-users").style.visibility = 'hidden';
 }
 
 $scope.sendFile = function(){
@@ -300,13 +317,9 @@ $scope.sendFile = function(){
 }
 
 $scope.disconnect = function() {
-    console.log("disconnect");
     if (stompClient !== null) {
         stompClient.disconnect();
     }
-    document.querySelector("#btnConnect").disabled = false;
-    document.querySelector("#btnDisconnect").disabled = true;
-    document.querySelector('#name').value = '';
     currentUserId = null;
     currentUserName = null;
     currentGroupId = 1;
@@ -318,11 +331,11 @@ $scope.disconnect = function() {
 
 $scope.onError = function(error) {
     connectingElement.textContent = 'Соединение не установлено.';
+    connectingElement.text = 'Соединение не установлено.';
     connectingElement.style.color = 'red';
 }
 
 messageForm.addEventListener('submit', send, true)
-
-$scope.connect(event);
+$scope.userDetails();
 
 });
