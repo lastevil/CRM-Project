@@ -1,21 +1,21 @@
 package org.unicrm.ticket.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.unicrm.ticket.dto.TicketDto;
 import org.unicrm.ticket.dto.TicketUserDto;
 import org.unicrm.ticket.entity.Ticket;
 import org.unicrm.ticket.entity.TicketDepartment;
-import org.unicrm.ticket.entity.TicketUser;
 import org.unicrm.ticket.exception.ResourceNotFoundException;
 import org.unicrm.ticket.mapper.TicketMapperInterface;
 import org.unicrm.ticket.mapper.TicketUserMapper;
 import org.unicrm.ticket.repository.TicketRepository;
+import org.unicrm.ticket.repository.TicketUserRepository;
 
-import java.sql.Timestamp;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -26,10 +26,12 @@ import java.util.stream.Collectors;
 public class TicketService {
 
     private final TicketRepository ticketRepository;
+    private final TicketUserRepository userRepository;
     private final TicketMapperInterface ticketMapper = TicketMapperInterface.INSTANCE;
     private final TicketUserMapper userMapper = TicketUserMapper.INSTANCE;
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+    private final TicketUserRepository ticketUserRepository;
 
     public List<TicketDto> findAll() {
         return ticketRepository.findAll().stream().map(ticketMapper::toDto).collect(Collectors.toList());
@@ -40,19 +42,23 @@ public class TicketService {
         return ticketMapper.toDto(ticket);
     }
 
+    @Transactional
     public void deleteById(UUID id) {
         ticketRepository.deleteById(id);
     }
 
+    @Transactional
     public Ticket createTicket(TicketDto ticketDto) {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        LocalDateTime creationTime = LocalDateTime.now();
         Ticket ticket = ticketMapper.toEntity(ticketDto);
-        ticket.setCreatedAt(timestamp);
+        ticket.setCreatedAt(creationTime);
+        ticket.setIsOverdue(creationTime.isAfter(creationTime));
         return ticketRepository.save(ticket);
     }
 
     @Transactional
     public Ticket update(TicketDto ticketDto) {
+        Date today = new Date(System.currentTimeMillis());
         Ticket ticket = ticketRepository.findById(ticketDto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Failed to update ticket. Ticket not found, id: " + ticketDto.getId()));
         ticket.setTitle(ticketDto.getTitle());
@@ -60,8 +66,9 @@ public class TicketService {
         ticket.setDescription(ticketDto.getDescription());
         ticket.setAssigneeId(ticketDto.getAssigneeId());
         ticket.setReporterId(ticketDto.getReporterId());
-        ticket.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        ticket.setUpdatedAt(LocalDateTime.now());
         ticket.setDueDate(ticketDto.getDueDate());
+        ticket.setIsOverdue(today.after(ticketDto.getDueDate()));
         return ticket;
     }
 
@@ -71,7 +78,6 @@ public class TicketService {
                 .collect(Collectors.toList());
     }
 
-    //TODO: Fix
     public List<TicketDto> findTicketsByDepartment(TicketDepartment ticketDepartment) {
         return ticketRepository.findAllByDepartment(ticketDepartment.getDepartmentId())
                 .stream().map(ticketMapper::toDto)
@@ -82,17 +88,5 @@ public class TicketService {
         return ticketRepository.findAllByAssigneeIdAndStatus(assignee.getId(), status)
                 .stream().map(ticketMapper::toDto)
                 .collect(Collectors.toList());
-    }
-
-    public Integer countTicketsByDepartmentAndStatus(TicketDepartment ticketDepartment, String status) {
-        return ticketRepository.countAllByDepartmentAndStatus(ticketDepartment.getDepartmentId(), status);
-    }
-
-    public Integer countTicketsByAssigneeAndStatus(TicketUser assignee, String status) {
-        return ticketRepository.countAllByAssigneeIdAndStatus(assignee.getId(), status);
-    }
-
-    public Integer countTicketsByReporterAndStatus(TicketUser reporter, String status) {
-        return ticketRepository.countAllByReporterIdAndStatus(reporter.getId(), status);
     }
 }
