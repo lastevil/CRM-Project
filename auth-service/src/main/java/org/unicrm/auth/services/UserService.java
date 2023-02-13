@@ -83,7 +83,7 @@ public class UserService implements UserDetailsService {
         if (updatedUserDto.getLastName() != null) user.setLastName(updatedUserDto.getLastName());
         if (updatedUserDto.getPassword() != null) user.setPassword(passwordEncoder.encode(updatedUserDto.getPassword()));
         userRepository.save(user);
-        kafkaTemplate.send("UserTopic", UUID.randomUUID(), EntityDtoMapper.INSTANCE.toDto(user));
+        kafkaTemplate.send("userTopic", UUID.randomUUID(), EntityDtoMapper.INSTANCE.toDto(user));
     }
 
     @Transactional
@@ -97,7 +97,7 @@ public class UserService implements UserDetailsService {
             }
         }
         if (departmentTitle != null) user.setDepartment(departmentService.findDepartmentByTitle(departmentTitle));
-        kafkaTemplate.send("UserTopic", UUID.randomUUID(), EntityDtoMapper.INSTANCE.toDto(user));
+        kafkaTemplate.send("userTopic", UUID.randomUUID(), EntityDtoMapper.INSTANCE.toDto(user));
     }
 
     @Transactional

@@ -22,14 +22,14 @@ public class AnalyticController {
 
     //@PreAuthorize("hasAnyAuthority('ROLE_CHIEF', 'ROLE_SUPERVISOR') || #information.userId == authentication.details.id")
     @Operation(summary = "метод получения страниц с задачами пользователя с определенным статусом за промежуток времяни")
-    @GetMapping("/user-tickets/{id}/{status}")
+    @PostMapping("/user-tickets/{id}/{status}")
     public Page<TicketFrontDto> getUserTicketsForTheTimeWithStatus(@PathVariable UUID id, @PathVariable Status status, @RequestBody CurrentPage information) {
         return service.getTicketByAssignee(id, status, information);
     }
 
     //@PreAuthorize("hasAnyAuthority('ROLE_CHIEF', 'ROLE_SUPERVISOR')")
     @Operation(summary = "метод получения страниц с задачами отдела с определенным статусом за промежуток времяни")
-    @GetMapping("/department-tickets/{id}/{status}")
+    @PostMapping("/department-tickets/{id}/{status}")
     public Page<TicketFrontDto> getDepartmentTicketsForTheTimeWithStatus(@PathVariable Long id, @PathVariable String status, @RequestBody CurrentPage page) {
         return service.getTicketByAssigneeDepartment(id, Status.valueOf(status), page);
     }
