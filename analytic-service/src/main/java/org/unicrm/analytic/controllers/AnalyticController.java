@@ -1,16 +1,14 @@
 package org.unicrm.analytic.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import org.unicrm.analytic.dto.CurrentInformation;
+import org.unicrm.analytic.api.Status;
 import org.unicrm.analytic.api.TimeInterval;
-import org.unicrm.analytic.dto.DepartmentFrontDto;
-import org.unicrm.analytic.dto.TicketFrontDto;
-import org.unicrm.analytic.dto.UserFrontDto;
+import org.unicrm.analytic.dto.*;
 import org.unicrm.analytic.services.AnalyticService;
-import org.unicrm.lib.dto.TicketDto;
-import org.unicrm.lib.dto.UserDto;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,48 +16,48 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
-//@Tag(name = "Аналитика", description = "Контроллер обработки запросов по статистике")
+@Tag(name = "Аналитика", description = "Контроллер обработки запросов по статистике")
 public class AnalyticController {
-    //ToDo: интегрировать считывание ролей из заголовков.
-    // Определится с необходимость некоторых методов.
-    // Определить необходимость дополнительных ДТО.
-    // Начинать добавлять автодокументацию.
-    // Тестирование контроллера нецелесообразно в виду единственной логики - передача всей логики сервису.
     private final AnalyticService service;
 
-    @GetMapping("/user-tickets")
-    public Page<TicketFrontDto> getUserTicketsForTheTimeWithStatus(@RequestBody CurrentInformation information) {
-        return service.getTicketByAssignee(information);
+    //@PreAuthorize("hasAnyAuthority('ROLE_CHIEF', 'ROLE_SUPERVISOR') || #information.userId == authentication.details.id")
+    @Operation(summary = "метод получения страниц с задачами пользователя с определенным статусом за промежуток времяни")
+    @GetMapping("/user-tickets/{id}/{status}")
+    public Page<TicketFrontDto> getUserTicketsForTheTimeWithStatus(@PathVariable UUID id, @PathVariable Status status, @RequestBody CurrentPage information) {
+        return service.getTicketByAssignee(id, status, information);
     }
 
-    @GetMapping("/department-tickets")
-    public Page<TicketFrontDto> getDepartmentTicketsForTheTimeWithStatus(@RequestBody CurrentInformation information) {
-        return service.getTicketByAssigneeDepartment(information);
+    //@PreAuthorize("hasAnyAuthority('ROLE_CHIEF', 'ROLE_SUPERVISOR')")
+    @Operation(summary = "метод получения страниц с задачами отдела с определенным статусом за промежуток времяни")
+    @GetMapping("/department-tickets/{id}/{status}")
+    public Page<TicketFrontDto> getDepartmentTicketsForTheTimeWithStatus(@PathVariable Long id, @PathVariable String status, @RequestBody CurrentPage page) {
+        return service.getTicketByAssigneeDepartment(id, Status.valueOf(status), page);
     }
 
-    @GetMapping("/users-of-department")
-    public Page<UserFrontDto> getDepartmentEmployees(CurrentInformation information) {
-        return service.getUsersFromDepartment(information);
+    //@PreAuthorize("hasAnyAuthority('ROLE_CHIEF', 'ROLE_SUPERVISOR')")
+    @Operation(summary = "метод получения страниц с сторудниками отдела")
+    @GetMapping("/users-of-department/{id}")
+    public Page<UserFrontDto> getDepartmentEmployees(@PathVariable Long id, @PathVariable CurrentPage page) {
+        return service.getUsersFromDepartment(id, page);
     }
 
+    //@PreAuthorize("hasAnyAuthority('ROLE_CHIEF', 'ROLE_SUPERVISOR')")
+    @Operation(summary = "метод получения списка отделов организации")
     @GetMapping("/departments")
     public @ResponseBody List<DepartmentFrontDto> getDepartments() {
         return service.getDepartments();
     }
 
-    @GetMapping("/user-info/{id}")
-    public @ResponseBody UserFrontDto getUserInformation(@PathVariable UUID id) {
-        return service.getUser(id);
+    //@PreAuthorize("hasAnyAuthority('ROLE_CHIEF', 'ROLE_SUPERVISOR') || #id == authentication.details.id")
+    @Operation(summary = "метод получения общей информации о деятельности сотрудника за промежуток времяни")
+    @GetMapping("/user-info/{id}/{interval}")
+    public @ResponseBody GlobalInfo getUserInformation(@PathVariable UUID id, @PathVariable String interval) {
+        return service.getUserInfo(id, TimeInterval.valueOf(interval));
     }
 
-    //под вопросом необходимость этих методов!!!
-    @PostMapping("/ticket-status")
-    public void changeTicketStatus(@RequestBody TicketDto ticketDto) {
-        service.updateTicketStatus(ticketDto);
-    }
-
-    @PostMapping("/change-user-department")
-    public void changeUserDepartment(@RequestBody UserDto userDto) {
-        service.changeUserDepartment(userDto);
+    @Operation(summary = "метод получения общей информации о деятельности отдела за промежуток времяни")
+    @GetMapping("/{id}/{interval}")
+    public @ResponseBody GlobalInfo getDepartmentInfo(@PathVariable Long id, @PathVariable String interval) {
+        return service.getDepartmentInfo(id, TimeInterval.valueOf(interval));
     }
 }

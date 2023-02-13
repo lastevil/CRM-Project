@@ -1,14 +1,14 @@
 package org.unicrm.lib.dto;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 public class TicketDto {
     private UUID id;
     private String title;
@@ -16,7 +16,7 @@ public class TicketDto {
     private UUID assigneeId;
     private Long assigneeDepartmentId;
     private UUID reporterId;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
-    private Timestamp dueDate;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private LocalDateTime dueDate;
 }
