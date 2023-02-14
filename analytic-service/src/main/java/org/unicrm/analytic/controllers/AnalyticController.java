@@ -20,44 +20,39 @@ import java.util.UUID;
 public class AnalyticController {
     private final AnalyticService service;
 
-    //@PreAuthorize("hasAnyAuthority('ROLE_CHIEF', 'ROLE_SUPERVISOR') || #information.userId == authentication.details.id")
-    @Operation(summary = "метод получения страниц с задачами пользователя с определенным статусом за промежуток времяни")
-    @PostMapping("/user-tickets/{id}/{status}")
+    @Operation(summary = "метод, для получения страниц с задачами пользователя, с определенным статусом за промежуток времени")
+    @PostMapping("/user/{id}/tickets/{status}")
     public Page<TicketFrontDto> getUserTicketsForTheTimeWithStatus(@PathVariable UUID id, @PathVariable Status status, @RequestBody CurrentPage information) {
         return service.getTicketByAssignee(id, status, information);
     }
 
-    //@PreAuthorize("hasAnyAuthority('ROLE_CHIEF', 'ROLE_SUPERVISOR')")
-    @Operation(summary = "метод получения страниц с задачами отдела с определенным статусом за промежуток времяни")
-    @PostMapping("/department-tickets/{id}/{status}")
-    public Page<TicketFrontDto> getDepartmentTicketsForTheTimeWithStatus(@PathVariable Long id, @PathVariable String status, @RequestBody CurrentPage page) {
-        return service.getTicketByAssigneeDepartment(id, Status.valueOf(status), page);
+    @Operation(summary = "метод, для получения страниц с задачами отдела, с определенным статусом за промежуток времени")
+    @PostMapping("/department/{id}/tickets/{status}")
+    public Page<TicketFrontDto> getDepartmentTicketsForTheTimeWithStatus(@PathVariable Long id, @PathVariable Status status, @RequestBody CurrentPage page) {
+        return service.getTicketByAssigneeDepartment(id, status, page);
     }
 
-    //@PreAuthorize("hasAnyAuthority('ROLE_CHIEF', 'ROLE_SUPERVISOR')")
     @Operation(summary = "метод получения страниц с сторудниками отдела")
-    @GetMapping("/users-of-department/{id}")
-    public Page<UserFrontDto> getDepartmentEmployees(@PathVariable Long id, @PathVariable CurrentPage page) {
+    @GetMapping("/department/{id}/users")
+    public Page<UserFrontDto> getDepartmentEmployees(@PathVariable Long id, @RequestBody CurrentPage page) {
         return service.getUsersFromDepartment(id, page);
     }
 
-    //@PreAuthorize("hasAnyAuthority('ROLE_CHIEF', 'ROLE_SUPERVISOR')")
     @Operation(summary = "метод получения списка отделов организации")
     @GetMapping("/departments")
     public @ResponseBody List<DepartmentFrontDto> getDepartments() {
         return service.getDepartments();
     }
 
-    //@PreAuthorize("hasAnyAuthority('ROLE_CHIEF', 'ROLE_SUPERVISOR') || #id == authentication.details.id")
-    @Operation(summary = "метод получения общей информации о деятельности сотрудника за промежуток времяни")
-    @GetMapping("/user-info/{id}/{interval}")
-    public @ResponseBody GlobalInfo getUserInformation(@PathVariable UUID id, @PathVariable String interval) {
-        return service.getUserInfo(id, TimeInterval.valueOf(interval));
+    @Operation(summary = "метод, для получения общей информации, о деятельности сотрудника, за промежуток времени")
+    @GetMapping("/user/{id}/info/{interval}")
+    public @ResponseBody GlobalInfo getUserInformation(@PathVariable UUID id, @PathVariable TimeInterval interval) {
+        return service.getUserInfo(id, interval);
     }
 
-    @Operation(summary = "метод получения общей информации о деятельности отдела за промежуток времяни")
-    @GetMapping("/{id}/{interval}")
-    public @ResponseBody GlobalInfo getDepartmentInfo(@PathVariable Long id, @PathVariable String interval) {
-        return service.getDepartmentInfo(id, TimeInterval.valueOf(interval));
+    @Operation(summary = "метод, для получения общей информации, о деятельности отдела, за промежуток времени")
+    @GetMapping("/department/{id}/{interval}")
+    public @ResponseBody GlobalInfo getDepartmentInfo(@PathVariable Long id, @PathVariable TimeInterval interval) {
+        return service.getDepartmentInfo(id, interval);
     }
 }

@@ -12,19 +12,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Slf4j
 public class GlobalExceptionsHandler {
     @ExceptionHandler
-    public ResponseEntity<AppError> ResourceNotFound(ResourceNotFoundException e) {
+    public ResponseEntity<AppError> resourceNotFound(ResourceNotFoundException e) {
         return new ResponseEntity<>(new AppError(HttpStatus.NOT_FOUND.value(), e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler
-    public ResponseEntity<AppError> InvalidKafkaDto(InvalidKafkaDtoException e) {
-        log.error("Kafka trouble");
-        return new ResponseEntity<>(new AppError(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<AppError> Runtime(RuntimeException e) {
-        log.error(e.getMessage());
+    public ResponseEntity<AppError> handleAllOtherExceptions(RuntimeException e) {
+        log.error(e.toString(), e.getMessage());
         return new ResponseEntity<>(new AppError(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

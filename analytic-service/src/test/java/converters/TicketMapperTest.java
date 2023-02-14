@@ -4,6 +4,7 @@ import org.apache.http.util.Asserts;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.unicrm.analytic.api.Status;
 import org.unicrm.analytic.converter.TicketMapper;
 import org.unicrm.analytic.dto.TicketFrontDto;
 import org.unicrm.analytic.entities.Department;
@@ -35,7 +36,7 @@ class TicketMapperTest {
                 .build();
 
         TicketDto ticketDto = TicketDto.builder()
-                .id(UUID.randomUUID()).status("Status").title("Title")
+                .id(UUID.randomUUID()).status(Status.IN_PROGRESS.name()).title("Title")
                 .assigneeDepartmentId(assDepartment.getId()).assigneeId(assignee.getId())
                 .reporterId(reporter.getId())
                 .createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).dueDate(LocalDateTime.now())
@@ -68,7 +69,7 @@ class TicketMapperTest {
                 .id(UUID.randomUUID()).firstName("SecondTest")
                 .lastName("Reporter").department(repDepartment)
                 .build();
-        Ticket ticket = Ticket.builder().status("test")
+        Ticket ticket = Ticket.builder().status(Status.IN_PROGRESS)
                 .id(UUID.randomUUID()).assignee(assignee).department(assDepartment)
                 .reporter(reporter).createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now())
                 .dueDate(LocalDateTime.now()).build();

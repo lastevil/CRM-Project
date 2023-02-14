@@ -12,6 +12,6 @@ import java.util.UUID;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
-    @Query(value = "select u from User u where u.department.id=?1")
+    @Query(value = "select u from User u where u.department.id=:id")
     Page<User> findAllByDepartmentId(Pageable pageable, Long id);
 }

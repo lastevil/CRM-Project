@@ -2,18 +2,19 @@ package org.unicrm.analytic.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import org.unicrm.analytic.api.Status;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Data
 public class TicketFrontDto {
-    @Schema(description = "id задачи", example = "{111222-223123123111-321321421}")
+    @Schema(description = "id задачи")
     private UUID id;
     @Schema(description = "Заголовок задачи", example = "Помыть посуду")
     private String title;
     @Schema(description = "Статус задачи", example = "В работе")
-    private String status;
+    private Status status;
     @Schema(description = "Исполнитель")
     private UserFrontDto assignee;
     @Schema(description = "Отдел исполнителя")
@@ -21,9 +22,9 @@ public class TicketFrontDto {
     @Schema(description = "Заявитель")
     private UserFrontDto reporter;
     @Schema(description = "Время создания")
-    private String createdAt;
+    private OffsetDateTime createdAt;
     @Schema(description = "Время последнего изменения")
-    private String updatedAt;
+    private OffsetDateTime updatedAt;
     @Schema(description = "Срок исполнения")
-    private String dueDate;
+    private OffsetDateTime dueDate;
 }
