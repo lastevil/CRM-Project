@@ -3,6 +3,7 @@ package org.unicrm.analytic.entities;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.UUIDSerializer;
 import lombok.*;
+import org.unicrm.analytic.api.Status;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -24,14 +25,14 @@ public class Ticket {
     @Column(name = "title")
     private String title;
     @Column(name = "status")
-    private String status;
-    @ManyToOne
+    private Status status;
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assignee_id")
     private User assignee;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     private Department department;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reporter_id")
     private User reporter;
     @Column(name = "created_at")
@@ -47,9 +48,9 @@ public class Ticket {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", status='" + status + '\'' +
-                ", assignee [ id:" + assignee.getId() + ", firstName: " + assignee.getFirstName() + ", lastName: " + assignee.getLastName() + "]" +
-                ", department [ id" + department.getId() + ", title: " + department.getTitle() + "]" +
-                ", reporter [ id:" + reporter.getId() + ", firstName: " + reporter.getFirstName() + ", lastName: " + reporter.getLastName() + "]" +
+                ", assigneeId='" + assignee.getId() + '\'' +
+                ", departmentId='" + department.getId() + '\'' +
+                ", reporterId=':" + reporter.getId() + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", dueDate=" + dueDate +
@@ -61,14 +62,11 @@ public class Ticket {
         if (this == o) return true;
         if (!(o instanceof Ticket)) return false;
         Ticket ticket = (Ticket) o;
-        return Objects.equals(id, ticket.id) &&
-                Objects.equals(title, ticket.title) &&
-                Objects.equals(status, ticket.status) &&
-                Objects.equals(updatedAt, ticket.updatedAt);
+        return Objects.equals(id, ticket.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, status, createdAt, updatedAt, dueDate);
+        return Objects.hash(id);
     }
 }

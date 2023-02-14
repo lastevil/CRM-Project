@@ -9,6 +9,12 @@ import org.unicrm.analytic.entities.Ticket;
 import org.unicrm.analytic.entities.User;
 import org.unicrm.lib.dto.TicketDto;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Mapper(componentModel = "spring")
 public interface TicketMapper {
     TicketMapper INSTANCE = Mappers.getMapper(TicketMapper.class);
@@ -28,8 +34,11 @@ public interface TicketMapper {
     @Mapping(target = "reporter.lastName",source = "reporter.lastName")
     @Mapping(target = "department.id",source = "department.id")
     @Mapping(target = "department.title",source = "department.title")
-    @Mapping(target = "createdAt",source = "ticket.createdAt",dateFormat = "dd-MM-yyyy hh:mm:ss" )
-    @Mapping(target = "updatedAt",source ="ticket.updatedAt", dateFormat = "dd-MM-yyyy hh:mm:ss")
-    @Mapping(target = "dueDate",source = "ticket.dueDate", dateFormat = "dd-MM-yyyy hh:mm:ss")
     TicketFrontDto fromEntityToFrontDto(Ticket ticket);
+
+    default OffsetDateTime map(String value) {
+        LocalDateTime localDateTime = LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
+        return zonedDateTime.toOffsetDateTime();
+    }
 }

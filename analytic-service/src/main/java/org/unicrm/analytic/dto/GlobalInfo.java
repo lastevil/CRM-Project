@@ -6,12 +6,12 @@ import lombok.Data;
 @Data
 @Builder
 public class GlobalInfo {
-    @Schema(description = "Колличество задач в работе", example = "2")
-    Integer ticketCountInProgress;
-    @Schema(description = "Колличество выполненых задач", example = "21")
-    Integer ticketCountDone;
-    @Schema(description = "Колличество завершенных задач", example = "3")
-    Integer ticketCountAccepted;
-    @Schema(description = "Колличество просроченых задач", example = "1")
-    Integer ticketCountOverdue;
+    @Schema(description = "Количество задач в работе", example = "2")
+    private Integer ticketCountInProgress;
+    @Schema(description = "Количество выполненых задач", example = "21")
+    private Integer ticketCountDone;
+    @Schema(description = "Количество завершенных задач", example = "3")
+    private Integer ticketCountAccepted;
+    @Schema(description = "Количество просроченых задач", example = "1")
+    private Integer ticketCountOverdue;
 }

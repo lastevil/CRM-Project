@@ -10,10 +10,10 @@ import org.unicrm.analytic.api.TimeInterval;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CurrentPage {
-    @Schema(description = "Времянной промежуток", example = "DAY, WEEK, MONTH, THREE_MONTH, HALF_YEAR, YEAR")
-    TimeInterval timeInterval;
+    @Schema(description = "Временной промежуток")
+    private TimeInterval timeInterval;
     @Schema(description = "Номер страницы", example = "1")
-    int page;
-    @Schema(description = "Колличество отобрадаемых элементов", example = "10")
-    int countElements;
+    private int page;
+    @Schema(description = "Количество отображаемых элементов", example = "10")
+    private int countElements;
 }
