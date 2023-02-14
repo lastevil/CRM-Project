@@ -3,11 +3,11 @@ package org.unicrm.chat.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.unicrm.chat.dto.ChatGroupDto;
 import org.unicrm.chat.entity.ChatGroup;
-import org.unicrm.chat.mapper.ChatGroupDto;
 import org.unicrm.chat.mapper.ChatGroupMapper;
+import org.unicrm.chat.model.ChatHistory;
 import org.unicrm.chat.model.ChatMessage;
-import org.unicrm.chat.model.UserHistory;
 import org.unicrm.chat.repository.ChatGroupRepository;
 
 import java.util.List;
@@ -57,7 +57,7 @@ public class ChatGroupService {
     }
 
     @Transactional
-    public List<ChatGroup> findByGroupIdAndRecipientId(UserHistory userHistory) {
+    public List<ChatGroup> findByGroupIdAndRecipientId(ChatHistory userHistory) {
         List<ChatGroup> chatGroups = chatGroupRepository.findByGroupIdAndRecipientId(
                 userHistory.getGroupId(), userHistory.getSenderId());
         for (ChatGroup c : chatGroups) {

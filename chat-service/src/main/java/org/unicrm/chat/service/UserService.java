@@ -7,14 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.unicrm.chat.entity.Group;
 import org.unicrm.chat.entity.User;
 import org.unicrm.chat.mapper.UserMapper;
-import org.unicrm.chat.mapper.UserRegistration;
+import org.unicrm.chat.dto.UserRegistration;
 import org.unicrm.chat.model.ChatMessage;
 import org.unicrm.chat.repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +37,7 @@ public class UserService {
     }
     @Transactional
     public List<User> findAllByNotSenderId(UUID senderId){
-        return userRepository.findByUuidNot(senderId);
+        return userRepository.findAllById(Collections.singleton(senderId));
     }
 
     @Transactional
@@ -65,7 +62,7 @@ public class UserService {
             userRepository.save(user);
             Optional<User> user1 = findByUsername(userReg.getUserName());
             if (!user1.isEmpty()){
-                userRepository.insert(user1.get().getUuid(), 1L);
+                userRepository.insert(user1.get().getId(), 1L);
             }
         }
     }
