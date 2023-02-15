@@ -3,6 +3,7 @@ package org.unicrm.chat.entity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class ChatRoom {
     @Id
     @GenericGenerator(name = "UUIDGenerator", strategy = "uuid2")
@@ -34,7 +36,5 @@ public class ChatRoom {
 
     @Column(name = "sender_id")
     private UUID senderId;
-
-    public ChatRoom() {}
 
 }

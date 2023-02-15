@@ -1,4 +1,4 @@
-package org.unicrm.chat.mapper;
+package org.unicrm.chat.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,12 +11,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ChatGroupDto {
-
+public class ChatRoomDto {
     private String chatdate;
     private String message;
     private String status;
-    private Long groupId;
-    private UUID senderId;
     private UUID recipientId;
+    private UUID senderId;
 }

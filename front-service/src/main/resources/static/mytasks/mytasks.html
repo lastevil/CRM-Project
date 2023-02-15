@@ -3,33 +3,24 @@
         <nav class="panel-crm" >
             <div class="menu-crm 1">
                 <div class="cell-crm" >
-                    <button class="btn-bd-primary1"></button>
-                    <a class="nav-link  active" href="#!/mytasks"> My tasks </a>
+                    <button class="btn-bd-primary1" ></button>
+                    <a class="nav-link  active" href="#!/mytasks"> Задачи </a>
                 </div>
-                <div >
+                <div  class="cell-crm">
                     <button class="btn-bd-primary1"></button>
-                    <a class="nav-link" href="#!/chat"> Chat </a>
+                    <a class="nav-link" href="#!/chat"> Чат </a>
+                </div>
+                <div  class="cell-crm">
+                    <button class="btn-bd-primary1">   </button>
+                    <a class="nav-link" href="#!/user"> Пользователь </a>
                 </div>
                 <div  >
                     <button class="btn-bd-primary1"></button>
-                    <a class="nav-link" href="#!/analytic"> Analytic </a>
+                    <a class="nav-link" href="#!/analytic"> Аналитика </a>
                 </div>
-                <div >
+                <div class="cell-crm">
                     <button class="btn-bd-primary1"></button>
-                    <a class="nav-link" href="#!/adminpanel"> Admin panel </a>
-                </div>
-            </div>
-            <div class="menu-crm 2">
-                <div class="menu-item1"></div>
-            </div>
-            <div class="menu-crm 3">
-                <div >
-                    <button class="btn-bd-primary1">   </button>
-                    <a class="nav-link" href="#!/createtask"> Create task </a>
-                </div>
-                <div >
-                    <button class="btn-bd-primary1">   </button>
-                    <a class="nav-link" href="#!/user"> User </a>
+                    <a class="nav-link" href="#!/adminpanel"> Администрирование </a>
                 </div>
             </div>
         </nav>
@@ -47,7 +38,7 @@
            <div class="mytasks-content">
               <div class="btn-new">
                   <div>
-                 <button id="btn-mytasks-new" type="button" class="btn btn-success" onclick="newTicket()" data-bs-toggle="modal" data-bs-target="#newTicket">
+                 <button id="btn-mytasks-new" type="button" class="btn btn-success" ng-click="newTicket()" data-bs-toggle="modal" data-bs-target="#newTicket">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                       <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
                     </svg>
@@ -57,17 +48,30 @@
               </div>
               <div class="btn-button">
                 <div class="btnAll">
-                    <button id="btn-mytasks-executor" type="button" class="btn btn-success" onclick="">Исполнитель</button>
+                    <div >
+                        <label class="col-form-label">Исполнитель</label>
+                        <select id="selAssignee" class="form-select" ></select>
+                    </div>
+             </div>
+                <div class="btnAll">
+                    <label class="col-form-label">Ответственный</label>
+                    <select id="selReporter" class="form-select" ></select>
+               </div>
+                <div class="btnAll">
+                    <label class="col-form-label">Отдел</label>
+                    <select id="selDepartment" class="form-select" ></select>
                 </div>
                 <div class="btnAll">
-                    <button id="btn-mytasks-responsible" type="button" class="btn btn-success" onclick="">Ответственный</button>
-                </div>
-                <div class="btnAll">
-                    <button id="btn-mytasks-department" type="button" class="btn btn-success" onclick="">Отдел</button>
-                </div>
-                <div class="btnAll">
-                    <button id="btn-mytasks-status" type="button" class="btn btn-success" onclick="">Статус</button>
-                </div>
+                    <label class="col-form-label">Статус</label>
+                    <select id="selStatus" class="form-select" >
+                        <option>Запланировано</option>
+                        <option>В работе</option>
+                        <option>Выполнено</option>
+                        <option>Принято</option>
+                        <option>Удалено</option>
+                        <option>Закрыто</option>
+                    </select>
+               </div>
               </div>
               <div>
                   <table id="tableTasks" class="table" border=""  bgcolor="#d0d0d0" >
@@ -128,29 +132,34 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" >Новая заявка</h5>
+
+                    <h5 class="title" style="justify-content: center;">Новая заявка</h5>
                 </div>
                 <div class="modal-body">
-                    <form class="form-create" novalidate ng-submit="createNewTicket()">
-                        <div class="mb-3">
+                    <form  novalidate ng-submit="createNewTicket()">
+                        <div class="input-group mb-3">
+                            <label for="newTitle" class="col-form-label">Заголовок</label>
+                            <input type="text" class="form-control" id="newTitle" ng-model="new_Ticket.title">
+                        </div>
+                        <div class="input-group mb-3">
                             <label for="newAssignee" class="col-form-label">Исполнитель</label>
                             <select id="newAssignee" class="form-control"  ng-model="new_Ticket.assigneeId"></select>
                         </div>
-                        <div class="mb-3">
+                        <div class="input-group mb-3">
                             <label for="newReporter" class="col-form-label">Ответственный</label>
                             <select id="newReporter" class="form-control"  ng-model="new_Ticket.reporterId"></select>
                         </div>
-                        <div class="mb-3">
+                        <div class="input-group mb-3">
                             <label for="newDepartment" class="col-form-label">Отдел</label>
-                            <select id="newDepartment" class="form-control"  ng-model="new_Ticket.assigneeDepartmentId"></select>
+                            <select id="newDepartment" class="form-control"  ng-model="new_Ticket.departmentId"></select>
                         </div>
-                        <div class="mb-3">
+                        <div class="input-group mb-3">
                             <label for="newDueDate" class="col-form-label">Выполнить до</label>
                             <input type="date" class="form-control" id="newDueDate" ng-model="new_Ticket.dueDate">
                         </div>
-                        <div class="mb-3">
-                            <label for="newTitle" class="col-form-label">Описание</label>
-                            <textarea class="form-control" id="newTitle" ng-model="new_Ticket.title"></textarea>
+                        <div class="input-group mb-3">
+                            <label for="newDescription" class="col-form-label">Описание</label>
+                            <textarea class="form-control" id="newDescription" ng-model="new_Ticket.description"></textarea>
                         </div>
                         <div>
                             <button type="submit" class="btn btn-primary">Создать</button>

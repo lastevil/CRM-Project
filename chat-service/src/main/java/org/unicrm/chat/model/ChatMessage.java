@@ -3,12 +3,14 @@ package org.unicrm.chat.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class ChatMessage {
     private MessageType type;
     private UUID senderId;
@@ -19,6 +21,4 @@ public class ChatMessage {
     private String chatDate;
     private String message;
 
-    public ChatMessage() {
-    }
 }

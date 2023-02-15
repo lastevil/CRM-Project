@@ -3,12 +3,14 @@ package org.unicrm.chat.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class GroupHistory {
     private UUID id;
     private UUID senderId;
@@ -18,6 +20,4 @@ public class GroupHistory {
     private String chatdate;
     private String message;
     private Long groupId;
-    public GroupHistory() {
-    }
 }

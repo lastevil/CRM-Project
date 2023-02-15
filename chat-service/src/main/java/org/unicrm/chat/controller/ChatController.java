@@ -39,7 +39,7 @@ public class ChatController {
     private final GroupService groupService;
     private final WebSocketEventListener webSocketEventListener;
 
-    @Operation(summary = "метод получения сообщения, сохранения его в базе и передача отправителю и получателям")
+    @Operation(summary = "метод получения сообщения, сохранения его в базе и передачи отправителю и получателям")
     @MessageMapping("/chat")
     public void sendNotification(MessageHeaders messageHeaders, @Payload ChatMessage chatMessage,
                                  @Header(name = "simpSessionId") String sessionId) {
@@ -123,12 +123,6 @@ public class ChatController {
         }
         return chatMessage;
     }
-
-//    @MessageMapping("/chat.send")
-//    @SendTo("/topic/public")
-//    public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {
-//        return chatMessage;
-//    }
 
     @Operation(summary = "метод получения списка групп, в которых состоит пользователь, с количеством непрочитанных сообщений")
     @MessageMapping("/chatgroup")

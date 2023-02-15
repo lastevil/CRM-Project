@@ -5,7 +5,7 @@ import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.unicrm.chat.entity.ChatRoom;
-import org.unicrm.chat.mapper.ChatRoomDto;
+import org.unicrm.chat.dto.ChatRoomDto;
 import org.unicrm.chat.mapper.ChatRoomMapper;
 import org.unicrm.chat.model.ChatMessage;
 import org.unicrm.chat.model.UserHistory;

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.unicrm.chat.entity.ChatGroup;
-import org.unicrm.chat.mapper.ChatGroupDto;
+import org.unicrm.chat.dto.ChatGroupDto;
 import org.unicrm.chat.mapper.ChatGroupMapper;
 import org.unicrm.chat.model.ChatMessage;
 import org.unicrm.chat.model.UserHistory;

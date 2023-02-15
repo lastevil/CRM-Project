@@ -1,41 +1,37 @@
 <div class="main-crm" ng-app="front" ng-controller="userController">
  <div class="container-crm" >
   <nav class="panel-crm" >
-   <div class="menu-crm 1">
-    <div class="cell-crm" >
-     <button class="btn-bd-primary1"></button>
-     <a class="nav-link  active" href="#!/mytasks"> My tasks </a>
-    </div>
-    <div >
-     <button class="btn-bd-primary1"></button>
-     <a class="nav-link" href="#!/chat"> Chat </a>
-    </div>
-    <div  >
-     <button class="btn-bd-primary1"></button>
-     <a class="nav-link" href="#!/analytic"> Analytic </a>
-    </div>
-    <div >
-     <button class="btn-bd-primary1"></button>
-     <a class="nav-link" href="#!/adminpanel"> Admin panel </a>
-    </div>
-   </div>
-   <div class="menu-crm 2">
-    <div class="menu-item1"></div>
-   </div>
-   <div class="menu-crm 3">
-    <div >
-     <button class="btn-bd-primary1">   </button>
-     <a class="nav-link" href="#!/createtask"> Create task </a>
-    </div>
-    <div >
-     <button class="btn-bd-primary1">   </button>
-     <a class="nav-link" href="#!/user"> User </a>
-    </div>
-   </div>
-  </nav>
+         <div class="menu-crm 1">
+             <div class="cell-crm" >
+                 <button class="btn-bd-primary1" ></button>
+                 <a class="nav-link  active" href="#!/mytasks"> Задачи </a>
+             </div>
+             <div  class="cell-crm">
+                 <button class="btn-bd-primary1"></button>
+                 <a class="nav-link" href="#!/chat"> Чат </a>
+             </div>
+             <div  class="cell-crm">
+                 <button class="btn-bd-primary1">   </button>
+                 <a class="nav-link" href="#!/user"> Пользователь </a>
+             </div>
+             <div  >
+                 <button class="btn-bd-primary1"></button>
+                 <a class="nav-link" href="#!/analytic"> Аналитика </a>
+             </div>
+             <div class="cell-crm">
+                 <button class="btn-bd-primary1"></button>
+                 <a class="nav-link" href="#!/adminpanel"> Администрирование </a>
+             </div>
+         </div>
+
+     </nav>
   <div class="page-crm">
    <div class="header">
-      <h2 class="title" style="text-align: center;">Пользователи</h2>
+      <h2 class="title" style="text-align: center;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+              <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"/>
+          </svg>
+          Пользователи</h2>
    </div>
    <div class="user-content">
       <div class="user-img">
