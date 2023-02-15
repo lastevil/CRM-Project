@@ -29,7 +29,6 @@ public class UserController {
         return userService.findAll();
     }
 
-    @PreAuthorize("authenticated()")
     @PostMapping("/users/update")
     public void updateUser(@RequestBody UpdatedUserDto updatedUserDto) {
         userService.updateUser(updatedUserDto);
@@ -51,5 +50,11 @@ public class UserController {
     @GetMapping("/users/not_active")
     public List<UserDto> findAllByStatusEqualsNoActive() {
         return userService.findAllByStatusEqualsNoActive();
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @GetMapping("/users/{username}/change/{login}")
+    public void changeLogin(@PathVariable String username, @PathVariable String login) {
+        userService.changeLogin(username, login);
     }
 }

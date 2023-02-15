@@ -76,15 +76,22 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void updateUser(UpdatedUserDto updatedUserDto) {
         User user = findByUsername(updatedUserDto.getUsername());
+        System.out.println("test");
         if (updatedUserDto.getEmail() != null) {
-            String[] username = updatedUserDto.getEmail().split("@");
+            user.setEmail(updatedUserDto.getEmail());
         }
         if (updatedUserDto.getUsername() != null) user.setFirstName(updatedUserDto.getFirstName());
         if (updatedUserDto.getLastName() != null) user.setLastName(updatedUserDto.getLastName());
         if (updatedUserDto.getPassword() != null) user.setPassword(passwordEncoder.encode(updatedUserDto.getPassword()));
         userRepository.save(user);
         kafkaTemplate.send("userTopic", UUID.randomUUID(), EntityDtoMapper.INSTANCE.toDto(user));
+    }
 
+    @Transactional
+    public void changeLogin(String username, String login) {
+        User user = findByUsername(username);
+        user.setUsername(login);
+        kafkaTemplate.send("userTopic", UUID.randomUUID(), EntityDtoMapper.INSTANCE.toDto(user));
     }
 
     @Transactional

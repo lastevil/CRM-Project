@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class DepartmentDto {
 
+    private Long id;
     private String title;
 
 }
