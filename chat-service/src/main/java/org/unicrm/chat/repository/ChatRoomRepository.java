@@ -23,7 +23,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, UUID> {
                                                 @Param("recipient_id") UUID recipientId);
 
     Optional<ChatRoom> findBySenderIdAndRecipientIdAndChatdate(UUID senderId,
-                UUID recipientId, String chatdate);
+                                                               UUID recipientId, String chatdate);
 
     @Modifying
     @Query(value = "update chatroom set status = :status " +

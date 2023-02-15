@@ -1,22 +1,23 @@
 package org.unicrm.chat.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import org.unicrm.chat.entity.ChatRoom;
 
-import java.util.List;
 import java.util.UUID;
 
 @Data
-public class UserHistory {
-
+@Builder
+@AllArgsConstructor
+public class GroupHistory {
+    private UUID id;
     private UUID senderId;
     private String senderName;
     private UUID recipientId;
     private String recipientName;
+    private String chatdate;
+    private String message;
     private Long groupId;
-    private List<ChatRoom> chatRoom;
-    private List<GroupHistory> chatGroup;
-
-    public UserHistory() {
+    public GroupHistory() {
     }
 }
