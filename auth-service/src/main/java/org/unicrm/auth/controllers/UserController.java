@@ -29,6 +29,7 @@ public class UserController {
         return userService.findAll();
     }
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/users/update")
     public void updateUser(@RequestBody UpdatedUserDto updatedUserDto) {
         userService.updateUser(updatedUserDto);
