@@ -18,19 +18,17 @@ public interface TicketRepository extends JpaRepository<Ticket, UUID> {
 
     //TODO: Fix
     @Query(value = "select t from Ticket t where t.departmentId = :departmentId")
-    List<Ticket> findAllByDepartment(UUID departmentId);
+    List<Ticket> findAllByDepartment(Long departmentId);
 
     @Query(value = "select t from Ticket t where t.assigneeId = :assigneId and t.status = :status")
     List<Ticket> findAllByAssigneeIdAndStatus(UUID assigneId, String status);
 
     @Query(value = "select count(*) from Ticket t where t.departmentId = :departmentId and t.status = :status")
-    Integer countAllByDepartmentAndStatus(UUID departmentId, String status);
+    Integer countAllByDepartmentAndStatus(Long departmentId, String status);
 
     @Query(value = "select count(*) from Ticket t where t.assigneeId = :assigneeId and t.status = :status")
     Integer countAllByAssigneeIdAndStatus(UUID assigneeId, String status);
 
     @Query(value = "select count(*) from Ticket t where t.reporterId = :reporterId and t.status = :status")
     Integer countAllByReporterIdAndStatus(UUID reporterId, String status);
-
-    //TODO: Методы фильтрации и подсчета за период
 }
