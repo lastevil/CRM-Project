@@ -76,7 +76,6 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void updateUser(UpdatedUserDto updatedUserDto) {
         User user = findByUsername(updatedUserDto.getUsername());
-        System.out.println("test");
         if (updatedUserDto.getEmail() != null) {
             user.setEmail(updatedUserDto.getEmail());
         }
