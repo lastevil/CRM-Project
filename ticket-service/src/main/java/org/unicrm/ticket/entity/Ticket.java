@@ -7,8 +7,6 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.unicrm.ticket.serializer.JsonDateSerializer;
-
 import javax.persistence.*;
 import java.sql.Date;
 import java.time.LocalDateTime;
@@ -56,8 +54,6 @@ public class Ticket {
 
     @Column(name = "updated_at")
     @CreationTimestamp
-    @JsonSerialize(using = JsonDateSerializer.class)
-
     private LocalDateTime updatedAt;
 
     @Column(name = "due_date")

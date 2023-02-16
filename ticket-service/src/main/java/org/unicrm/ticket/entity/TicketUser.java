@@ -22,6 +22,9 @@ public class TicketUser {
     @JsonDeserialize(using = UUIDDeserializer.class)
     private UUID id;
 
+    @Column(name = "username")
+    private String username;
+
     @Column(name = "first_name")
     private String firstName;
 

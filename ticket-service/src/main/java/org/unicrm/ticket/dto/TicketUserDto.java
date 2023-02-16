@@ -18,6 +18,8 @@ public class TicketUserDto {
     @JsonDeserialize(using = UUIDDeserializer.class)
     private UUID id;
 
+    private String username;
+
     private String firstName;
 
     private String lastName;
