@@ -7,14 +7,15 @@ import org.unicrm.ticket.dto.TicketDto;
 import org.unicrm.ticket.entity.Ticket;
 
 @Mapper(componentModel = "spring")
-public interface TicketMapperInterface {
-    TicketMapperInterface INSTANCE = Mappers.getMapper(TicketMapperInterface.class);
+public interface TicketMapper {
+    TicketMapper INSTANCE = Mappers.getMapper(TicketMapper.class);
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "assigneeId", target = "assigneeId")
     @Mapping(source = "reporterId", target = "reporterId")
     @Mapping(source = "departmentId", target = "departmentId")
     Ticket toEntity(TicketDto ticketDto);
+
     TicketDto toDto(Ticket ticket);
 
 }

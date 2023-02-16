@@ -2,9 +2,8 @@ package org.unicrm.ticket.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.unicrm.lib.dto.UserDto;
 import org.unicrm.ticket.dto.TicketDto;
-import org.unicrm.ticket.dto.TicketUserDto;
-import org.unicrm.ticket.entity.Ticket;
 import org.unicrm.ticket.services.TicketService;
 
 import java.util.List;
@@ -34,8 +33,8 @@ public class TicketController {
     }
 
     @PutMapping
-    public Ticket updateTicket(@RequestBody TicketDto ticketDto) {
-        return ticketService.update(ticketDto);
+    public void updateTicket(@RequestBody TicketDto ticketDto) {
+        ticketService.update(ticketDto);
     }
 
     @DeleteMapping("/{id}")
@@ -46,7 +45,7 @@ public class TicketController {
     //Методы фильтрации
 
     @PostMapping("/filter/by-assignee")
-    public List<TicketDto> getAllByAssignee(@RequestBody TicketUserDto assignee) {
+    public List<TicketDto> getAllByAssignee(@RequestBody UserDto assignee) {
         return ticketService.findTicketsByAssignee(assignee);
     }
 

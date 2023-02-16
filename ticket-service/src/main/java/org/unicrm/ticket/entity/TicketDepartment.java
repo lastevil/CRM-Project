@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
-import java.util.UUID;
 
 @Entity
 @Data
@@ -19,9 +18,9 @@ public class TicketDepartment {
     @Id
     @Column(name = "department_id")
     @JsonSerialize(using = UUIDSerializer.class)
-    private UUID departmentId;
+    private Long departmentId;
 
     @Column(name = "department_name")
-    private String departmentName;
+    private String title;
 }
 
