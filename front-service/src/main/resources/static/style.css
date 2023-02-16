@@ -29,7 +29,7 @@
 }
 .panel-crm {
    height: 100%;
-   width: 10%;
+   width: 15%;
    background-color: #92ad95;
    justify-content: center;
    flex-direction: column;
@@ -39,7 +39,7 @@
 }
 .page-crm {
    height: 100%;
-   width: 90%;
+   width: 85%;
    background: url(image/fon.png) repeat;
    position: absolute;
    font-family: 'Bree Serif', serif;
@@ -47,7 +47,7 @@
    right: 0;
    padding: 10px;
 }
-.analytic,  .createtask{
+.analytic{
    position: absolute;
    top: 100px;
    left: 200px;
@@ -135,25 +135,17 @@ input {
 .hidden {
    margin-bottom: 10px;
 }
-.menu-crm li{
-   list-style-type: none;
-   flex-direction: column;
-   justify-content: center;
-}
 .menu-crm 1 {
-   height: 40%;
-   display: table;
-   width: 100%;
-   text-align: center;
-   justify-content: center;
-   flex-direction: column;
-}
+   height: 100%;
 
-.menu-crm 3 {
-   height: 20%;
+   width: 100%;
+
+
 }
-.menu-item1 {
-   padding: 100px;
+.cell-crm {
+
+   justify-content: center;
+   margin: 5px;
 }
 .btn-bd-primary1 {
   display: table-cell;
@@ -163,7 +155,8 @@ input {
   border: none;
   border-radius: 50%;
   padding: 20px;
-  margin-left: 45px;
+  margin-left: 40%;
+  margin-right: 40%;
   justify-content: center;
 }
 .bi bi-paperclip, .bi bi-send {
@@ -174,9 +167,6 @@ input {
 }
 h6 {
    color: #777;
-}
-.groupli, .userli {
-   padding-left: 0;
 }
 
 /***************************ADMIN PANEL*********************************/
@@ -357,12 +347,13 @@ h6 {
    background: #c4fdf1;
    text-align: right;
    list-style-type: none;
-
+   margin-left: 50%;
 
 }
 #messageArea li.user {
    text-align: left;
    list-style-type: none;
+   margin-right: 50%;
 }
 .connecting {
     padding-top: 5px;
@@ -397,4 +388,6 @@ h6 {
 .form-group1 {
    margin-top: 10px;
 }
-
+.groupli, .userli {
+   padding-left: 0;
+}

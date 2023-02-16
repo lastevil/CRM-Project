@@ -34,6 +34,6 @@ public interface ChatGroupRepository extends JpaRepository<ChatGroup, UUID> {
     List<ChatGroup> findByGroupIdAndRecipientIdAndStatus(@Param("group_id") Long group_id,
                                                          @Param("recipient_id") UUID recipient_id,
                                                          @Param("status") String status);
-    
+
     Optional<ChatGroup> findByChatdateAndRecipientId(String chatdate, UUID recipientId);
 }

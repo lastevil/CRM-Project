@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.unicrm.chat.entity.ChatRoom;
 import org.unicrm.chat.dto.ChatRoomDto;
 import org.unicrm.chat.mapper.ChatRoomMapper;
-import org.unicrm.chat.model.ChatHistory;
 import org.unicrm.chat.model.ChatMessage;
 import org.unicrm.chat.model.UserHistory;
 import org.unicrm.chat.repository.ChatRoomRepository;
@@ -65,7 +64,7 @@ public class ChatRoomService {
     }
 
     @Transactional
-    public List<ChatRoom> findBySenderIdAndRecipientId(ChatHistory userHistory){
+    public List<ChatRoom> findBySenderIdAndRecipientId(UserHistory userHistory){
         List<ChatRoom> chatRooms = chatRoomRepository.findBySenderIdAndRecipientId(userHistory.getSenderId(),
                 userHistory.getRecipientId());
         for (ChatRoom c : chatRooms) {
