@@ -12,7 +12,7 @@ create table users
     uuid          uuid primary key,
     username      varchar(36) unique not null,
     first_name    varchar(36) not null,
-    last_name     varchar(56),
+    last_name     varchar(56) not null,
     password      varchar(255) not null,
     email         varchar(50) unique,
     department_id bigint references departments (id),

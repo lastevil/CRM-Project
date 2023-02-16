@@ -23,4 +23,6 @@ public interface EntityDtoMapper {
     UserDto toDto(User user);
 
     DepartmentDto toDto(Department department);
+
+    Department toEntity(DepartmentDto departmentDto);
 }
