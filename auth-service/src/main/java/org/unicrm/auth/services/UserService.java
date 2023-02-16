@@ -79,7 +79,6 @@ public class UserService implements UserDetailsService {
         if (updatedUserDto.getEmail() != null) {
             user.setEmail(updatedUserDto.getEmail());
         }
-        if (updatedUserDto.getUsername() != null) user.setUsername(updatedUserDto.getUsername());
         if (updatedUserDto.getFirstName() != null) user.setFirstName(updatedUserDto.getFirstName());
         if (updatedUserDto.getLastName() != null) user.setLastName(updatedUserDto.getLastName());
         if (updatedUserDto.getPassword() != null) user.setPassword(passwordEncoder.encode(updatedUserDto.getPassword()));
