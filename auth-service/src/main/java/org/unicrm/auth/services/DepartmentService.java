@@ -32,4 +32,16 @@ public class DepartmentService {
     public List<DepartmentDto> findAll() {
        return departmentRepository.findAll().stream().map(EntityDtoMapper.INSTANCE::toDto).collect(Collectors.toList());
     }
+
+    @Transactional
+    public void addOrUpdateDepartment(DepartmentDto departmentDto) {
+        if (departmentDto.getId() == null) {
+            Department department = new Department();
+            department.setTitle(departmentDto.getTitle());
+            departmentRepository.save(department);
+        } else {
+            Department department = departmentRepository.findById(departmentDto.getId()).orElseThrow(() -> new ResourceNotFoundException("Department with id: " + departmentDto.getId() + " not found"));
+            department.setTitle(departmentDto.getTitle());
+        }
+    }
 }

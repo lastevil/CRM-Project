@@ -60,4 +60,4 @@ spring:
             - JwtAuthFilter
 jwt:
   secret: h2342335233245h234kj5h234h5dsf22af32434hf5gs66dj5st5us23i452k523
-  lifetime: 3600000
+  lifetime: 13600000
