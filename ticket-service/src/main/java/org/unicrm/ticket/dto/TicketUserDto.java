@@ -23,10 +23,12 @@ public class TicketUserDto {
     @Schema(description = "id юзера", example = "2e18a2f4-a49d-11ed-ad47-0242ac120002")
     private UUID id;
 
+
     @Schema(description = "Логин пользователя", example = "a.ivanov")
     private String username;
 
     @Schema(description = "Имя пользователя", example = "Андрей")
+
     private String firstName;
 
     @Schema(description = "Фамилия пользователя", example = "Иванов")
