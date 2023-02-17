@@ -31,15 +31,16 @@ public class TicketService {
 
     private final TicketFacade facade;
     private final TicketDepartmentService departmentService;
+    private final TicketUserService userService;
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 
-    @KafkaListener(topics = "userTopic", containerFactory = "userKafkaListenerContainerFactory")
-    @Transactional
-    public void createOrUpdateUserAndDepartment(UserDto userDto) {
-        TicketDepartment department = departmentSaveOrUpdate(userDto);
-        userSaveOrUpdate(userDto, department);
-    }
+//    @KafkaListener(topics = "userTopic", containerFactory = "userKafkaListenerContainerFactory")
+//    @Transactional
+//    public void createOrUpdateUserAndDepartment(UserDto userDto) {
+//        TicketDepartment department = departmentSaveOrUpdate(userDto);
+//        userSaveOrUpdate(userDto, department);
+//    }
 
     private TicketDepartment departmentSaveOrUpdate(UserDto dto) {
         TicketDepartment department;
@@ -57,23 +58,23 @@ public class TicketService {
         return department;
     }
 
-    private void userSaveOrUpdate(UserDto dto, TicketDepartment department) {
-        TicketUser user;
-        if (!facade.getUserRepository().existsById(dto.getId())) {
-            user = facade.getUserMapper().toEntity(dto, department);
-        } else {
-            user = facade.getUserRepository().findById(dto.getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Пользователь с id " + dto.getId() + "не найден в базе"));
-            user.setDepartment(department);
-            if (dto.getFirstName() != null) {
-                user.setFirstName(dto.getFirstName());
-            }
-            if (dto.getLastName() != null) {
-                user.setLastName(user.getLastName());
-            }
-        }
-        facade.getUserRepository().save(user);
-    }
+//    private void userSaveOrUpdate(UserDto dto, TicketDepartment department) {
+//        TicketUser user;
+//        if (!facade.getUserRepository().existsById(dto.getId())) {
+//            user = facade.getUserMapper().toEntity(dto, department);
+//        } else {
+//            user = facade.getUserRepository().findById(dto.getId())
+//                    .orElseThrow(() -> new ResourceNotFoundException("Пользователь с id " + dto.getId() + "не найден в базе"));
+//            user.setDepartment(department);
+//            if (dto.getFirstName() != null) {
+//                user.setFirstName(dto.getFirstName());
+//            }
+//            if (dto.getLastName() != null) {
+//                user.setLastName(user.getLastName());
+//            }
+//        }
+//        facade.getUserRepository().save(user);
+//    }
 
     public List<TicketDto> findAll() {
         return facade.getTicketRepository().findAll().stream().map(facade.getTicketMapper()::toDto).collect(Collectors.toList());
@@ -92,7 +93,9 @@ public class TicketService {
     @Transactional
     public Ticket createTicket(TicketDto ticketDto) {
         LocalDateTime creationTime = LocalDateTime.now();
-        Ticket ticket = facade.getTicketMapper().toEntity(ticketDto);
+        TicketUser assignee = userService.findUserById(ticketDto.getAssigneeId().getId());
+        TicketUser reporter = userService.findUserById(ticketDto.getReporterId().getId());
+        Ticket ticket = facade.getTicketMapper().toEntity(ticketDto, ticketDto.getAssigneeId(), ticketDto.getReporterId(), ticketDto.getDepartmentId());
         ticket.setCreatedAt(creationTime);
         ticket.setStatus(TicketStatus.BACKLOG);
         return facade.getTicketRepository().save(ticket);
@@ -106,19 +109,19 @@ public class TicketService {
         ticket.setTitle(ticketDto.getTitle());
         ticket.setStatus(ticketDto.getStatus());
         ticket.setDescription(ticketDto.getDescription());
-        ticket.setAssigneeId(ticketDto.getAssigneeId());
-        ticket.setReporterId(ticketDto.getReporterId());
+//        ticket.setAssigneeId(ticketDto.getAssigneeId());
+//        ticket.setReporterId(ticketDto.getReporterId());
         ticket.setUpdatedAt(LocalDateTime.now());
         ticket.setDueDate(ticketDto.getDueDate());
         ticket.setIsOverdue(today.after(ticketDto.getDueDate()));
         kafkaTemplate.send("ticketTopic", UUID.randomUUID(), facade.getTicketMapper().toDto(ticket));
     }
 
-    public List<TicketDto> findTicketsByAssignee(UserDto userDto) {
-        return facade.getTicketRepository().findAllByAssignee(facade.getUserMapper().toEntity(userDto, departmentService.findDepartmentById(userDto)))
-                .stream().map(facade.getTicketMapper()::toDto)
-                .collect(Collectors.toList());
-    }
+//    public List<TicketDto> findTicketsByAssignee(UserDto userDto) {
+//        return facade.getTicketRepository().findAllByAssignee(facade.getUserMapper().toEntity(userDto, departmentService.findDepartmentById(userDto)))
+//                .stream().map(facade.getTicketMapper()::toDto)
+//                .collect(Collectors.toList());
+//    }
 
     public List<TicketDto> findTicketsByDepartment(TicketDepartment ticketDepartment) {
         return facade.getTicketRepository().findAllByDepartment(ticketDepartment.getDepartmentId())

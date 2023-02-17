@@ -18,8 +18,11 @@ import java.util.UUID;
 public class TicketUser {
 
     @Id
+    @Column(name = "id")
     @JsonSerialize(using = UUIDSerializer.class)
-    @JsonDeserialize(using = UUIDDeserializer.class)
+//    @JsonDeserialize(contentUsing = UUIDDeserializer.class)
+//    @JsonSerialize(contentUsing = UUIDSerializer.class)
+//    @JsonDeserialize(contentUsing = UUIDDeserializer.class)
     private UUID id;
 
     @Column(name = "username")
@@ -31,7 +34,7 @@ public class TicketUser {
     @Column(name = "last_name")
     private String lastName;
 
-   @ManyToOne
+   @ManyToOne(fetch = FetchType.LAZY)
    @JoinColumn(name = "department_id")
    private TicketDepartment department;
 }

@@ -36,16 +36,21 @@ public class Ticket {
     @Column
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity=TicketUser.class)
-    @JoinColumn(name = "assignee", columnDefinition = "UUID")
+    @ManyToOne(fetch = FetchType.LAZY)
+//    @ManyToOne(fetch = FetchType.LAZY, targetEntity=TicketUser.class)
+//    @JoinColumn(name = "assignee", columnDefinition = "UUID")
+    @JoinColumn(name = "assignee")
     private TicketUser assigneeId;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity=TicketUser.class)
-    @JoinColumn(name = "reporter", columnDefinition = "UUID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reporter")
+//    @ManyToOne(fetch = FetchType.LAZY, targetEntity=TicketUser.class)
+//    @JoinColumn(name = "reporter", columnDefinition = "UUID")
     private TicketUser reporterId;
 
-    @ManyToOne
-    @JoinColumn(name = "department_id", columnDefinition = "UUID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+//    @JoinColumn(name = "department_id", columnDefinition = "UUID")
     private TicketDepartment departmentId;
 
     @Column(name = "created_at")

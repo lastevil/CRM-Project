@@ -15,9 +15,9 @@ public interface TicketDepartmentMapper {
 
     @Mapping(target = "departmentId", source = "departmentId")
     @Mapping(target = "title", source = "departmentTitle")
-    TicketDepartment toEntity(UserDto ticketDepartment);
+    TicketDepartment toEntity(UserDto userDto);
 
-    TicketDepartmentDto toDto(Optional<TicketDepartment> ticketDepartment);
+    TicketDepartmentDto toDto(TicketDepartment ticketDepartment);
 
 
 }

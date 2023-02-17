@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.unicrm.lib.dto.UserDto;
 import org.unicrm.ticket.dto.TicketDto;
 import org.unicrm.ticket.services.TicketService;
 
@@ -50,10 +49,10 @@ public class TicketController {
         ticketService.deleteById(id);
     }
 
-    @Operation(summary = "метод получения списка всех заявок по исполнителю")
-    @PostMapping("/filter/by-assignee")
-    public List<TicketDto> getAllByAssignee(@RequestBody UserDto assignee) {
-        return ticketService.findTicketsByAssignee(assignee);
-    }
+//    @Operation(summary = "метод получения списка всех заявок по исполнителю")
+//    @PostMapping("/filter/by-assignee")
+//    public List<TicketDto> getAllByAssignee(@RequestBody UserDto assignee) {
+//        return ticketService.findTicketsByAssignee(assignee);
+//    }
 
 }
