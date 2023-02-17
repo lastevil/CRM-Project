@@ -2,18 +2,22 @@ package org.unicrm.ticket.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.unicrm.lib.dto.UserDto;
 import org.unicrm.ticket.entity.TicketDepartment;
+import org.unicrm.ticket.exception.ResourceNotFoundException;
 import org.unicrm.ticket.mapper.TicketDepartmentMapper;
-import org.unicrm.ticket.services.utils.TicketFacade;
+import org.unicrm.ticket.repository.TicketDepartmentRepository;
+
+import java.nio.file.ReadOnlyFileSystemException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class TicketDepartmentService {
 
     private final TicketDepartmentMapper mapper;
+    private final TicketDepartmentRepository departmentRepository;
 
-    public TicketDepartment findDepartmentById(UserDto userDto) {
-        return mapper.toEntity(userDto);
+    public TicketDepartment findDepartmentById(Long id) {
+        return departmentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Department not found"));
     }
 }

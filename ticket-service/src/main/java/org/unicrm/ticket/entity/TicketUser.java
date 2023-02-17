@@ -20,9 +20,6 @@ public class TicketUser {
     @Id
     @Column(name = "id")
     @JsonSerialize(using = UUIDSerializer.class)
-//    @JsonDeserialize(contentUsing = UUIDDeserializer.class)
-//    @JsonSerialize(contentUsing = UUIDSerializer.class)
-//    @JsonDeserialize(contentUsing = UUIDDeserializer.class)
     private UUID id;
 
     @Column(name = "username")

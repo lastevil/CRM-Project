@@ -1,14 +1,13 @@
 package org.unicrm.ticket.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.UUIDSerializer;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -37,35 +36,29 @@ public class Ticket {
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-//    @ManyToOne(fetch = FetchType.LAZY, targetEntity=TicketUser.class)
-//    @JoinColumn(name = "assignee", columnDefinition = "UUID")
     @JoinColumn(name = "assignee")
-    private TicketUser assigneeId;
+    private TicketUser assignee;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reporter")
-//    @ManyToOne(fetch = FetchType.LAZY, targetEntity=TicketUser.class)
-//    @JoinColumn(name = "reporter", columnDefinition = "UUID")
-    private TicketUser reporterId;
+    private TicketUser reporter;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
-//    @JoinColumn(name = "department_id", columnDefinition = "UUID")
-    private TicketDepartment departmentId;
+    private TicketDepartment department;
 
     @Column(name = "created_at")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
-    @CreationTimestamp
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     @Column(name = "due_date")
-    @UpdateTimestamp
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date dueDate;
+    private LocalDateTime dueDate;
 
-    @Column(name = "is_overdue")
-    private Boolean isOverdue;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "overdue")
+    private TicketStatus overdue;
 }

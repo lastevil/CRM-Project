@@ -1,6 +1,5 @@
 package org.unicrm.ticket.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.deser.std.UUIDDeserializer;
@@ -13,8 +12,7 @@ import lombok.NoArgsConstructor;
 import org.unicrm.ticket.entity.TicketStatus;
 
 
-import java.sql.Date;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Data
@@ -37,34 +35,27 @@ public class TicketDto {
     @Schema(description = "Описание заявки", example = "Требуется провести полный рефакторинг существующего кода")
     private String description;
 
-    @Schema(description = "id исполнителя", example = "2e18a2f4-a49d-11ed-ad47-0242ac120002")
+    @Schema(description = "id исполнителя")
     @JsonSerialize(contentUsing = UUIDSerializer.class)
     @JsonDeserialize(contentUsing = UUIDDeserializer.class)
-    private TicketUserDto assigneeId;
+    private TicketUserDto assignee;
 
-    @Schema(description = "id заявителя", example = "34f3d3f0-a49d-11ed-ad47-0242ac120002")
+    @Schema(description = "id заявителя")
     @JsonSerialize(contentUsing = UUIDSerializer.class)
     @JsonDeserialize(contentUsing = UUIDDeserializer.class)
-    private TicketUserDto reporterId;
+    private TicketUserDto reporter;
 
-    @Schema(description = "id отдела", example = "1L")
-//    @JsonSerialize(contentUsing = UUIDSerializer.class)
-//    @JsonDeserialize(contentUsing = UUIDDeserializer.class)
-    private TicketDepartmentDto departmentId;
+    @Schema(description = "id отдела")
+    private TicketDepartmentDto department;
 
     @Schema(description = "Дата создания заявки", example = "2023-12-10 14:43")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
-    //TODO: Fix
     @Schema(description = "Дата обновления заявки", example = "2023-12-10 14:50")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime updatedAt;
+    private OffsetDateTime updatedAt;
 
-    //TODO: Fix
     @Schema(description = "Дата, к которой нужно выполнить заявку", example = "2023-12-11")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date dueDate;
+    private OffsetDateTime dueDate;
 
     //TODO: заменить
     @Schema(description = "Дата, к которой нужно выполнить заявку", example = "2023-12-11")

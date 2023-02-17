@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class TicketDepartmentDto {
 
     @Schema(description = "id отдела", example = "1L")
-    private Long departmentId;
+    private Long id;
 
     @Schema(description = "Название отдела", example = "QA")
     private String title;

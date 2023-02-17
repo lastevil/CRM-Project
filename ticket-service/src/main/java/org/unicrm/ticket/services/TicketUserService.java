@@ -1,6 +1,7 @@
 package org.unicrm.ticket.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.unicrm.ticket.dto.TicketDepartmentDto;
 import org.unicrm.ticket.dto.TicketUserDto;
@@ -19,9 +20,12 @@ public class TicketUserService {
 
     private final TicketUserMapper mapper;
 
-    //TODO: change to findUserByUsername()
     public TicketUser findUserById(UUID uuid) {
         return ticketUserRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
+    
+    public TicketUser findUserByUsername(String username) {
+        return ticketUserRepository.findByUsername(username);
 
+    }
 }

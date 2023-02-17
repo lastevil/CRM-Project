@@ -18,7 +18,6 @@ public enum TicketStatus {
     DONE("Выполнено"),
     ACCEPTED("Принято"),
     DELETED("Удалено"),
-    CLOSED("Закрыто"),
     OVERDUE("Просрочено"),
     THREE_DAYS_LEFT("Осталось 3 дня"),
     TWO_DAYS_LEFT("Осталось 2 дня"),
