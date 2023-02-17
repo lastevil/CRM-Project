@@ -14,8 +14,11 @@ public interface TicketUserMapper {
 
     @Mapping(source = "ticketUserDto.id", target = "id")
     @Mapping(source = "department", target = "department")
-    TicketUser toEntity(UserDto ticketUserDto, TicketDepartment department);
+    TicketUser toEntity(TicketUserDto ticketUserDto, TicketDepartment department);
 
     TicketUserDto toDto(TicketUser ticketUser);
-
+    
+    @Mapping(target = "id", source = "userDto.id")
+    @Mapping(target = "department", source = "department")
+    TicketUser tofromGlobalDto(UserDto userDto, TicketDepartment department);
 }

@@ -13,11 +13,11 @@ import java.util.Optional;
 public interface TicketDepartmentMapper {
     TicketDepartmentMapper INSTANCE = Mappers.getMapper(TicketDepartmentMapper.class);
 
-    @Mapping(target = "departmentId", source = "departmentId")
+    @Mapping(target = "id", source = "departmentId")
     @Mapping(target = "title", source = "departmentTitle")
-    TicketDepartment toEntity(UserDto ticketDepartment);
+    TicketDepartment toEntity(UserDto userDto);
 
-    TicketDepartmentDto toDto(Optional<TicketDepartment> ticketDepartment);
+    TicketDepartmentDto toDto(TicketDepartment ticketDepartment);
 
 
 }

@@ -1,22 +1,21 @@
 package org.unicrm.ticket.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.deser.std.UUIDDeserializer;
 import com.fasterxml.jackson.databind.ser.std.UUIDSerializer;
-import lombok.*;
-import org.unicrm.ticket.entity.TicketDepartment;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.unicrm.ticket.entity.TicketStatus;
-import org.unicrm.ticket.entity.TicketUser;
 
 
-import java.sql.Date;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Data
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -24,33 +23,42 @@ public class TicketDto {
 
     @JsonSerialize(using = UUIDSerializer.class)
     @JsonDeserialize(using = UUIDDeserializer.class)
+    @Schema(description = "id заявки", example = "cef5b424-a49c-11ed-a8fc-0242ac120002")
     private UUID id;
 
+    @Schema(description = "Заголовок заявки", example = "Провести рефакторинг кода")
     private String title;
 
+    @Schema(description = "Статус заявки", example = "Запланировано")
     private TicketStatus status;
 
+    @Schema(description = "Описание заявки", example = "Требуется провести полный рефакторинг существующего кода")
     private String description;
 
+    @Schema(description = "id исполнителя")
     @JsonSerialize(contentUsing = UUIDSerializer.class)
     @JsonDeserialize(contentUsing = UUIDDeserializer.class)
-    private TicketUser assigneeId;
+    private TicketUserDto assignee;
 
+    @Schema(description = "id заявителя")
     @JsonSerialize(contentUsing = UUIDSerializer.class)
     @JsonDeserialize(contentUsing = UUIDDeserializer.class)
-    private TicketUser reporterId;
+    private TicketUserDto reporter;
 
-    private TicketDepartment departmentId;
+    @Schema(description = "id отдела")
+    private TicketDepartmentDto department;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime createdAt;
+    @Schema(description = "Дата создания заявки", example = "2023-12-10 14:43")
+    private OffsetDateTime createdAt;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime updatedAt;
+    @Schema(description = "Дата обновления заявки", example = "2023-12-10 14:50")
+    private OffsetDateTime updatedAt;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date dueDate;
+    @Schema(description = "Дата, к которой нужно выполнить заявку", example = "2023-12-11")
+    private OffsetDateTime dueDate;
 
+    //TODO: заменить
+    @Schema(description = "Дата, к которой нужно выполнить заявку", example = "2023-12-11")
     private Boolean isOverdue;
 }
 

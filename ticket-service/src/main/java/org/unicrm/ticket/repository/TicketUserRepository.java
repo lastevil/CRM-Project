@@ -8,4 +8,7 @@ import org.unicrm.ticket.entity.TicketUser;
 import java.util.UUID;
 @Repository
 public interface TicketUserRepository extends JpaRepository<TicketUser, UUID> {
+    
+    
+    TicketUser findByUsername(String username);
 }

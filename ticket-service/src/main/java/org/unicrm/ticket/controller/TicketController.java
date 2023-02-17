@@ -4,8 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.unicrm.lib.dto.UserDto;
 import org.unicrm.ticket.dto.TicketDto;
+import org.unicrm.ticket.dto.TicketRequestDto;
 import org.unicrm.ticket.services.TicketService;
 
 import java.util.List;
@@ -32,16 +32,17 @@ public class TicketController {
     }
 
     @Operation(summary = "метод создания заявки")
-    @PostMapping()
-    public TicketDto createTicket(@RequestBody TicketDto ticketDto) {
-        ticketService.createTicket(ticketDto);
-        return ticketDto;
+    @PostMapping("/newTicket/{departmentId}/{assigneeId}")
+    public void createTicket(@RequestBody TicketRequestDto ticketDto, @PathVariable Long departmentId,
+                             @PathVariable(required = false) UUID assigneeId, @RequestHeader String username) {
+        ticketService.createTicket(ticketDto, departmentId, assigneeId, username);
     }
 
     @Operation(summary = "метод для обновления заявки")
-    @PutMapping
-    public void updateTicket(@RequestBody TicketDto ticketDto) {
-        ticketService.update(ticketDto);
+    @PutMapping("update/{id}/{departmentId}/{assigneeId}")
+    public void updateTicket(@RequestBody TicketRequestDto ticketDto, @PathVariable UUID id, @PathVariable(required = false) Long departmentId,
+                             @PathVariable(required = false) UUID assigneeId) {
+        ticketService.update(ticketDto,id,departmentId,assigneeId);
     }
 
     @Operation(summary = "метод удаления конкретной заявки по ее id")
@@ -50,10 +51,11 @@ public class TicketController {
         ticketService.deleteById(id);
     }
 
-    @Operation(summary = "метод получения списка всех заявок по исполнителю")
-    @PostMapping("/filter/by-assignee")
-    public List<TicketDto> getAllByAssignee(@RequestBody UserDto assignee) {
-        return ticketService.findTicketsByAssignee(assignee);
-    }
+//    @Operation(summary = "метод получения списка всех заявок по исполнителю")
+//    @PostMapping("/filter/by-assignee")
+//    public List<TicketDto> getAllByAssignee(@RequestBody UserDto assignee) {
+//        return ticketService.findTicketsByAssignee(assignee);
+//    }
+
 
 }

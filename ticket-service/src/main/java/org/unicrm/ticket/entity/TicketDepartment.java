@@ -18,7 +18,7 @@ public class TicketDepartment {
     @Id
     @Column(name = "department_id")
     @JsonSerialize(using = UUIDSerializer.class)
-    private Long departmentId;
+    private Long id;
 
     @Column(name = "department_name")
     private String title;
