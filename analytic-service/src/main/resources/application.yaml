@@ -8,7 +8,7 @@ spring:
   kafka:
     bootstrap-servers: "localhost:9092"
     consumer:
-      group-id: 1
+      group-id: 2
   datasource:
     url: jdbc:postgresql://localhost:5432/unicrmdb
     username: postgres

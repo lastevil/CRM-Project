@@ -5,6 +5,10 @@ server:
 spring:
   application:
     name: chat-service
+  kafka:
+    bootstrap-servers: "localhost:9092"
+    consumer:
+      group-id: 3
   datasource:
     url: jdbc:postgresql://localhost:5432/unicrmdb
     username: postgres

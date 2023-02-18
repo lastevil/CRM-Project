@@ -17,13 +17,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     List<User> findByUuidNot(UUID uuid);
 
     Optional<User> findByUserName(String userName);
-
-    @Modifying
-    @Query(value = "insert into users_groups (user_id, group_id) " +
-            "values(:user_id, :group_id)",
-            nativeQuery = true)
-    void insert(@Param("user_id") UUID user_id, @Param("group_id") Long group_id);
-
+    @Query(value = "select u from User u where u.group.id=:groupId")
     List<User> findByGroupsId(Long groupId);
 
     Optional<User> findById(UUID id);

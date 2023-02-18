@@ -13,8 +13,7 @@ import java.util.UUID;
 @Repository
 public interface GroupRepository extends JpaRepository<Group, Long> {
 
-    @Query(value = "select g.id, g.title from users u, groups g, users_groups ug " +
-            "where u.uuid = ug.user_id and g.id = ug.group_id and u.uuid = :id",
+    @Query(value = "select groups.id, groups.title from groups right join users on users.group_id=groups.id where groups.id=:id",
             nativeQuery = true)
     List<Group> findByUsers_Uuid(@Param("id") UUID uuid);
 

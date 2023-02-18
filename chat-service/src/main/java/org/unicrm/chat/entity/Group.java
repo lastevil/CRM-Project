@@ -1,11 +1,12 @@
 package org.unicrm.chat.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.UUIDSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Collection;
 
 @Entity
 @Table(name = "groups")
@@ -14,16 +15,10 @@ import java.util.Collection;
 @NoArgsConstructor
 public class Group {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonSerialize(using = UUIDSerializer.class)
     @Column(name = "id")
     private Long id;
 
     @Column(name = "title")
     private String title;
-
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    @JoinTable(name = "users_groups",
-            joinColumns = @JoinColumn(name = "group_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Collection<User> users;
 }
