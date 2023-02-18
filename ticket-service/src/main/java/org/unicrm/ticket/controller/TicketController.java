@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.unicrm.ticket.dto.TicketDto;
 import org.unicrm.ticket.dto.TicketRequestDto;
+import org.unicrm.ticket.dto.TicketResponseDto;
 import org.unicrm.ticket.services.TicketService;
 
 import java.util.List;
@@ -51,11 +52,29 @@ public class TicketController {
         ticketService.deleteById(id);
     }
 
-//    @Operation(summary = "метод получения списка всех заявок по исполнителю")
-//    @PostMapping("/filter/by-assignee")
-//    public List<TicketDto> getAllByAssignee(@RequestBody UserDto assignee) {
-//        return ticketService.findTicketsByAssignee(assignee);
-//    }
+    @Operation(summary = "метод получения списка всех заявок по исполнителю")
+    @GetMapping("/tickets/{assigneeId}")
+    public List<TicketResponseDto> getAllByAssignee(@PathVariable UUID assigneeId) {
+        return ticketService.findTicketsByAssignee(assigneeId);
+    }
+
+    @Operation(summary = "метод для получения списка заявок по исполнителю и статусу")
+    @GetMapping("/tickets/{assigneeId}/{status}")
+    public List<TicketResponseDto> getAllByAssigneeAndStatus(@PathVariable UUID assigneeId, @PathVariable String status) {
+        return ticketService.findTicketsByAssigneeAndStatus(assigneeId, status);
+    }
+
+    @Operation(summary = "метод для получения списка заявок по частичному совпадение заголовка")
+    @GetMapping("/tickets/search/{title}")
+    public List<TicketResponseDto> getTicketsByTitle(@PathVariable String title) {
+        return ticketService.findTicketByTitle(title);
+    }
+
+    @Operation(summary = "метод для получения списка заявок по отделу")
+    @GetMapping("/tickets/findByDepartment/{departmentId}")
+    public List<TicketResponseDto> getTicketsByDepartment(@PathVariable Long departmentId) {
+        return ticketService.findTicketsByDepartment(departmentId);
+    }
 
 
 }

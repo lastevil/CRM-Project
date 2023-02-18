@@ -3,7 +3,6 @@ package org.unicrm.ticket.dto;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.deser.std.UUIDDeserializer;
-import com.fasterxml.jackson.databind.ser.std.NumberSerializers;
 import com.fasterxml.jackson.databind.ser.std.UUIDSerializer;
 
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -1,11 +1,7 @@
 package org.unicrm.ticket.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
-import org.unicrm.ticket.dto.TicketDepartmentDto;
-import org.unicrm.ticket.dto.TicketUserDto;
-import org.unicrm.ticket.entity.TicketDepartment;
 import org.unicrm.ticket.entity.TicketUser;
 import org.unicrm.ticket.exception.ResourceNotFoundException;
 import org.unicrm.ticket.mapper.TicketUserMapper;
@@ -26,6 +22,9 @@ public class TicketUserService {
     
     public TicketUser findUserByUsername(String username) {
         return ticketUserRepository.findByUsername(username);
+    }
 
+    public Long findDepartmentId(UUID id) {
+        return ticketUserRepository.findUserDepartment(id);
     }
 }
