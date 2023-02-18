@@ -26,11 +26,7 @@
       </nav>
     <div class="page-crm">
        <div class="header">
-        <h2 class="title" style="text-align: center;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-left" viewBox="0 0 16 16">
-                <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
-            </svg>
-            Чат</h2>
+        <h2 class="title" style="text-align: center;">Чат</h2>
       </div>
        <div class="chat-content">
           <div id="chat-page1">
@@ -39,7 +35,15 @@
                     <input type="text" id="btn-user" value="" disabled class="form-control" align="center" />
                 </div>
                 <div  class="chat-box12">
-                   <input type="text" id="nameRecipiend" value="" disabled class="form-control" align="center" />
+                    <div style="width: 85%;">
+                        <input type="text" id="nameRecipiend" value="" disabled class="form-control" align="center" />
+                    </div>
+                   <div>
+                    <button id="btnCreate" class="btn btn-success" ng-click="createGroup()" type="button" disabled
+                             data-bs-toggle="modal" data-bs-target="#createGroup">
+                        Создать группу
+                    </button>
+                   </div>
                 </div>
              </div>
           </div>
@@ -114,4 +118,39 @@
        </div>
     </div>
   </div>
+    <div class="modal fade" id="createGroup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="title" style="text-align: center;">Новая группа</h5>
+                </div>
+                <div class="modal-body">
+                    <form novalidate ng-submit="createNewGroup()">
+                        <div class="input-group mb-3">
+                            <label for="newGroup" class="col-form-label">Название:</label>
+                            <input type="text" class="form-control" id="newGroup" ng-model="new_Group.title">
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-primary">Создать группу</button>
+                        </div>
+                    </form>
+                    <div id="selNewUsers" class="input-group mb-3">
+                        <label for="groups" class="col-form-label">Выберите группу:</label>
+                        <select id="groups" class="form-control"  ng-model="groups" ></select>
+                    </div>
+                    <form  novalidate ng-submit="addNewUsers()" >
+                        <div class="input-group mb-3">
+                            <label for="groupUsers" class="col-form-label">Добавить членов группы:</label>
+                            <select id="groupUsers" class="form-control"  ng-model="new_groupUsers.id" disabled multiple></select>
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>

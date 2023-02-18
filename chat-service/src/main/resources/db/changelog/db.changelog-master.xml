@@ -10,6 +10,7 @@
 <!--<include file="changeset/ddl/create_table.sql" relativeToChangelogFile="true"/>-->
 <!--<include file="changeset/ddl/create_table1.sql" relativeToChangelogFile="true"/>-->
 <!--<include file="changeset/ddl/create_table2.sql" relativeToChangelogFile="true"/>-->
-<!--<include file="changeset/dml/insert_data.sql" relativeToChangelogFile="true"/>-->
+    <!-- <include file="changeset/ddl/create_table3.sql" relativeToChangelogFile="true"/>-->
+<include file="changeset/dml/insert_data.sql" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

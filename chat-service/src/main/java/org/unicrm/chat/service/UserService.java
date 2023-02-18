@@ -4,10 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.unicrm.chat.dto.UserDto;
 import org.unicrm.chat.entity.Group;
 import org.unicrm.chat.entity.User;
 import org.unicrm.chat.mapper.UserMapper;
-import org.unicrm.chat.mapper.UserRegistration;
+import org.unicrm.chat.model.UserRegistration;
 import org.unicrm.chat.model.ChatMessage;
 import org.unicrm.chat.repository.UserRepository;
 
@@ -21,6 +22,7 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
     private final GroupService groupService;
+    private final UserMapper userMapper;
 
     public String findNickNameById(UUID id){
         Optional<User> user = userRepository.findById(id);
@@ -31,6 +33,20 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public List<UserDto> findAllUsers(){
+        List<User> users = userRepository.findAll();
+        List<UserDto> list = new ArrayList<>();
+        for (User u : users) {
+            UserDto dto = UserDto.builder()
+                    .uuid(u.getUuid())
+                    .userName(u.getUserName())
+                    .nickName(u.getNickName())
+                    .build();
+            list.add(dto);
+        }
+        return list;
+    }
+
     public Optional<User> findByUsername(String sender){
         Optional<User> user = userRepository.findByUserName(sender);
         if (user.isEmpty()) {
@@ -39,7 +55,7 @@ public class UserService {
         return user;
     }
     @Transactional
-    public List<User> findAllByNotSenderId(UUID senderId){
+    public List<User> findAllExcludeSender(UUID senderId){
         return userRepository.findByUuidNot(senderId);
     }
 

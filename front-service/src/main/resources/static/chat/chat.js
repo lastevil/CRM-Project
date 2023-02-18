@@ -8,6 +8,9 @@ var ulgroup = document.querySelector('#group');
 var ulusers = document.querySelector('#users');
 var btnSend = document.querySelector('#send');
 var nameRecipiend = document.querySelector('#nameRecipiend');
+var nameGroup = document.querySelector('#newGroup');
+var groupUsers = document.querySelector('#groupUsers');
+var groups = document.querySelector('#groups');
 var file = document.querySelector('#logo');
 var btnUser = document.getElementById("btn-user");
 var currentUserId = null;
@@ -29,9 +32,7 @@ $scope.userDetails = function(){
     $http.get(contextPathAuth+'users/'+ $localStorage.username)
        .then(function successCallback(response) {
           nickName = response.data.lastName + ' ' + response.data.firstName;
-          userReg = {userName: $localStorage.username,
-                     nickName: nickName};
-
+          userReg = {userName: $localStorage.username, nickName: nickName};
           $scope.regUser(userReg);
        }, function errorCallback(response) {
           alert(response.data);
@@ -78,8 +79,12 @@ $scope.send = function(event) { //послать сообщение
             message: messageInput.value,
             groupId: currentGroupId,
             type: 'CHAT'
-          };
-          stompClient.send(context+"chat", {}, JSON.stringify(message));
+        };
+        if(currentGroupId != null){
+            stompClient.send(context+"chat/group", {}, JSON.stringify(message));
+        }else {
+            stompClient.send(context+"chat/room", {}, JSON.stringify(message));
+        }
         messageInput.value = '';
     }
 }
@@ -145,6 +150,7 @@ $scope.onMessageSession = function(payload) {
    if(sessionId != null){
       stompClient.subscribe('/queue/'+sessionId, $scope.onMessageReceived);
    }
+   $scope.loadSelectGroup();
    $scope.loadGroup();
    $scope.loadUsers();
    document.querySelector("#btn-load-users").disabled = false;
@@ -173,14 +179,12 @@ $scope.onMessageList = function(payload) {
    //получить список групп, в которые входит юзер
    //получить список всех пользователей
    var message = JSON.parse(payload.body);
-
    if('groups' in message) {
          $scope.ligroup = message.groups;
    }
    if('users' in message) {
          $scope.liusers = message.users;
    }
-
 }
 
 $scope.onMessageActiveusers = function(payload) { //получить пользователей online
@@ -262,7 +266,22 @@ $scope.onMessageReceived = function(payload) { //получить сообщен
              }
           }
        }
+    }else if (message.type == 'NEWGROUP') {
+       if(stompClient){
+            stompClient.send(context+"groups", {}, JSON.stringify({type: 'GROUPS'}));
+       }
+    }else if (message.type == 'GROUPS') {
+        groups.options.length=1;
+        for (let i = 0; i < message.groups.length; i++) {
+           groups.options[i+1] = new Option(message.groups[i].title, message.groups[i].id);
+        }
+        groups.selectedIndex = -1;
+        groupUsers.disabled = false;
     }
+}
+
+$scope.loadSelectGroup = function(){
+         stompClient.send(context+"groups", {}, JSON.stringify({type: 'GROUPS'}));
 }
 
 $scope.btnGroup = function(group){ // при выборе группы загрузить еe историю
@@ -310,10 +329,7 @@ $scope.btnLoadUsers = function(event){ //загрузить пользовате
      stompClient.send(context+"activeusers", {}, JSON.stringify({}));//загрузить пользователей online
      document.querySelector("#btn-load-users").style.display = 'none';
      document.querySelector("#btn-load-users").style.visibility = 'hidden';
-}
-
-$scope.sendFile = function(){
-   $("#logo").trigger('click');
+     document.querySelector("#btnCreate").disabled = false;
 }
 
 $scope.disconnect = function() {
@@ -335,7 +351,41 @@ $scope.onError = function(error) {
     connectingElement.style.color = 'red';
 }
 
+$scope.createNewGroup = function(){
+    if(stompClient ) {
+       stompClient.send(context+"chat/newgroup", {},
+          JSON.stringify({type: 'NEWGROUP', title: newGroup.value}));
+    }
+}
+
+$scope.addNewUsers = function(){
+   var optionUsers = groupUsers.selectedOptions;
+   for(let i=0; i<optionUsers.length; i++){
+      if(stompClient ) {
+        stompClient.send(context+"newusers", {},
+           JSON.stringify({type: 'NEWGROUP', id: groups.value, users: optionUsers[i].value}));
+      }
+   }
+   stompClient.send(context+"activeusers", {}, JSON.stringify({}));//загрузить пользователей online
+   alert("Группа укомплектована.");
+}
+
+$scope.loadUsersNewGroup = function(){
+   $http.get(contextPathChat + 'users/')
+          .then(function successCallback(response) {
+            groupUsers.options.length=1;
+            for (let i = 0; i < response.data.length; i++) {
+               groupUsers.options[i+1] = new Option(response.data[i].nickName,
+               response.data[i].uuid);
+            }
+            groupUsers.selectedIndex = -1;
+          }, function errorCallback(response) {
+             alert(response.data);
+          });
+}
+
 messageForm.addEventListener('submit', send, true)
 $scope.userDetails();
+$scope.loadUsersNewGroup();
 
 });

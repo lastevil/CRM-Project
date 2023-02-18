@@ -2,8 +2,12 @@ package org.unicrm.chat.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.unicrm.chat.mapper.UserRegistration;
+import org.unicrm.chat.dto.UserDto;
+import org.unicrm.chat.model.UserRegistration;
 import org.unicrm.chat.service.UserService;
+
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,5 +20,9 @@ public class UserController {
         userService.save(user);
     }
 
+    @GetMapping("/users")
+    public List<UserDto> findAll() {
+        return userService.findAllUsers();
+    }
 
 }
