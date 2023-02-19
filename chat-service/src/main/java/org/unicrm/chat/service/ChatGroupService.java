@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.unicrm.chat.entity.ChatGroup;
 import org.unicrm.chat.dto.ChatGroupDto;
+import org.unicrm.chat.entity.User;
 import org.unicrm.chat.mapper.ChatGroupMapper;
 import org.unicrm.chat.model.ChatMessage;
 import org.unicrm.chat.model.UserHistory;
@@ -71,5 +72,25 @@ public class ChatGroupService {
         List<ChatGroup> chatGroups = chatGroupRepository.findByGroupIdAndRecipientIdAndStatus(
                 groupId, recipientId, "RECEIVED");
         return chatGroups.size();
+    }
+    @Transactional
+    public ChatMessage create(ChatMessage chatMessage, String date, User user) {
+        save(chatMessage, user.getUuid(), date);
+        Optional<ChatGroup> chatGroup =
+                findByChatdateAndRecipientId(date, user.getUuid());
+        if (!chatGroup.isEmpty()) {
+            ChatMessage chat = ChatMessage.builder()
+                    .chatDate(chatGroup.get().getChatdate())
+                    .groupId(chatGroup.get().getGroupId())
+                    .message(chatGroup.get().getMessage())
+                    .recipientId(chatGroup.get().getRecipientId())
+                    .recipientName(user.getNickName())
+                    .senderId(chatGroup.get().getSenderId())
+                    .senderName(chatMessage.getSenderName())
+                    .type(chatMessage.getType())
+                    .build();
+            return  chat;
+        }
+        return null;
     }
 }

@@ -1,15 +1,18 @@
-package org.unicrm.chat.mapper;
+package org.unicrm.chat.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserRegistration {
+public class UserDto {
+    private UUID uuid;
     private String userName;
     private String nickName;
 }

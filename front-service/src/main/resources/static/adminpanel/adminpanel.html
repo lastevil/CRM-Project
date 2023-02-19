@@ -47,10 +47,10 @@
                            <label  class="input-group-text">Выберите отдел</label>
                            <select id="selectDepartment" class="form-control" placeholder="Отдел" ng-model="selectDepartmentTitle"></select>
                        </div>
-                   <form class="form-edit-department" novalidate ng-submit="editDepartment()">
+                   <form class="form-edit-department" novalidate ng-submit="editDepartmentTitle()">
                        <div class="input-group mb-3">
                            <label  class="input-group-text">Название</label>
-                           <input type="text" class="form-control" placeholder="Название отдела" ng-model="new_department.title">
+                           <input id="update_department" type="text" class="form-control" placeholder="Название отдела" ng-model="put_department.title">
                        </div>
                        <button type="submit" class="btn btn-primary">Редактировать</button>
                    </form>
@@ -70,10 +70,10 @@
                        </form>
                    </div>
                    <div class="status">
-                       <form>
+                       <form class="form-edit-department" novalidate ng-submit="editDepartmentUser()">
                            <div class="input-group mb-3">
                                <label  class="input-group-text">Выберите отдел</label>
-                               <select id="selDepartment" class="form-control" placeholder="Отдел" ng-model="selectDepartmentTitle"></select>
+                               <select id="selDepartment" class="form-control" placeholder="Отдел" ng-model="selDepartmentTitle"></select>
                            </div>
                            <div>
                                <button type="submit" class="btn btn-primary">Сменить отдел</button>

@@ -19,10 +19,6 @@
                 templateUrl: 'chat/chat.html',
                 controller: 'chatController'
             })
-            .when('/createtask', {
-                templateUrl: 'createtask/createtask.html',
-                controller: 'createtaskController'
-            })
             .when('/mytasks', {
                 templateUrl: 'mytasks/mytasks.html',
                 controller: 'mytasksController'

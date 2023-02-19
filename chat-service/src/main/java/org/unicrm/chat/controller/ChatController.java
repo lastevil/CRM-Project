@@ -39,67 +39,40 @@ public class ChatController {
     private final GroupService groupService;
     private final WebSocketEventListener webSocketEventListener;
 
-    @Operation(summary = "метод получения сообщения, сохранения его в базе и передачи отправителю и получателям")
-    @MessageMapping("/chat")
-    public void sendNotification(MessageHeaders messageHeaders, @Payload ChatMessage chatMessage,
-                                 @Header(name = "simpSessionId") String sessionId) {
-        if (chatMessage.getRecipientId() != null) {
-            UUID chatRoomId = chatRoomService.save(chatMessage);
-            Optional<ChatRoom> chatRoom = chatRoomService.findById(chatRoomId);
-            if (!chatRoom.isEmpty()) {
-                ChatMessage chat = ChatMessage.builder()
-                        .chatDate(chatRoom.get().getChatdate())
-                        .groupId(null)
-                        .message(chatRoom.get().getMessage())
-                        .recipientId(chatRoom.get().getRecipientId())
-                        .recipientName(chatMessage.getRecipientName())
-                        .senderId(chatRoom.get().getSenderId())
-                        .senderName(chatMessage.getSenderName())
-                        .type(chatMessage.getType())
-                        .build();
-                messagingTemplate.convertAndSend(
-                        "/queue/" + sessionId,
-                        chat
-                );
-                if (webSocketEventListener.getSessionId(chatMessage.getRecipientId()) != null) {
-                    messagingTemplate.convertAndSend(
-                            "/queue/" + webSocketEventListener.getSessionId(chatMessage.getRecipientId()),
-                            chat
-                    );
-                }
-            }
-        }
-        if (chatMessage.getGroupId() != null) {
-            List<User> users = userService.findByGroupsId(chatMessage);
-            if (users.size() != 0) {
-                String date = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date());
-                for (User u : users) {
-                    chatGroupService.save(chatMessage, u.getUuid(), date);
-                    Optional<ChatGroup> chatGroup =
-                            chatGroupService.findByChatdateAndRecipientId(date, u.getUuid());
-                    if (!chatGroup.isEmpty()) {
-                        ChatMessage chat = ChatMessage.builder()
-                                .chatDate(chatGroup.get().getChatdate())
-                                .groupId(chatGroup.get().getGroupId())
-                                .message(chatGroup.get().getMessage())
-                                .recipientId(chatGroup.get().getRecipientId())
-                                .recipientName(u.getNickName())
-                                .senderId(chatGroup.get().getSenderId())
-                                .senderName(chatMessage.getSenderName())
-                                .type(chatMessage.getType())
-                                .build();
-                        if (u.getUuid() == chatMessage.getSenderId()) {
+ @Operation(summary = "метод получения сообщения, сохранения его в базе и передача отправителю и получателю")
+ @MessageMapping("/chat/room")
+ public void sendRoom(MessageHeaders messageHeaders, @Payload ChatMessage chatMessage,
+                      @Header(name = "simpSessionId") String sessionId) {
+     ChatMessage chat = chatRoomService.create(chatMessage);
+     if (chat != null) {
+         messagingTemplate.convertAndSend("/queue/" + sessionId, chat);
+         if (webSocketEventListener.getSessionId(chatMessage.getRecipientId()) != null) {
+             messagingTemplate.convertAndSend(
+                     "/queue/" + webSocketEventListener.getSessionId(chatMessage.getRecipientId()),
+                     chat
+             );
+         }
+     }
+ }
+
+    @Operation(summary = "метод получения сообщения, сохранения его в базе и передача отправителю и получателям")
+    @MessageMapping("/chat/group")
+    public void sendGroup(MessageHeaders messageHeaders, @Payload ChatMessage chatMessage,
+                          @Header(name = "simpSessionId") String sessionId) {
+        List<User> users = userService.findByGroupsId(chatMessage);
+        if (users.size() != 0) {
+            String date = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date());
+            for (User u : users) {
+                ChatMessage chat = chatGroupService.create(chatMessage, date, u);
+                if (chat != null) {
+                    if (u.getUuid() == chatMessage.getSenderId()) {
+                        messagingTemplate.convertAndSend("/queue/" + sessionId, chat);
+                    } else {
+                        if (webSocketEventListener.getSessionId(u.getUuid()) != null) {
                             messagingTemplate.convertAndSend(
-                                    "/queue/" + sessionId,
+                                    "/queue/" + webSocketEventListener.getSessionId(u.getUuid()),
                                     chat
                             );
-                        }else {
-                            if (webSocketEventListener.getSessionId(u.getUuid()) != null) {
-                                messagingTemplate.convertAndSend(
-                                        "/queue/" + webSocketEventListener.getSessionId(u.getUuid()),
-                                        chat
-                                );
-                            }
                         }
                     }
                 }
@@ -150,7 +123,7 @@ public class ChatController {
     @MessageMapping("/chatusers")
     @SendToUser("/topic/list")
     public RequestListUsers findAll(@Payload RequestListUsers users) {
-        List<User> usersList = userService.findAllByNotSenderId(users.getSenderId());
+        List<User> usersList = userService.findAllExcludeSender(users.getSenderId());
         List<ChatUsers> chatUsers = new ArrayList<>();
         for (int i = 0; i < usersList.size(); i++) {
             int count = chatRoomService.findBySenderIdAndRecipientIdAndStatus(
