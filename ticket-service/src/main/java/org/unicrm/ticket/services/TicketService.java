@@ -9,12 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.unicrm.lib.dto.UserDto;
 import org.unicrm.ticket.dto.TicketDto;
 import org.unicrm.ticket.dto.TicketRequestDto;
-import org.unicrm.ticket.dto.TicketUserDto;
+import org.unicrm.ticket.dto.TicketResponseDto;
 import org.unicrm.ticket.entity.Ticket;
 import org.unicrm.ticket.entity.TicketDepartment;
 import org.unicrm.ticket.entity.TicketStatus;
 import org.unicrm.ticket.entity.TicketUser;
 import org.unicrm.ticket.exception.ResourceNotFoundException;
+import org.unicrm.ticket.mapper.TicketDepartmentMapper;
+import org.unicrm.ticket.mapper.TicketUserMapper;
 import org.unicrm.ticket.services.utils.TicketFacade;
 
 import java.time.LocalDate;
@@ -35,6 +37,8 @@ public class TicketService {
     private final TicketFacade facade;
     private final TicketDepartmentService departmentService;
     private final TicketUserService userService;
+    private final TicketUserMapper ticketUserMapper;
+    private final TicketDepartmentMapper ticketDepartmentMapper;
 
     @KafkaListener(topics = "userTopic", containerFactory = "userKafkaListenerContainerFactory")
     @Transactional
@@ -91,21 +95,28 @@ public class TicketService {
         facade.getTicketRepository().deleteById(id);
     }
 
-//    public List<TicketDto> findTicketsByAssignee(UserDto userDto) {
-//        return facade.getTicketRepository().findAllByAssignee(facade.getUserMapper().toEntity(userDto, departmentService.findDepartmentById(userDto)))
-//                .stream().map(facade.getTicketMapper()::toDto)
-//                .collect(Collectors.toList());
-//    }
+    public List<TicketResponseDto> findTicketsByAssignee(UUID assignee) {
+        return facade.getTicketRepository()
+                .findAllByAssignee(assignee)
+                        .stream().map(facade.getTicketMapper()::toResponseDtoFromEntity)
+                        .collect(Collectors.toList());
+    }
 
-    public List<TicketDto> findTicketsByDepartment(TicketDepartment ticketDepartment) {
-        return facade.getTicketRepository().findAllByDepartment(ticketDepartment.getId())
-                .stream().map(facade.getTicketMapper()::toDto)
+    public List<TicketResponseDto> findTicketsByDepartment(Long ticketDepartment) {
+        return facade.getTicketRepository().findAllByDepartment(ticketDepartment)
+                .stream().map(facade.getTicketMapper()::toResponseDtoFromEntity)
                 .collect(Collectors.toList());
     }
 
-    public List<TicketDto> findTicketsByAssigneeAndStatus(TicketUserDto assignee, String status) {
-        return facade.getTicketRepository().findAllByAssigneeIdAndStatus(assignee.getId(), status)
-                .stream().map(facade.getTicketMapper()::toDto)
+    public List<TicketResponseDto> findTicketsByAssigneeAndStatus(UUID assignee, String status) {
+        return facade.getTicketRepository().findAllByAssigneeIdAndStatus(assignee, TicketStatus.valueOf(status))
+                .stream().map(facade.getTicketMapper()::toResponseDtoFromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public List<TicketResponseDto> findTicketByTitle(String title) {
+        return facade.getTicketRepository().findTicketsByTitle(title)
+                .stream().map(facade.getTicketMapper()::toResponseDtoFromEntity)
                 .collect(Collectors.toList());
     }
 
@@ -142,6 +153,13 @@ public class TicketService {
         if (ticketDto.getDueDate() != null) {
             ticket.setDueDate(LocalDateTime.of(ticketDto.getDueDate(), LocalTime.of(21, 0, 0)));
         }
+        if(ticketDto.getStatus() != null) {
+            ticket.setStatus(ticketDto.getStatus());
+        }
+        if(ticketDto.getStatus().equals(TicketStatus.DONE) || ticketDto.getStatus().equals(TicketStatus.ACCEPTED)) {
+            if(!ticket.getOverdue().equals(TicketStatus.OVERDUE))
+                ticket.setOverdue(null);
+        }
         kafkaTemplate.send("ticketTopic", UUID.randomUUID(), facade.getTicketMapper().toDto(ticket));
     }
 
@@ -149,8 +167,7 @@ public class TicketService {
     @Transactional
     public void updateDueStatus() {
         List<Ticket> ticketList = facade.getTicketRepository()
-                .findAllWithStatuses(TicketStatus.BACKLOG, TicketStatus.IN_PROGRESS, LocalDateTime.now().plusDays(1), LocalDateTime.now().minusDays(4) );
-        System.out.println(ticketList.size()+"-------->"+LocalDateTime.now());
+                .findAllWithStatuses(TicketStatus.BACKLOG, TicketStatus.IN_PROGRESS, LocalDateTime.now().plusDays(1), LocalDateTime.now().minusDays(4));
         ticketList.stream().forEach(t -> t.setOverdue(null));
         ticketList.stream().filter(t -> t.getDueDate().minusDays(4).toLocalDate().isBefore(LocalDate.now()))
                 .forEach(t -> {

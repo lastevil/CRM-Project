@@ -7,8 +7,6 @@ import org.unicrm.lib.dto.UserDto;
 import org.unicrm.ticket.dto.TicketDepartmentDto;
 import org.unicrm.ticket.entity.TicketDepartment;
 
-import java.util.Optional;
-
 @Mapper(componentModel = "spring")
 public interface TicketDepartmentMapper {
     TicketDepartmentMapper INSTANCE = Mappers.getMapper(TicketDepartmentMapper.class);
