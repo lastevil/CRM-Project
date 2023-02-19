@@ -42,7 +42,7 @@ public class Ticket {
     private LocalDateTime updatedAt;
     @Column(name = "due_date")
     private LocalDateTime dueDate;
-        @Column (name = "overdue")
+    @Column(name = "overdue_status")
     @Enumerated(EnumType.STRING)
     private Status overdue;
 
@@ -52,12 +52,13 @@ public class Ticket {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", status='" + status + '\'' +
+                ", overdueStatus='" + overdue +'\''+
                 ", assigneeId='" + assignee.getId() + '\'' +
                 ", departmentId='" + department.getId() + '\'' +
-                ", reporterId=':" + reporter.getId() + '\'' +
+                ", reporterId='" + reporter.getId() + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", dueDate=" + dueDate +
+                ", dueDate= " + dueDate +
                 '}';
     }
 

@@ -1,13 +1,8 @@
 package org.unicrm.analytic.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.unicrm.analytic.converter.UserMapper;
-import org.unicrm.analytic.dto.CurrentPage;
 import org.unicrm.analytic.dto.UserFrontDto;
 import org.unicrm.analytic.entities.Department;
 import org.unicrm.analytic.entities.User;
@@ -15,7 +10,9 @@ import org.unicrm.analytic.exceptions.ResourceNotFoundException;
 import org.unicrm.analytic.repositorys.UserRepository;
 import org.unicrm.lib.dto.UserDto;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,10 +26,9 @@ public class UserService {
     }
 
 
-    public Page<UserFrontDto> getUsersFromDepartment(Long departmentId, CurrentPage currentPage) {
-        Pageable pageable = PageRequest.of(currentPage.getPage() - 1, currentPage.getCountElements(), Sort.by("lastName"));
-        return userRepository.findAllByDepartmentId(pageable, departmentId)
-                .map(userMapper::fromEntityToFrontDto);
+    public List<UserFrontDto> getUsersFromDepartment(Long departmentId) {
+        return userRepository.findAllByDepartmentId(departmentId).stream()
+                .map(userMapper::fromEntityToFrontDto).collect(Collectors.toList());
     }
 
     public void userSaveOrUpdate(UserDto dto, Department department) {
@@ -51,5 +47,9 @@ public class UserService {
             }
         }
         userRepository.save(user);
+    }
+
+    public User findByUsername(String username) {
+            return userRepository.findByUsername(username);
     }
 }

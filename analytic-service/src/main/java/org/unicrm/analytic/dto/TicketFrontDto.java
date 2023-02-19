@@ -27,4 +27,6 @@ public class TicketFrontDto {
     private OffsetDateTime updatedAt;
     @Schema(description = "Срок исполнения")
     private OffsetDateTime dueDate;
+    @Schema(description = "Статус срока выполнения задачи")
+    private Status overdue;
 }
