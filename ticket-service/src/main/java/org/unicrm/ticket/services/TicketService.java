@@ -153,6 +153,9 @@ public class TicketService {
         if (ticketDto.getDueDate() != null) {
             ticket.setDueDate(LocalDateTime.of(ticketDto.getDueDate(), LocalTime.of(21, 0, 0)));
         }
+        if(ticketDto.getStatus() != null) {
+            ticket.setStatus(ticketDto.getStatus());
+        }
         if(ticketDto.getStatus().equals(TicketStatus.DONE) || ticketDto.getStatus().equals(TicketStatus.ACCEPTED)) {
             if(!ticket.getOverdue().equals(TicketStatus.OVERDUE))
                 ticket.setOverdue(null);
@@ -163,6 +166,7 @@ public class TicketService {
     @Scheduled(initialDelay = 1, fixedDelay = 120, timeUnit = TimeUnit.MINUTES)
     @Transactional
     public void updateDueStatus() {
+        System.out.println("---------------->Initiating update status");
         List<Ticket> ticketList = facade.getTicketRepository()
                 .findAllWithStatuses(TicketStatus.BACKLOG, TicketStatus.IN_PROGRESS, LocalDateTime.now().plusDays(1), LocalDateTime.now().minusDays(4));
         ticketList.stream().forEach(t -> t.setOverdue(null));

@@ -27,6 +27,7 @@ public interface TicketMapper {
     @Mapping(target = "reporter.lastName", source = "reporter.lastName")
     @Mapping(target = "department.id", source = "department.id")
     @Mapping(target = "department.title", source = "department.title")
+    @Mapping(target = "overdue", source = "overdue")
     TicketDto toDto(Ticket ticket);
 
     default OffsetDateTime map(String value) {

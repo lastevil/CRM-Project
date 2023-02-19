@@ -48,6 +48,6 @@ public class TicketResponseDto {
     @Schema(description = "Дата, к которой нужно выполнить заявку", example = "2023-12-11")
     private OffsetDateTime dueDate;
 
-    @Schema(description = "Статус заявки", example = "2023-12-11")
+    @Schema(description = "Категория просроченности заявки", example = "OVERDUE")
     private TicketStatus overdue;
 }

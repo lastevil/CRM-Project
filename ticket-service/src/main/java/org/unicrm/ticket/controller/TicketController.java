@@ -33,7 +33,7 @@ public class TicketController {
     }
 
     @Operation(summary = "метод создания заявки")
-    @PostMapping("/newTicket/{departmentId}/{assigneeId}")
+    @PostMapping("/create/{departmentId}/{assigneeId}")
     public void createTicket(@RequestBody TicketRequestDto ticketDto, @PathVariable Long departmentId,
                              @PathVariable(required = false) UUID assigneeId, @RequestHeader String username) {
         ticketService.createTicket(ticketDto, departmentId, assigneeId, username);
@@ -53,7 +53,7 @@ public class TicketController {
     }
 
     @Operation(summary = "метод получения списка всех заявок по исполнителю")
-    @GetMapping("/tickets/{assigneeId}")
+    @GetMapping("/tickets/assignee/{assigneeId}")
     public List<TicketResponseDto> getAllByAssignee(@PathVariable UUID assigneeId) {
         return ticketService.findTicketsByAssignee(assigneeId);
     }
@@ -71,7 +71,7 @@ public class TicketController {
     }
 
     @Operation(summary = "метод для получения списка заявок по отделу")
-    @GetMapping("/tickets/findByDepartment/{departmentId}")
+    @GetMapping("/tickets/department/{id}")
     public List<TicketResponseDto> getTicketsByDepartment(@PathVariable Long departmentId) {
         return ticketService.findTicketsByDepartment(departmentId);
     }

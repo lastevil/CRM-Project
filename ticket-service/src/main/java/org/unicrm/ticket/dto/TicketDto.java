@@ -57,8 +57,7 @@ public class TicketDto {
     @Schema(description = "Дата, к которой нужно выполнить заявку", example = "2023-12-11")
     private OffsetDateTime dueDate;
 
-    //TODO: заменить
     @Schema(description = "Дата, к которой нужно выполнить заявку", example = "2023-12-11")
-    private Boolean isOverdue;
+    private TicketStatus overdue;
 }
 

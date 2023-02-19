@@ -19,4 +19,5 @@ public class TicketDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime dueDate;
+    private String overdue;
 }
