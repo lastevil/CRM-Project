@@ -31,7 +31,7 @@ public enum TicketStatus {
 
     private static Map<String, TicketStatus> FORMAT_MAP = Stream
             .of(TicketStatus.values())
-            .collect(Collectors.toMap(s -> s.value, Function.identity()));
+            .collect(Collectors.toMap(Enum::name, Function.identity()));
 
     @JsonCreator
     public static TicketStatus fromString(String string) {

@@ -1,4 +1,4 @@
-package org.unicrm.chat.mapper;
+package org.unicrm.chat.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

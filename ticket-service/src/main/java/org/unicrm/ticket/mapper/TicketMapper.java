@@ -5,16 +5,15 @@ import org.mapstruct.Mapper;
 
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import org.unicrm.ticket.dto.TicketDepartmentDto;
-import org.unicrm.ticket.dto.TicketDto;
-import org.unicrm.ticket.dto.TicketRequestDto;
-import org.unicrm.ticket.dto.TicketUserDto;
+import org.unicrm.ticket.dto.*;
 import org.unicrm.ticket.entity.Ticket;
 import org.unicrm.ticket.entity.TicketDepartment;
+import org.unicrm.ticket.entity.TicketStatus;
 import org.unicrm.ticket.entity.TicketUser;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 @Mapper(componentModel = "spring")
 public interface TicketMapper {
@@ -28,6 +27,7 @@ public interface TicketMapper {
     @Mapping(target = "reporter.lastName", source = "reporter.lastName")
     @Mapping(target = "department.id", source = "department.id")
     @Mapping(target = "department.title", source = "department.title")
+    @Mapping(target = "overdue", source = "overdue")
     TicketDto toDto(Ticket ticket);
 
     default OffsetDateTime map(String value) {
@@ -49,4 +49,6 @@ public interface TicketMapper {
     @Mapping(target = "department.title", source = "department.title")
     @Mapping(target = "dueDate", expression = "java(ticketDto.getDueDate().atTime(21, 00, 00))")
     Ticket toEntityFromTicketRequest(TicketRequestDto ticketDto, TicketUser assignee, TicketUser reporter, TicketDepartment department);
+
+    TicketResponseDto toResponseDtoFromEntity(Ticket ticket);
 }

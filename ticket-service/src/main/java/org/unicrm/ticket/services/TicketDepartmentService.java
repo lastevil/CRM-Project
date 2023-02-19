@@ -7,9 +7,6 @@ import org.unicrm.ticket.exception.ResourceNotFoundException;
 import org.unicrm.ticket.mapper.TicketDepartmentMapper;
 import org.unicrm.ticket.repository.TicketDepartmentRepository;
 
-import java.nio.file.ReadOnlyFileSystemException;
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class TicketDepartmentService {

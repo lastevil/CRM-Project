@@ -84,5 +84,24 @@ public class ChatRoomService {
                 "RECEIVED");
         return chatRooms.size();
     }
+    @Transactional
+    public ChatMessage create(ChatMessage chatMessage) {
+        UUID chatRoomId = save(chatMessage);
+        Optional<ChatRoom> chatRoom = findById(chatRoomId);
+        if (!chatRoom.isEmpty()) {
+            ChatMessage chat = ChatMessage.builder()
+                    .chatDate(chatRoom.get().getChatdate())
+                    .groupId(null)
+                    .message(chatRoom.get().getMessage())
+                    .recipientId(chatRoom.get().getRecipientId())
+                    .recipientName(chatMessage.getRecipientName())
+                    .senderId(chatRoom.get().getSenderId())
+                    .senderName(chatMessage.getSenderName())
+                    .type(chatMessage.getType())
+                    .build();
+            return chat;
+        }
+        return null;
+    }
 
 }

@@ -47,11 +47,6 @@
    right: 0;
    padding: 10px;
 }
-.analytic{
-   position: absolute;
-   top: 100px;
-   left: 200px;
-}
 /***********************AUTH**************************************/
 html,#username-page, #username-page-reg {
     height: 100%;
@@ -135,18 +130,17 @@ input {
 .hidden {
    margin-bottom: 10px;
 }
+
 .menu-crm 1 {
    height: 100%;
-
    width: 100%;
-
-
 }
 .cell-crm {
 
    justify-content: center;
    margin: 5px;
 }
+
 .btn-bd-primary1 {
   display: table-cell;
   vertical-align: middle;
@@ -271,7 +265,6 @@ h6 {
 /******************************CHAT*******************************/
 .chat-content {
    height: 90%;
-   border: 1px solid #000;
    box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
    margin-top: 10px;
 }
@@ -295,6 +288,7 @@ h6 {
    width: 80%;
    box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
    padding: 10px;
+   display: flex;
 }
 #nameRecipiend, #btn-user {
    text-align: center;
@@ -340,7 +334,6 @@ h6 {
     background-color: #fff;
     box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
     position: relative;
-    border: 1px solid #000;
     padding: 10px;
 }
 #messageArea li.userI {
@@ -390,4 +383,43 @@ h6 {
 }
 .groupli, .userli {
    padding-left: 0;
+}
+/********************ANALITIC*****************************/
+.analitic-content {
+   height: 85%;
+   box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
+   margin-top: 10px;
+}
+.menu {
+   display: flex;
+}
+#fio, #depart {
+   text-align: center;
+   font-weight: 400;
+   font-size: 1.5rem;
+   font-family: 'Bree Serif', serif;
+   margin-top: 10px;
+   margin-left: 10px;
+   height: 90%;
+   width: 25%;
+}
+#depart {
+   font-size: 1.2rem;
+}
+.diagram {
+   width: 100%;
+   height: 100%;
+   display: flex;
+}
+#last, #first, #kpi, #allTicket, #closeTicket, #overdue, #inWork {
+   background: url(image/fon.png) repeat;
+}
+#diagramDepartment, #diagramMy {
+   margin-top: 10px;
+   margin-right: 10px;
+   height: 80%;
+   width: 75%;
+}
+#diagramDepart {
+   height: 95%;
 }
