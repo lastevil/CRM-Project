@@ -2,15 +2,17 @@ package org.unicrm.chat.service;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.unicrm.chat.dto.UserDto;
+import org.unicrm.chat.dto.LocalUserDto;
 import org.unicrm.chat.entity.Group;
 import org.unicrm.chat.entity.User;
 import org.unicrm.chat.mapper.UserMapper;
 import org.unicrm.chat.model.UserRegistration;
 import org.unicrm.chat.model.ChatMessage;
 import org.unicrm.chat.repository.UserRepository;
+import org.unicrm.lib.dto.UserDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +35,11 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public List<UserDto> findAllUsers(){
+    public List<LocalUserDto> findAllUsers(){
         List<User> users = userRepository.findAll();
-        List<UserDto> list = new ArrayList<>();
+        List<LocalUserDto> list = new ArrayList<>();
         for (User u : users) {
-            UserDto dto = UserDto.builder()
+            LocalUserDto dto = LocalUserDto.builder()
                     .uuid(u.getUuid())
                     .userName(u.getUserName())
                     .nickName(u.getNickName())
@@ -63,26 +65,19 @@ public class UserService {
     public List<User> findByGroupsId(ChatMessage chatMessage){
         return userRepository.findByGroupsId(chatMessage.getGroupId());
     }
+    @KafkaListener(topics = "userTopic", containerFactory = "userKafkaListenerContainerFactory")
     @Transactional
-    public void save(UserRegistration userReg){
-        Optional<User> userOptional = userRepository.findByUserName(userReg.getUserName());
+    public void save(UserDto userReg){
+        Optional<User> userOptional = userRepository.findByUserName(userReg.getUsername());
         if (userOptional.isEmpty()) {
-            User user = UserMapper.INSTANCE.toEntity(userReg);
+            User user = userMapper.toEntity(userReg);
             Optional<Group> group = groupService.findById(1L);
             List<Group> groups = new ArrayList<>();
             if (!group.isEmpty()) {
                 groups.add(group.get());
             }
-            user.builder()
-                    .nickName(userReg.getNickName())
-                    .userName(userReg.getUserName())
-                    .groups(groups)
-                    .build();
+            user.setGroups(groups);
             userRepository.save(user);
-            Optional<User> user1 = findByUsername(userReg.getUserName());
-            if (!user1.isEmpty()){
-                userRepository.insert(user1.get().getUuid(), 1L);
-            }
         }
     }
 }

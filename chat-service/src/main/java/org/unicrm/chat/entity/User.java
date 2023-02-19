@@ -21,7 +21,7 @@ public class User {
     @Id
     @GenericGenerator(name = "UUIDGenerator", strategy = "uuid2")
     @GeneratedValue(generator = "UUIDGenerator")
-    @Column(name = "uuid")
+    @Column(name = "id")
     private UUID uuid;
 
     @Column(name = "username")
