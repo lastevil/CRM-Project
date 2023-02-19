@@ -25,6 +25,7 @@ public class Ticket {
     @Column(name = "title")
     private String title;
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     private Status status;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assignee_id")
@@ -41,6 +42,9 @@ public class Ticket {
     private LocalDateTime updatedAt;
     @Column(name = "due_date")
     private LocalDateTime dueDate;
+        @Column (name = "overdue")
+    @Enumerated(EnumType.STRING)
+    private Status overdue;
 
     @Override
     public String toString() {

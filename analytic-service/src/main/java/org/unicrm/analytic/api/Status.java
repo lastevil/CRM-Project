@@ -12,8 +12,7 @@ public enum Status {
     OVERDUE("Просрочено"),
     THREE_DAYS_LEFT("Осталось 3 дня"),
     TWO_DAYS_LEFT("Осталось 2 дня"),
-    TODAY_LEFT("Истечет сегодня"),
-    CLOSED("Закрыто");
+    TODAY_LEFT("Истечет сегодня");
     private final String value;
 
     private Status(String value) {
