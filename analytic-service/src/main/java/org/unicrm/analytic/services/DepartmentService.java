@@ -6,6 +6,7 @@ import org.unicrm.analytic.converter.DepartmentMapper;
 import org.unicrm.analytic.dto.DepartmentFrontDto;
 import org.unicrm.analytic.entities.Department;
 import org.unicrm.analytic.exceptions.ResourceNotFoundException;
+import org.unicrm.analytic.exceptions.validators.DepartmentValidator;
 import org.unicrm.analytic.repositorys.DepartmentRepository;
 import org.unicrm.lib.dto.UserDto;
 
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 public class DepartmentService {
     private final DepartmentRepository departmentRepository;
     private final DepartmentMapper departmentMapper;
+    private final DepartmentValidator validator;
 
     public Department findById(Long id) {
         return departmentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Департамент c id " + id + " не найден в базе"));
@@ -29,16 +31,15 @@ public class DepartmentService {
     }
 
     public Department departmentSaveOrUpdate(UserDto dto) {
+        validator.validate(dto);
         Department department;
         if (!departmentRepository.existsById(dto.getDepartmentId())) {
             department = departmentMapper.fromUserDto(dto);
-           departmentRepository.save(department);
+            departmentRepository.save(department);
         } else {
             department = findById(dto.getDepartmentId());
-            if (dto.getDepartmentTitle() != null) {
-                department.setTitle(dto.getDepartmentTitle());
-                departmentRepository.save(department);
-            }
+            department.setTitle(dto.getDepartmentTitle());
+            departmentRepository.save(department);
         }
         return department;
     }

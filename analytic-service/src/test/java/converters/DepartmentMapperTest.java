@@ -4,18 +4,14 @@ import org.apache.http.util.Asserts;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.unicrm.analytic.converter.DepartmentMapper;
-import org.unicrm.analytic.converter.TicketMapper;
 import org.unicrm.analytic.dto.DepartmentFrontDto;
-import org.unicrm.analytic.dto.UserFrontDto;
+import org.unicrm.analytic.dto.UserResponseDto;
 import org.unicrm.analytic.entities.Department;
-import org.unicrm.analytic.entities.Ticket;
-import org.unicrm.analytic.entities.User;
-import org.unicrm.lib.dto.TicketDto;
 import org.unicrm.lib.dto.UserDto;
 
 import java.util.UUID;
 
-@SpringBootTest(classes = {DepartmentMapper.class, UserDto.class, Department.class, UserFrontDto.class, DepartmentFrontDto.class})
+@SpringBootTest(classes = {DepartmentMapper.class, UserDto.class, Department.class, UserResponseDto.class, DepartmentFrontDto.class})
 class DepartmentMapperTest {
     @Test
     void convertFromUserDto() {

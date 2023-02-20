@@ -27,19 +27,19 @@ public class AnalyticController {
 
     @Operation(summary = "метод, для получения страниц с задачами пользователя, с определенным статусом за промежуток времени")
     @PostMapping("/user/{id}/tickets/{status}/{interval}")
-    public List<TicketFrontDto> getUserTicketsForTheTimeWithStatus(@PathVariable UUID id, @PathVariable Status status, @PathVariable TimeInterval interval) {
+    public List<TicketResponseDto> getUserTicketsForTheTimeWithStatus(@PathVariable UUID id, @PathVariable Status status, @PathVariable TimeInterval interval) {
         return ticketService.getTicketByAssignee(id, status, interval);
     }
 
     @Operation(summary = "метод, для получения страниц с задачами отдела, с определенным статусом за промежуток времени")
     @PostMapping("/department/{id}/tickets/{status}/{interval}")
-    public List<TicketFrontDto> getDepartmentTicketsForTheTimeWithStatus(@PathVariable Long id, @PathVariable Status status, @PathVariable TimeInterval interval) {
+    public List<TicketResponseDto> getDepartmentTicketsForTheTimeWithStatus(@PathVariable Long id, @PathVariable Status status, @PathVariable TimeInterval interval) {
         return ticketService.getTicketByAssigneeDepartment(id, status, interval);
     }
 
     @Operation(summary = "метод получения страниц с сторудниками отдела")
     @GetMapping("/department/{id}/users")
-    public List<UserFrontDto> getDepartmentEmployees(@PathVariable Long id) {
+    public List<UserResponseDto> getDepartmentEmployees(@PathVariable Long id) {
         return userService.getUsersFromDepartment(id);
     }
 

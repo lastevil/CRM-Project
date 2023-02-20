@@ -1,17 +1,14 @@
 package org.unicrm.analytic.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.unicrm.analytic.api.Status;
 import org.unicrm.analytic.api.TimeInterval;
 import org.unicrm.analytic.converter.TicketMapper;
-import org.unicrm.analytic.dto.GlobalInfo;
-import org.unicrm.analytic.dto.TicketFrontDto;
+import org.unicrm.analytic.dto.TicketResponseDto;
 import org.unicrm.analytic.entities.Department;
 import org.unicrm.analytic.entities.Ticket;
 import org.unicrm.analytic.entities.User;
@@ -19,8 +16,10 @@ import org.unicrm.analytic.exceptions.ResourceNotFoundException;
 import org.unicrm.analytic.repositorys.TicketRepository;
 import org.unicrm.lib.dto.TicketDto;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -52,14 +51,14 @@ public class TicketService {
         }
     }
 
-    public List<TicketFrontDto> getTicketByAssignee(UUID userId, Status status, TimeInterval timeInterval) {
+    public List<TicketResponseDto> getTicketByAssignee(UUID userId, Status status, TimeInterval timeInterval) {
         LocalDateTime between = getTimeForInterval(timeInterval);
         return ticketRepository
                 .findAllByAssigneeIdWithStatus(userId, status, between, LocalDateTime.now()).stream()
                 .map(ticketMapper::fromEntityToFrontDto).collect(Collectors.toList());
     }
 
-    public List<TicketFrontDto> getTicketByAssigneeDepartment(Long departmentId, Status status, TimeInterval timeInterval) {
+    public List<TicketResponseDto> getTicketByAssigneeDepartment(Long departmentId, Status status, TimeInterval timeInterval) {
         LocalDateTime between = getTimeForInterval(timeInterval);
         return ticketRepository
                 .findAllByAssigneeDepartmentWithStatus(departmentId, status, between, LocalDateTime.now()).stream()
@@ -110,11 +109,27 @@ public class TicketService {
         }
     }
 
-    public List<Ticket> findAllTicketByAssignee(UUID userId, TimeInterval time) {
-        return ticketRepository.findAllByAssigneeId(userId, getTimeForInterval(time), LocalDateTime.now());
+    public Map<Status, Integer> getAssigneeTicketsByStatus(UUID userId, TimeInterval time) {
+        return ticketRepository.countByStatusDueDateBetweenAndAssignee(userId, getTimeForInterval(time), LocalDateTime.now());
     }
 
-    public List<Ticket> findAllTicketByAssigneeDepartment(Long departmentId, TimeInterval time) {
-        return ticketRepository.findAllByDepartmentAssigneeId(departmentId, getTimeForInterval(time), LocalDateTime.now());
+    public Map<Status, Integer> getAssigneeTicketsByOverdue(UUID userId, TimeInterval time) {
+        return ticketRepository.countByOverdueDueDateBetweenAndAssignee(userId, getTimeForInterval(time), LocalDateTime.now());
+    }
+
+    public Map<Status, Integer> getDepartmentTicketsByStatus(Long departmentId, TimeInterval time) {
+        return ticketRepository.countByStatusDueDateBetweenDepAndDepartment(departmentId, getTimeForInterval(time), LocalDateTime.now());
+    }
+
+    public Map<Status, Integer> getDepartmentTicketsByOverdue(Long departmentId, TimeInterval time) {
+        return ticketRepository.countByOverdueDueDateBetweenAndDepartment(departmentId, getTimeForInterval(time), LocalDateTime.now());
+    }
+
+    public Integer getTicketsCountByAssignee(UUID userId, TimeInterval time) {
+        return ticketRepository.countByAssigneeAndDueDateBetween(userId, getTimeForInterval(time), LocalDateTime.now());
+    }
+
+    public Integer getTicketsCountByDepartment(Long departmentId, TimeInterval time) {
+        return ticketRepository.countByDepartmentAndDueDateBetween(departmentId, getTimeForInterval(time), LocalDateTime.now());
     }
 }

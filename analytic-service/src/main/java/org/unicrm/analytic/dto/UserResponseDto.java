@@ -5,7 +5,7 @@ import lombok.Data;
 
 import java.util.UUID;
 @Data
-public class UserFrontDto {
+public class UserResponseDto {
     @Schema(description = "id пользователя")
     private UUID id;
     @Schema(description = "Имя", example = "Иван")

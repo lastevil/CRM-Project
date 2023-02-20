@@ -13,10 +13,14 @@ import org.unicrm.analytic.entities.Ticket;
 import org.unicrm.analytic.entities.User;
 import org.unicrm.lib.dto.UserDto;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -38,21 +42,25 @@ public class AnalyticService {
 
     @Transactional
     public GlobalInfo getUserInfo(User user, TimeInterval time) {
-        List<Ticket> ticketList = ticketService.findAllTicketByAssignee(user.getId(), time);
-        GlobalInfo userInfo = calculateInformation(ticketList);
+        GlobalInfo userInfo = new GlobalInfo();
         userInfo.setUserId(user.getId());
         userInfo.setFirstName(user.getFirstName());
         userInfo.setLastName(user.getLastName());
-        return userInfo;
-      }
+        userInfo.setTicketCount(ticketService.getTicketsCountByAssignee(user.getId(), time));
+        return calculateGlobalInformation(userInfo,
+                ticketService.getAssigneeTicketsByOverdue(user.getId(), time),
+                ticketService.getAssigneeTicketsByStatus(user.getId(), time));
+    }
 
     @Transactional
     public GlobalInfo getDepartmentInfo(Long departmentId, TimeInterval time) {
-        List<Ticket> ticketList = ticketService.findAllTicketByAssigneeDepartment(departmentId, time);
-        GlobalInfo departmentInfo = calculateInformation(ticketList);
+        GlobalInfo departmentInfo = new GlobalInfo();
+        departmentInfo.setTicketCount(ticketService.getTicketsCountByDepartment(departmentId, time));
         departmentInfo.setDepartmentId(departmentId);
         departmentInfo.setDepartmentTitle(departmentService.findById(departmentId).getTitle());
-        return departmentInfo;
+        return calculateGlobalInformation(departmentInfo,
+                ticketService.getDepartmentTicketsByOverdue(departmentId, time),
+                ticketService.getDepartmentTicketsByStatus(departmentId, time));
     }
 
     public GlobalInfo getCurrentUserInfo(String username, TimeInterval interval) {
@@ -65,22 +73,23 @@ public class AnalyticService {
         return getUserInfo(user, interval);
     }
 
-    private GlobalInfo calculateInformation(List<Ticket> ticketList) {
-        GlobalInfo info = new GlobalInfo();
-        info.setTicketCount(ticketList.size());
-        info.setTicketCountAccepted(ticketList.stream().filter(t -> t.getStatus().equals(Status.ACCEPTED)).count());
-        info.setTicketBacklogCount(ticketList.stream().filter(t -> t.getStatus().equals(Status.BACKLOG)).count());
-        info.setTicketCountDone(ticketList.stream().filter(t -> t.getStatus().equals(Status.DONE)).count());
-        info.setTicketCountInProgress(ticketList.stream().filter(t -> t.getStatus().equals(Status.IN_PROGRESS)).count());
-        info.setTicketCountOverdue(ticketList.stream().filter(t -> t.getOverdue().equals(Status.OVERDUE)).count());
+    private GlobalInfo calculateGlobalInformation(GlobalInfo globalInfo,
+                                                  Map<Status, Integer> map1, Map<Status, Integer> map2) {
+        Map<Status, Integer> info = Stream.of(map1, map2)
+                .flatMap(map -> map.entrySet().stream())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        Integer::sum));
+        globalInfo.setMapTicketsStatusCount(info);
         Integer kpi = 0;
-        if (info.getTicketCount() != 0) {
-            Double calculate = (((info.getTicketCountAccepted() + (info.getTicketCountDone() * DONE_INDEX)
-                    + (info.getTicketCountInProgress() * IN_PROGRESS_INDEX)) / info.getTicketCount()) * 100)
-                    - info.getTicketCountOverdue();
+        if (globalInfo.getTicketCount() > 0) {
+            Double calculate = (((info.get(Status.ACCEPTED) + (info.get(Status.DONE) * DONE_INDEX)
+                    + (info.get(Status.IN_PROGRESS) * IN_PROGRESS_INDEX)) / globalInfo.getTicketCount()) * 100)
+                    - ((info.get(Status.OVERDUE)));
             kpi = calculate.intValue();
         }
-        info.setKpi(kpi);
-        return info;
+        globalInfo.setKpi(kpi);
+        return globalInfo;
     }
 }
