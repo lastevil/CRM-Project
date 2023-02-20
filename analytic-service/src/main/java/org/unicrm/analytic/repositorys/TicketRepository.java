@@ -41,6 +41,6 @@ public interface TicketRepository extends JpaRepository<Ticket, UUID> {
     Map<Status, Integer> countByOverdueDueDateBetweenAndAssignee(UUID userId, LocalDateTime beginTime, LocalDateTime endTime);
     @Query(value = "SELECT count(*) from tickets where assignee_id=:userId and due_date between :beginTime and :endTime",nativeQuery = true)
     Integer countByAssigneeAndDueDateBetween(UUID userId, LocalDateTime beginTime, LocalDateTime endTime);
-    @Query(value = "SELECT count(*) from tickets where department_id1=:departmentId and due_date between :beginTime and :endTime",nativeQuery = true)
+    @Query(value = "SELECT count(*) from tickets where department_id=:departmentId and due_date between :beginTime and :endTime",nativeQuery = true)
     Integer countByDepartmentAndDueDateBetween(Long departmentId, LocalDateTime beginTime, LocalDateTime endTime);
 }

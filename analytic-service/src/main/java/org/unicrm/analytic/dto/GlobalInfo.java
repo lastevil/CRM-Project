@@ -22,20 +22,8 @@ public class GlobalInfo {
     private String departmentTitle;
     @Schema(description = "Количество задач за заданый интервал", example = "300")
     private Integer ticketCount;
-    @Schema(description = "Колличество задач по статусам", example = "Выполнено:1")
+    @Schema(description = "Колличество задач по статусам")
     Map<Status, Integer> mapTicketsStatusCount;
     @Schema(description = "Показатель результативности", example = "75")
     private Integer kpi;
 }
-
-
-//    @Schema(description = "Количество задач в работе", example = "52")
-//    private Long ticketCountInProgress;
-//    @Schema(description = "Количество новых задач", example = "2")
-//    private Long ticketBacklogCount;
-//    @Schema(description = "Количество выполненых задач", example = "21")
-//    private Long ticketCountDone;
-//    @Schema(description = "Количество завершенных задач", example = "12")
-//    private Long ticketCountAccepted;
-//    @Schema(description = "Количество просроченых задач", example = "5")
-//    private Long ticketCountOverdue;

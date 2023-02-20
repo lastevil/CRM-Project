@@ -32,7 +32,7 @@ public class KafkaConfig {
         consumer.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, server);
         consumer.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, UUIDDeserializer.class);
         consumer.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        consumer.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+        consumer.put(JsonDeserializer.TRUSTED_PACKAGES, "org.unicrm.lib.dto.TicketDto, org.unicrm.lib.dto.UserDto");
         consumer.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         return consumer;
     }
