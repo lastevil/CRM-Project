@@ -45,8 +45,8 @@ public class AnalyticController {
 
     @Operation(summary = "метод получения информации о текущем пользователе")
     @GetMapping("/user/info/{interval}")
-    public void getCurrentUserInfo(@PathVariable TimeInterval interval, @RequestHeader String username){
-        analyticService.getCurrentUserInfo(username, interval);
+    public @ResponseBody GlobalInfo getCurrentUserInfo(@PathVariable TimeInterval interval, @RequestHeader String username){
+        return analyticService.getCurrentUserInfo(username, interval);
     }
 
     @Operation(summary = "метод получения списка отделов организации")
