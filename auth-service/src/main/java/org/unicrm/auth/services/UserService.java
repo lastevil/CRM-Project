@@ -3,6 +3,7 @@ package org.unicrm.auth.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,7 +12,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.concurrent.ListenableFuture;
 import org.unicrm.auth.dto.UpdatedUserDto;
+import org.unicrm.auth.dto.UserInfoDto;
 import org.unicrm.auth.dto.UserRegDto;
 import org.unicrm.auth.entities.Role;
 import org.unicrm.auth.entities.Status;
@@ -37,6 +40,7 @@ public class UserService implements UserDetailsService {
     private final RoleService roleService;
     private final KafkaTemplate<UUID, UserDto> kafkaTemplate;
     private final PasswordEncoder passwordEncoder;
+    private final List<UserDto> listUserDtoForSend = new ArrayList<>();
 
     @Override
     @Transactional(readOnly = true)
@@ -81,16 +85,19 @@ public class UserService implements UserDetailsService {
         }
         if (updatedUserDto.getFirstName() != null) user.setFirstName(updatedUserDto.getFirstName());
         if (updatedUserDto.getLastName() != null) user.setLastName(updatedUserDto.getLastName());
-        if (updatedUserDto.getPassword() != null) user.setPassword(passwordEncoder.encode(updatedUserDto.getPassword()));
+        if (updatedUserDto.getPassword() != null)
+            user.setPassword(passwordEncoder.encode(updatedUserDto.getPassword()));
         userRepository.save(user);
-        kafkaTemplate.send("userTopic", UUID.randomUUID(), EntityDtoMapper.INSTANCE.toDto(user));
+        listUserDtoForSend.add(EntityDtoMapper.INSTANCE.toDto(user));
+        sendToKafka();
     }
 
     @Transactional
     public void changeLogin(String username, String login) {
         User user = findByUsername(username);
         user.setUsername(login);
-        kafkaTemplate.send("userTopic", UUID.randomUUID(), EntityDtoMapper.INSTANCE.toDto(user));
+        listUserDtoForSend.add(EntityDtoMapper.INSTANCE.toDto(user));
+        sendToKafka();
     }
 
     @Transactional
@@ -104,13 +111,24 @@ public class UserService implements UserDetailsService {
             }
         }
         if (departmentTitle != null) user.setDepartment(departmentService.findDepartmentByTitle(departmentTitle));
-        kafkaTemplate.send("userTopic", UUID.randomUUID(), EntityDtoMapper.INSTANCE.toDto(user));
+        listUserDtoForSend.add(EntityDtoMapper.INSTANCE.toDto(user));
+        sendToKafka();
     }
 
     @Transactional
     public void addRole(String username, String roleName) {
         User user = findByUsername(username);
         user.getRoles().add(roleService.findRoleByName(roleName));
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserDto> findAllByStatusEqualsNoActive() {
+        return userRepository.findAllByStatusEquals(Status.NOT_ACTIVE).stream().map(EntityDtoMapper.INSTANCE::toDto).collect(Collectors.toList());
+    }
+
+    public UserInfoDto getUserInfo(String username) {
+        User user = findByUsername(username);
+        return EntityDtoMapper.INSTANCE.toInfoDto(user);
     }
 
     private User findByUsername(String username) {
@@ -121,8 +139,11 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    @Transactional(readOnly = true)
-    public List<UserDto> findAllByStatusEqualsNoActive() {
-        return userRepository.findAllByStatusEquals(Status.NOT_ACTIVE).stream().map(EntityDtoMapper.INSTANCE::toDto).collect(Collectors.toList());
+    private void sendToKafka() {
+        while (listUserDtoForSend.iterator().hasNext()) {
+            ListenableFuture<SendResult<UUID, UserDto>> future = kafkaTemplate.send("userTopic", UUID.randomUUID(), listUserDtoForSend.iterator().next());
+            listUserDtoForSend.remove(listUserDtoForSend.iterator().next());
+            kafkaTemplate.flush();
+        }
     }
 }
