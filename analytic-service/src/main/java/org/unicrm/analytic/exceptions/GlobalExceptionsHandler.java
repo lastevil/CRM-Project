@@ -17,6 +17,11 @@ public class GlobalExceptionsHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<AppError> validationException(ValidationException e){
+        return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), e.getMessage()),HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<AppError> handleAllOtherExceptions(RuntimeException e) {
         log.error(e.toString(), e.getMessage());
         return new ResponseEntity<>(new AppError(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);

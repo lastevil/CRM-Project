@@ -5,13 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.unicrm.analytic.converter.DepartmentMapper;
 import org.unicrm.analytic.converter.UserMapper;
-import org.unicrm.analytic.dto.UserFrontDto;
+import org.unicrm.analytic.dto.UserResponseDto;
 import org.unicrm.analytic.entities.Department;
 import org.unicrm.analytic.entities.User;
 import org.unicrm.lib.dto.UserDto;
 
 import java.util.UUID;
-@SpringBootTest(classes = {UserMapper.class, UserFrontDto.class, User.class, Department.class, UserDto.class})
+@SpringBootTest(classes = {UserMapper.class, UserResponseDto.class, User.class, Department.class, UserDto.class})
 class UserMapperTest {
     @Test
     void convertFromUserDto() {
@@ -49,7 +49,7 @@ class UserMapperTest {
         user.setDepartment(Department.builder()
                 .id(1L).title("Test").build());
 
-        UserFrontDto dto = UserMapper.INSTANCE.fromEntityToFrontDto(user);
+        UserResponseDto dto = UserMapper.INSTANCE.fromEntityToFrontDto(user);
         System.out.println("Test 2:");
         System.out.println(user);
         System.out.println(dto);

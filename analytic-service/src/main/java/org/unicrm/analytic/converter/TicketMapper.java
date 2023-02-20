@@ -3,7 +3,7 @@ package org.unicrm.analytic.converter;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import org.unicrm.analytic.dto.TicketFrontDto;
+import org.unicrm.analytic.dto.TicketResponseDto;
 import org.unicrm.analytic.entities.Department;
 import org.unicrm.analytic.entities.Ticket;
 import org.unicrm.analytic.entities.User;
@@ -34,7 +34,7 @@ public interface TicketMapper {
     @Mapping(target = "reporter.lastName",source = "reporter.lastName")
     @Mapping(target = "department.id",source = "department.id")
     @Mapping(target = "department.title",source = "department.title")
-    TicketFrontDto fromEntityToFrontDto(Ticket ticket);
+    TicketResponseDto fromEntityToFrontDto(Ticket ticket);
 
     default OffsetDateTime map(String value) {
         LocalDateTime localDateTime = LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME);

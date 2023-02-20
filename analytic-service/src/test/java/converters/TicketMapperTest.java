@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.unicrm.analytic.api.Status;
 import org.unicrm.analytic.converter.TicketMapper;
-import org.unicrm.analytic.dto.TicketFrontDto;
+import org.unicrm.analytic.dto.TicketResponseDto;
 import org.unicrm.analytic.entities.Department;
 import org.unicrm.analytic.entities.Ticket;
 import org.unicrm.analytic.entities.User;
@@ -74,7 +74,7 @@ class TicketMapperTest {
                 .reporter(reporter).createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now())
                 .dueDate(LocalDateTime.now()).build();
 
-        TicketFrontDto dto = TicketMapper.INSTANCE.fromEntityToFrontDto(ticket);
+        TicketResponseDto dto = TicketMapper.INSTANCE.fromEntityToFrontDto(ticket);
 
         System.out.println(ticket);
         System.out.println(dto);
