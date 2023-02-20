@@ -67,6 +67,7 @@ document.querySelector("#errAuth").style.visibility = 'hidden';
 var stompClient = null;
 
 $scope.tryToAuth = function () {
+console.log(contextPath+'auth', $scope.user);
         $http.post(contextPath+'auth', $scope.user)
             .then(function successCallback(response) {
                 if (response.data.token) {
@@ -75,6 +76,7 @@ $scope.tryToAuth = function () {
                     let payload = JSON.parse(atob(jwt.split('.')[1]));
                     $localStorage.username = payload.sub;
                     $localStorage.userRoles = payload.roles;
+                    console.log("role = "+$localStorage.userRoles);
                 }
                 $location.path('mytasks');
             }, function errorCallback(response) {

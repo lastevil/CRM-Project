@@ -130,7 +130,12 @@ input {
 .hidden {
    margin-bottom: 10px;
 }
-
+/*
+.menu-crm li{
+   list-style-type: none;
+   flex-direction: column;
+   justify-content: center;
+}*/
 .menu-crm 1 {
    height: 100%;
    width: 100%;
@@ -140,7 +145,13 @@ input {
    justify-content: center;
    margin: 5px;
 }
-
+/*
+.menu-crm 3 {        flex-direction: column;    display: table;
+   height: 20%;
+}
+.menu-item1 {
+   padding: 100px;
+}*/
 .btn-bd-primary1 {
   display: table-cell;
   vertical-align: middle;
@@ -206,6 +217,10 @@ h6 {
 }
 .btnAll {
    padding: 3px 3px;
+}
+#infoTicket {
+   weight: 800px;
+   height: 500px;
 }
 /********************USER****************************************/
 .user-content {
@@ -289,6 +304,7 @@ h6 {
    box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
    padding: 10px;
    display: flex;
+ /*  align-items: right;*/
 }
 #nameRecipiend, #btn-user {
    text-align: center;
@@ -384,13 +400,16 @@ h6 {
 .groupli, .userli {
    padding-left: 0;
 }
+#modChat1, #modChat2, #modChat3, #selNewUsers {
+   margin: 5px;
+}
 /********************ANALITIC*****************************/
 .analitic-content {
    height: 85%;
    box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
    margin-top: 10px;
 }
-.menu {
+.menu, .d-grid gap-2 {
    display: flex;
 }
 #fio, #depart {
@@ -423,3 +442,10 @@ h6 {
 #diagramDepart {
    height: 95%;
 }
+.selects {
+   display: flex;
+   padding-left: 10px;
+   border: 1px solid #000;
+
+}
+

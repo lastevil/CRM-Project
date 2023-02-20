@@ -15,7 +15,7 @@ import java.util.UUID;
 public interface GroupRepository extends JpaRepository<Group, Long> {
 
     @Query(value = "select g.id, g.title from users u, groups g, users_groups ug " +
-            "where u.uuid = ug.user_id and g.id = ug.group_id and u.uuid = :id",
+            "where u.id = ug.user_id and g.id = ug.group_id and u.id = :id",
             nativeQuery = true)
     List<Group> findByUsers_Uuid(@Param("id") UUID uuid);
 
@@ -32,4 +32,12 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
             "values(:user_id, :group_id)",
             nativeQuery = true)
     void insertUsers(@Param("user_id") UUID user_id, @Param("group_id") Long group_id);
+
+    @Query(value = "select count(user_id) from users_groups " +
+            "where user_id = :uuid and group_id = :id",
+            nativeQuery = true)
+    int findIfUserIsAlreadyInGroup(@Param("uuid") UUID uuid, @Param("id") Long id);
+
+    Group getById(Long id);
 }
+

@@ -36,14 +36,19 @@
                     </h2>
                 </div>
            <div class="mytasks-content">
-              <div class="btn-new">
+              <div class="btn-new" style="display: flex;">
                   <div>
-                 <button id="btn-mytasks-new" type="button" class="btn btn-success" ng-click="newTicket()" data-bs-toggle="modal" data-bs-target="#newTicket">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
-                      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                    </svg>
-                    Создать
-                 </button>
+                    <button id="btn-mytasks-new" type="button" class="btn btn-success" ng-click="newTicket()" data-bs-toggle="modal" data-bs-target="#newTicket">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                      </svg>
+                      Создать
+                    </button>
+                  </div>
+                  <div>
+                      <button id="btn-mytasks-refresh" type="button" class="btn btn-success" ng-click="loadTickets()" >
+                          Обновить список заявок
+                      </button>
                   </div>
               </div>
               <div class="btn-button">
@@ -84,20 +89,25 @@
                           <th>Статус</th>
                           <th>Выполнить до</th>
                           <th>Создано</th>
-                          <th>Обновлено</th>
+                          <th></th>
+
                       </tr>
                       </thead>
                       <tbody>
                       <form>
                           <tr ng-repeat="t in ticketPage" bgcolor="ghostwhite">
                               <td>{{t.title}}</td>
-                              <td>{{t.assigneeDepartmentId}}</td>
-                              <td>{{t.assigneeId}}</td>
-                              <td>{{t.reporterId}}</td>
+                              <td>{{t.department.title}}</td>
+                              <td>{{t.assignee.lastName + ' ' + t.assignee.firstName}}</td>
+                              <td>{{t.reporter.lastName + ' ' + t.reporter.firstName}}</td>
                               <td>{{t.status}}</td>
                               <td>{{t.dueDate}}</td>
                               <td>{{t.createdAt}}</td>
-                              <td>{{t.updatedAt}}</td>
+                              <td>
+                                  <button type="button" class="btn btn-primary" ng-click="infoTicket(t)" data-bs-toggle="modal" data-bs-target="#infoTicket">
+                                      Подробнее</button>
+                              </td>
+
                           </tr>
                       </form>
                       </tbody>
@@ -168,6 +178,96 @@
                     </form>
                 </div>
 
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="infoTicket" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div style="display: flex;">
+                       <div>
+                           <input type="text" class="form-control" disabled id="title">
+                       </div>
+                        <div class="btnAll" style="display: flex;">
+                            <label for="selStatus1" class="col-form-label" style="margin-left: 40px;">Статус</label>
+                            <select id="selStatus1" class="form-select" >
+                                <option value="BACKLOG">Запланировано</option>
+                                <option value="IN_PROGRESS">В работе</option>
+                                <option value="DONE">Выполнено</option>
+                                <option value="ACCEPTED">Принято</option>
+                                <option value="DELETED">Удалено</option>
+                                <option value="OVERDUE">Просрочено</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <form  novalidate ng-submit="updateTicket()">
+                      <div>
+                        <div style="display: flex;">
+                            <div class="input-group mb-3" style="margin: 3px;">
+                                <label for="assign" class="col-form-label">Исполнитель: </label>
+                                <input type="text" class="form-control" disabled id="assign">
+                            </div>
+                            <div class="input-group mb-3" style="margin: 3px;">
+                                <label for="depart" class="col-form-label">Отдел: </label>
+                                <input type="text" class="form-control" disabled id="depart">
+                            </div>
+                        </div>
+                      <div id="assig">
+                          <div  style="margin: 3px;">
+                              <label for="selAssignee1" class="col-form-label">Выберите исполнителя:</label>
+                              <select id="selAssignee1" class="form-select" ></select>
+                          </div>
+                      </div>
+                      <div id="departm">
+                          <div  style="margin: 3px;">
+                              <label for="selDepartm" class="col-form-label">Выберите отдел:</label>
+                              <select id="selDepartm" class="form-select" ></select>
+                          </div>
+                      </div>
+                        <div style="display: flex;">
+                            <div class="input-group mb-3" style="margin: 3px;">
+                                <label for="report" class="col-form-label">Ответственный: </label>
+                                <input type="text" class="form-control" disabled id="report">
+                            </div>
+                            <div class="input-group mb-3" style="margin: 3px;">
+                                <label for="create" class="col-form-label">Создано: </label>
+                                <input type="text" class="form-control" disabled id="create">
+                            </div>
+                        </div>
+                        <div style="display: flex;">
+                            <div class="input-group mb-3" style="margin: 3px;">
+                                <label for="stat" class="col-form-label">Статус: </label>
+                                <input type="text" class="form-control" disabled id="stat">
+                            </div>
+                            <div class="input-group mb-3" style="margin: 3px;">
+                                <label for="dueDate" class="col-form-label">Выполнить до: </label>
+                                <input type="text" class="form-control" disabled id="dueDate">
+                            </div>
+                        </div>
+                      </div>
+                      <div>
+                        <div class="input-group mb-3">
+                            <label for="description" class="col-form-label">Описание</label>
+                            <textarea class="form-control" id="description" ></textarea>
+                        </div>
+                      </div>
+                      <div>
+                          <div class="input-group mb-3" style="margin: 3px;">
+                              <label for="date" class="col-form-label">Выполнено: </label>
+                              <input type="date" class="form-control" value="" id="date">
+                          </div>
+                      </div>
+                      <div style="display: flex;">
+                        <div  style="margin: 3px;">
+                            <button type="submit" class="btn btn-primary">Обновить</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        </div>
+                      </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
