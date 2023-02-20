@@ -19,8 +19,6 @@ import java.util.UUID;
 public class User {
 
     @Id
-    @GenericGenerator(name = "UUIDGenerator", strategy = "uuid2")
-    @GeneratedValue(generator = "UUIDGenerator")
     @Column(name = "id")
     private UUID uuid;
 

@@ -23,6 +23,16 @@
           <a class="nav-link" href="#!/adminpanel"> Администрирование </a>
         </div>
       </div>
+      <!--            <div class="menu-crm 2">-->
+      <!--                <div class="menu-item1"></div>-->
+      <!--            </div>-->
+      <!--            <div class="menu-crm 3">-->
+      <!--                <div >-->
+      <!--                    <button class="btn-bd-primary1">   </button>-->
+      <!--                    <a class="nav-link" href="#!/createtask"> Create task </a>-->
+      <!--                </div>-->
+
+      <!--            </div>-->
     </nav>
     <div class="page-crm">
       <div class="header">
@@ -44,7 +54,44 @@
           <div class="d-grid gap-2" style="background: #8bbf73;">
             <button class="btn btn-success" style="background: #8bbf73;" type="button">Статистика организации</button>
           </div>
-          <div></div>
+<!--          <div style="width: 30%;"></div>-->
+
+        </div>
+        <div class="d-grid gap-2">
+          <div id="choiceStatus" class="input-group mb-3">
+<!--            <div>-->
+<!--              <span for="selStatus" class="input-group-text">Выберите статус</span>-->
+<!--            </div>-->
+<!--            <div>-->
+              <select id="selStatus" class="form-control" >
+                <option value="BACKLOG">Запланировано</option>
+                <option value="IN_PROGRESS">В работе</option>
+                <option value="DONE">Выполнено</option>
+                <option value="ACCEPTED">Принято</option>
+                <option value="DELETED">Удалено</option>
+                <option value="OVERDUE">Просрочено</option>
+                <option value="THREE_DAYS_LEFT">Осталось 3 дня</option>
+                <option value="TWO_DAYS_LEFT">Осталось 2 дня</option>
+                <option value="TODAY_LEFT">Истечет сегодня</option>
+                <option value="CLOSED">Закрыто</option>
+              </select>
+<!--            </div>-->
+          </div>
+          <div id="choiceInterval" class="input-group mb-3">
+<!--            <div>-->
+<!--              <span for="selInterval" class="input-group-text">Выберите период</span>-->
+<!--            </div>-->
+<!--            <div>-->
+              <select id="selInterval" class="form-control" >
+                <option value="DAY">День</option>
+                <option value="WEEK">Неделя</option>
+                <option value="MONTH">Месяц</option>
+                <option value="THREE_MONTH">Квартал</option>
+                <option value="HALF_YEAR">Полугодие</option>
+                <option value="YEAR">Год</option>
+              </select>
+<!--            </div>-->
+          </div>
         </div>
         <div class="diagram" style="display: flex;">
           <div id="fio">

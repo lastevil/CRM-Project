@@ -26,6 +26,13 @@ public class GroupController {
         groupService.createGroup(dto);
         messagingTemplate.convertAndSend("/queue/" + sessionId, dto);
     }
+    @MessageMapping("/chat/updatetitle")
+    public void updateTitleGroup(@Payload ListNewUsersGroup dto,
+                               @Header(name = "simpSessionId") String sessionId) {
+
+        groupService.updateTitleGroup(dto);
+        messagingTemplate.convertAndSend("/queue/" + sessionId, dto);
+    }
     @MessageMapping("/groups")
     public void findAllGroup(@Payload GroupListDto dto,
                                  @Header(name = "simpSessionId") String sessionId) {

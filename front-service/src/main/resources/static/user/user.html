@@ -34,16 +34,16 @@
           Пользователи</h2>
    </div>
    <div class="user-content">
-      <div class="user-img">
-          <div class="div-img">
-             <img id="img" src="image/chimpanzee.png" alt="photo">
-          </div>
-          <div class="btn-img">
-              <button id="btn-user-img" type="button" class="btn btn-primary" onclick="">Сменить фото</button>
-          </div>
-      </div>
+<!--      <div class="user-img">-->
+<!--          <div class="div-img">-->
+<!--             <img id="img" src="image/chimpanzee.png" alt="photo">-->
+<!--          </div>-->
+<!--          <div class="btn-img">-->
+<!--              <button id="btn-user-img" type="button" class="btn btn-primary" onclick="">Сменить фото</button>-->
+<!--          </div>-->
+<!--      </div>-->
       <div class="user-details" >
-          <form novalidate ng-submit="updateLastName()" >
+          <form novalidate ng-submit="updateUser()" >
               <div class="input-group mb-3">
                   <label  class="input-group-text">Фамилия</label>
                   <input id="user_lastName" type="text" class="form-control" value="" ng-model="user_details.lastName">
@@ -66,7 +66,7 @@
       </div>
       <div class="user-password">
           <h5 class="title">Смена пароля</h5>
-          <form class="form-create" >
+          <form class="form-create" novalidate ng-submit="updatePassword()">
              <input id="oldPass" type="password" class="form-control" placeholder="Старый пароль" ng-model="new_password.old_pass" autocomplete="off" required/>
              <input id="newPass1" type="password" class="form-control" placeholder="Новый пароль" ng-model="new_password.new_pass" autocomplete="off" required/>
              <input id="newPass2" type="password" class="form-control" placeholder="Новый пароль"  autocomplete="off" required/>

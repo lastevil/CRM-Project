@@ -1,11 +1,16 @@
 angular.module('front').controller('analyticController',
          function ($rootScope, $scope, $http, $localStorage, $location) {
-console.log("analytic");
+
+const contextPathAuth = 'http://localhost:8701/auth/api/v1/';
+const contextPathAnalytic = 'http://localhost:8701/analytic/api/v1';
+var selInterval = document.getElementById("selInterval");
 
 document.querySelector("#diagramMy").style.display='none';
 document.querySelector("#diagramDepartment").style.display='none';
 document.querySelector("#fio").style.display='none';
 document.querySelector("#depart").style.display='none';
+document.querySelector("#choiceStatus").style.display='none';
+document.querySelector("#choiceInterval").style.display='none';
 
 $scope.myAnalitic = function(){
    document.getElementById('diagramMy').innerHTML = "";
@@ -13,44 +18,55 @@ $scope.myAnalitic = function(){
    document.querySelector("#diagramDepartment").style.display='none';
    document.querySelector("#fio").style.display='block';
    document.querySelector("#depart").style.display='none';
+   document.querySelector("#choiceStatus").style.display='none';
+   document.querySelector("#choiceInterval").style.display='block';
+
+//   $http.get(contextPathAnalytic + '/users/' + $localStorage.username)
+//       .then(function successCallback(response) {
+  //        $http.get(contextPathAnalytic + '/user-info/' + response.data.id + '/' +
+          $http.get(contextPathAnalytic + '/user-info/' + $localStorage.username + '/' +
+              selInterval.options[selInterval.selectedIndex].value)
+             .then(function successCallback(response) {
+  console.log(response.data);
+                document.querySelector("#last").value = response.data.lastName;
+                document.querySelector("#first").value = response.data.firstName;
+                document.querySelector("#kpi").value = response.data.kpi;
+                $scope.MyChart(response);
+             }, function errorCallback(response) {
+                alert(response.data);
+             });
+//       }, function errorCallback(response) {
+//          alert(response.data);
+//       });
+}
+
+$scope.MyChart = function(response){
    anychart.onDocumentReady(function() {
-       // Создание гистограммы
-       var chart = anychart.column();
-       // Создание набора данных
-       var a1 = 47;
-       var a2 = 15;
-       var a3 = 8;
-       var a4 = 34;
-         var chartData = {
-                 title: 'Задачи по статусам за сегодня',
-                 rows: [
-                   ['Все', a1],
-                   ['Новые', a2],
-                   ['Выполнены', a3],
-                   ['Отклонены', a4],
-                   ['Приняты', 22],
-                   ['В работе', 9],
-                   ['Просрочены', 2]
-                 ]
-               };
-               chart.data(chartData);
-               chart.animation(true);
-
-                     chart.yAxis().labels().format('{%Value}{groupsSeparator: }');
-
-chart
-        .labels()
-        .enabled(true)
-        .position('center-top')
-        .anchor('center-bottom')
-        .format('{%Value}{groupsSeparator: }');
-      chart.hovered().labels(false);
-       chart.container("diagramMy");
-
-       // Отображение гистограммы
-       chart.draw();
-
-   });
+          var chart = anychart.column();
+          var chartData = {
+             title: 'Задачи по статусам за сегодня',
+             rows: [
+                ['Все', response.data.ticketCount],
+                ['Новые', response.data.ticketBacklogCount],
+                ['Выполнены', response.data.ticketCountDone],
+                ['Приняты', response.data.ticketCountAccepted],
+                ['В работе', response.data.ticketCountInProgress],
+                ['Просрочены',response.data.ticketCountOverdue]
+             ]
+           };
+           chart.data(chartData);
+           chart.animation(true);
+           chart.yAxis().labels().format('{%Value}{groupsSeparator: }');
+          chart
+               .labels()
+               .enabled(true)
+               .position('center-top')
+               .anchor('center-bottom')
+               .format('{%Value}{groupsSeparator: }');
+          chart.hovered().labels(false);
+          chart.container("diagramMy");
+          chart.draw();
+      });
 }
 
 $scope.analiticDepartment = function(){
@@ -59,6 +75,8 @@ $scope.analiticDepartment = function(){
    document.querySelector("#diagramMy").style.display='none';
    document.querySelector("#fio").style.display='none';
    document.querySelector("#depart").style.display='block';
+   document.querySelector("#choiceStatus").style.display='block';
+   document.querySelector("#choiceInterval").style.display='block';
    anychart.onDocumentReady(function () {
             var data = [
               ['Eyebrow pencil', 5221],
@@ -109,7 +127,22 @@ $scope.analiticDepartment = function(){
                     chart.draw();
                   });
 }
-
+selInterval.addEventListener('change',function(){
+    console.log("selInterval = "+selInterval.options[selInterval.selectedIndex].value);
+//       if ( selInterval.selectedIndex != -1) {
+//       const message = { assigneeId: selInterval.options[selInterval.selectedIndex].value };
+//
+//              console.log("contextPathTicket = "+contextPathTicket + '/filter/by-assignee', message);
+//              $http.post(contextPathTicket + '/filter/by-assignee', message)
+//                     .then(function successCallback(response) {
+//                         alert("Заявка создана.");
+//                     }, function errorCallback(response) {
+//                         alert(response.data);
+//                       //  document.querySelector("#newTicket").style.visibility = 'hidden';
+//              });
+//           }
+});
+console.log("selInterval = "+selInterval.options[selInterval.selectedIndex].value);
 });
 
 

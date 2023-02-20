@@ -11,6 +11,7 @@ var nameRecipiend = document.querySelector('#nameRecipiend');
 var nameGroup = document.querySelector('#newGroup');
 var groupUsers = document.querySelector('#groupUsers');
 var groups = document.querySelector('#groups');
+var updateGroup = document.querySelector('#updateGroup');
 var file = document.querySelector('#logo');
 var btnUser = document.getElementById("btn-user");
 var currentUserId = null;
@@ -28,25 +29,25 @@ var userReg = '';
 const contextPathChat = 'http://localhost:8701/chat/api/v1/';
 const contextPathAuth = 'http://localhost:8701/auth/api/v1/';
 
-$scope.userDetails = function(){
-    $http.get(contextPathAuth+'users/'+ $localStorage.username)
-       .then(function successCallback(response) {
-          nickName = response.data.lastName + ' ' + response.data.firstName;
-          userReg = {userName: $localStorage.username, nickName: nickName};
-          $scope.regUser(userReg);
-       }, function errorCallback(response) {
-          alert(response.data);
-       });
-}
-
-$scope.regUser = function(userReg){
-   $http.post(contextPathChat+'registration',JSON.stringify(userReg))
-          .then(function successCallback(response) {
-             $scope.connect(event);
-          }, function errorCallback(response) {
-             alert(response.data);
-          });
-}
+//$scope.userDetails = function(){
+//    $http.get(contextPathAuth+'users/'+ $localStorage.username)
+//       .then(function successCallback(response) {
+//          nickName = response.data.lastName + ' ' + response.data.firstName;
+//          userReg = {userName: $localStorage.username, nickName: nickName};
+//          $scope.regUser(userReg);
+//       }, function errorCallback(response) {
+//          alert(response.data);
+//       });
+//}
+//
+//$scope.regUser = function(userReg){
+//   $http.post(contextPathChat+'registration',JSON.stringify(userReg))
+//          .then(function successCallback(response) {
+//             $scope.connect(event);
+//          }, function errorCallback(response) {
+//             alert(response.data);
+//          });
+//}
 
 $scope.connect = function(event) { // установить соединение с сервером
     if (stompClient == null) {
@@ -266,7 +267,7 @@ $scope.onMessageReceived = function(payload) { //получить сообщен
              }
           }
        }
-    }else if (message.type == 'NEWGROUP') {
+    }else if (message.type == 'NEWGROUP' || message.type == 'PUTGROUP') {
        if(stompClient){
             stompClient.send(context+"groups", {}, JSON.stringify({type: 'GROUPS'}));
        }
@@ -277,6 +278,10 @@ $scope.onMessageReceived = function(payload) { //получить сообщен
         }
         groups.selectedIndex = -1;
         groupUsers.disabled = false;
+//    }else if (message.type == 'PUTGROUP') {
+//            if(stompClient){
+//                 stompClient.send(context+"groups", {}, JSON.stringify({type: 'GROUPS'}));
+//            }
     }
 }
 
@@ -358,6 +363,17 @@ $scope.createNewGroup = function(){
     }
 }
 
+$scope.updateGroup = function(){
+    if(stompClient ) {
+           stompClient.send(context+"chat/updatetitle", {},
+              JSON.stringify({type: 'PUTGROUP',
+                              id: groups.options[groups.selectedIndex].value,
+                              title: updateGroup.value}));
+    console.log("groups.options[groups.selectedIndex].value = "+groups.options[groups.selectedIndex].value);
+    console.log("updateGroup.value = "+updateGroup.value);
+    }
+}
+
 $scope.addNewUsers = function(){
    var optionUsers = groupUsers.selectedOptions;
    for(let i=0; i<optionUsers.length; i++){
@@ -384,8 +400,13 @@ $scope.loadUsersNewGroup = function(){
           });
 }
 
+groups.addEventListener('change',function(){
+    updateGroup.value = groups.options[groups.selectedIndex].text;
+});
+
 messageForm.addEventListener('submit', send, true)
-$scope.userDetails();
+
+$scope.connect(event);
 $scope.loadUsersNewGroup();
 
 });

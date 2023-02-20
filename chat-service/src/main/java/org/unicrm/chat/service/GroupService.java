@@ -52,7 +52,16 @@ public class GroupService {
     }
     @Transactional
     public void addUsers(ListNewUsersGroup dto) {
-        groupRepository.insertUsers(dto.getUsers(), dto.getId());
+        int count = groupRepository.findIfUserIsAlreadyInGroup(dto.getUsers(), dto.getId());
+        if(count == 0) {
+            groupRepository.insertUsers(dto.getUsers(), dto.getId());
+        }
+    }
+    @Transactional
+    public void updateTitleGroup(ListNewUsersGroup dto){
+        Group group = groupRepository.getById(dto.getId());
+        group.setTitle(dto.getTitle());
+        groupRepository.save(group);
     }
 }
 
