@@ -25,8 +25,8 @@ public class SenderHandler {
     public void sendToKafka() {
         while (listUserDtoForSend.iterator().hasNext()) {
             ListenableFuture<SendResult<UUID, UserDto>> future = kafkaTemplate.send("userTopic", UUID.randomUUID(), listUserDtoForSend.iterator().next());
-            listUserDtoForSend.remove(listUserDtoForSend.iterator().next());
             kafkaTemplate.flush();
+            if (future.isDone()) listUserDtoForSend.remove(listUserDtoForSend.iterator().next());
         }
     }
 }
