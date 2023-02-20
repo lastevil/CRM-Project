@@ -29,6 +29,7 @@ public class UserController {
     public UserDto getUserByUsername(@PathVariable String username) {
         return userService.getByUsername(username);
     }
+
     @Operation(summary = "Getting a list of all users")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/users")

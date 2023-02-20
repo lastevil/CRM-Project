@@ -2,8 +2,6 @@ package org.unicrm.auth.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,7 +10,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.concurrent.ListenableFuture;
 import org.unicrm.auth.dto.UpdatedUserDto;
 import org.unicrm.auth.dto.UserInfoDto;
 import org.unicrm.auth.dto.UserRegDto;
@@ -27,7 +24,6 @@ import org.unicrm.lib.dto.UserDto;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,9 +34,8 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final DepartmentService departmentService;
     private final RoleService roleService;
-    private final KafkaTemplate<UUID, UserDto> kafkaTemplate;
+    private final SenderHandler senderHandler;
     private final PasswordEncoder passwordEncoder;
-    private final List<UserDto> listUserDtoForSend = new ArrayList<>();
 
     @Override
     @Transactional(readOnly = true)
@@ -88,16 +83,16 @@ public class UserService implements UserDetailsService {
         if (updatedUserDto.getPassword() != null)
             user.setPassword(passwordEncoder.encode(updatedUserDto.getPassword()));
         userRepository.save(user);
-        listUserDtoForSend.add(EntityDtoMapper.INSTANCE.toDto(user));
-        sendToKafka();
+        senderHandler.get().add(EntityDtoMapper.INSTANCE.toDto(user));
+        senderHandler.sendToKafka();
     }
 
     @Transactional
     public void changeLogin(String username, String login) {
         User user = findByUsername(username);
         user.setUsername(login);
-        listUserDtoForSend.add(EntityDtoMapper.INSTANCE.toDto(user));
-        sendToKafka();
+        senderHandler.get().add(EntityDtoMapper.INSTANCE.toDto(user));
+        senderHandler.sendToKafka();
     }
 
     @Transactional
@@ -111,8 +106,8 @@ public class UserService implements UserDetailsService {
             }
         }
         if (departmentTitle != null) user.setDepartment(departmentService.findDepartmentByTitle(departmentTitle));
-        listUserDtoForSend.add(EntityDtoMapper.INSTANCE.toDto(user));
-        sendToKafka();
+        senderHandler.get().add(EntityDtoMapper.INSTANCE.toDto(user));
+        senderHandler.sendToKafka();
     }
 
     @Transactional
@@ -137,13 +132,5 @@ public class UserService implements UserDetailsService {
             throw new ResourceNotFoundException(String.format("User '%s' not found", username));
         }
         return user;
-    }
-
-    private void sendToKafka() {
-        while (listUserDtoForSend.iterator().hasNext()) {
-            ListenableFuture<SendResult<UUID, UserDto>> future = kafkaTemplate.send("userTopic", UUID.randomUUID(), listUserDtoForSend.iterator().next());
-            listUserDtoForSend.remove(listUserDtoForSend.iterator().next());
-            kafkaTemplate.flush();
-        }
     }
 }
