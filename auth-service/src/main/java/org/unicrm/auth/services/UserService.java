@@ -2,7 +2,6 @@ package org.unicrm.auth.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.unicrm.auth.dto.UpdatedUserDto;
+import org.unicrm.auth.dto.UserInfoDto;
 import org.unicrm.auth.dto.UserRegDto;
 import org.unicrm.auth.entities.Role;
 import org.unicrm.auth.entities.Status;
@@ -24,7 +24,6 @@ import org.unicrm.lib.dto.UserDto;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,7 +34,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final DepartmentService departmentService;
     private final RoleService roleService;
-    private final KafkaTemplate<UUID, UserDto> kafkaTemplate;
+    private final SenderHandler senderHandler;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -81,16 +80,19 @@ public class UserService implements UserDetailsService {
         }
         if (updatedUserDto.getFirstName() != null) user.setFirstName(updatedUserDto.getFirstName());
         if (updatedUserDto.getLastName() != null) user.setLastName(updatedUserDto.getLastName());
-        if (updatedUserDto.getPassword() != null) user.setPassword(passwordEncoder.encode(updatedUserDto.getPassword()));
+        if (updatedUserDto.getPassword() != null)
+            user.setPassword(passwordEncoder.encode(updatedUserDto.getPassword()));
         userRepository.save(user);
-        kafkaTemplate.send("userTopic", UUID.randomUUID(), EntityDtoMapper.INSTANCE.toDto(user));
+        senderHandler.get().add(EntityDtoMapper.INSTANCE.toDto(user));
+        senderHandler.sendToKafka();
     }
 
     @Transactional
     public void changeLogin(String username, String login) {
         User user = findByUsername(username);
         user.setUsername(login);
-        kafkaTemplate.send("userTopic", UUID.randomUUID(), EntityDtoMapper.INSTANCE.toDto(user));
+        senderHandler.get().add(EntityDtoMapper.INSTANCE.toDto(user));
+        senderHandler.sendToKafka();
     }
 
     @Transactional
@@ -104,7 +106,8 @@ public class UserService implements UserDetailsService {
             }
         }
         if (departmentTitle != null) user.setDepartment(departmentService.findDepartmentByTitle(departmentTitle));
-        kafkaTemplate.send("userTopic", UUID.randomUUID(), EntityDtoMapper.INSTANCE.toDto(user));
+        senderHandler.get().add(EntityDtoMapper.INSTANCE.toDto(user));
+        senderHandler.sendToKafka();
     }
 
     @Transactional
@@ -113,16 +116,21 @@ public class UserService implements UserDetailsService {
         user.getRoles().add(roleService.findRoleByName(roleName));
     }
 
+    @Transactional(readOnly = true)
+    public List<UserDto> findAllByStatusEqualsNoActive() {
+        return userRepository.findAllByStatusEquals(Status.NOT_ACTIVE).stream().map(EntityDtoMapper.INSTANCE::toDto).collect(Collectors.toList());
+    }
+
+    public UserInfoDto getUserInfo(String username) {
+        User user = findByUsername(username);
+        return EntityDtoMapper.INSTANCE.toInfoDto(user);
+    }
+
     private User findByUsername(String username) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
             throw new ResourceNotFoundException(String.format("User '%s' not found", username));
         }
         return user;
-    }
-
-    @Transactional(readOnly = true)
-    public List<UserDto> findAllByStatusEqualsNoActive() {
-        return userRepository.findAllByStatusEquals(Status.NOT_ACTIVE).stream().map(EntityDtoMapper.INSTANCE::toDto).collect(Collectors.toList());
     }
 }
