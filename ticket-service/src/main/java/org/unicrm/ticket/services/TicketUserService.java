@@ -34,4 +34,8 @@ public class TicketUserService {
     public Long findDepartmentId(UUID id) {
         return ticketUserRepository.findUserDepartment(id);
     }
+
+    public List<TicketUserDto> findAllUsersByDepartments(Long departmentId) {
+        return ticketUserRepository.findAllByDepartment(departmentId).stream().map(mapper::toDto).collect(Collectors.toList());
+    }
 }

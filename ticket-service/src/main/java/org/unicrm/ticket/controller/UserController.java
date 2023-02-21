@@ -24,4 +24,10 @@ public class UserController {
     public List<TicketUserDto> getAllUsers() {
         return userService.findAllUsers();
     }
+
+    @Operation(summary = "метод для получения пользователей по конкретному отделу")
+    @GetMapping("tickets/users/{departmentId}")
+    public List<TicketUserDto> getAllUsersFromDepartment(Long departmentId) {
+        return userService.findAllUsersByDepartments(departmentId);
+    }
 }
