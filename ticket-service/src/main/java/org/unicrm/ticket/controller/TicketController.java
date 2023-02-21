@@ -87,7 +87,7 @@ public class TicketController {
 
 
     @Operation(summary = "метод для передачи заявки в работу и присвоения статуса IN_PROGRESS")
-    @PostMapping("/api/v1/ticket/{ticketId}")
+    @PostMapping("/ticket/progress/{ticketId}")
     public void takeTicketToWork(@RequestHeader String username, @PathVariable UUID ticketId) {
         TicketUser user = userService.findUserByUsername(username);
         TicketRequestDto requestDto = new TicketRequestDto();
