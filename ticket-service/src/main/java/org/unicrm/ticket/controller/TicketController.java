@@ -3,13 +3,13 @@ package org.unicrm.ticket.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import org.unicrm.ticket.dto.TicketDto;
+import org.unicrm.ticket.dto.TicketPage;
 import org.unicrm.ticket.dto.TicketRequestDto;
 import org.unicrm.ticket.dto.TicketResponseDto;
 import org.unicrm.ticket.services.TicketService;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -22,13 +22,13 @@ public class TicketController {
 
     @Operation(summary = "метод для получения всех заявок")
     @GetMapping()
-    public List<TicketDto> getAllTickets() {
-        return ticketService.findAll();
+    public Page<TicketResponseDto> getAllTickets(TicketPage page) {
+        return ticketService.findAll(page);
     }
 
     @Operation(summary = "метод для получения конкретной заявки по ее id")
     @GetMapping("/{id}")
-    public TicketDto getTicketById(@PathVariable UUID id) {
+    public TicketResponseDto getTicketById(@PathVariable UUID id) {
         return ticketService.findTicketById(id);
     }
 
@@ -40,10 +40,10 @@ public class TicketController {
     }
 
     @Operation(summary = "метод для обновления заявки")
-    @PutMapping("update/{id}/{departmentId}/{assigneeId}")
+    @PutMapping("/update/{id}/{departmentId}/{assigneeId}")
     public void updateTicket(@RequestBody TicketRequestDto ticketDto, @PathVariable UUID id, @PathVariable(required = false) Long departmentId,
                              @PathVariable(required = false) UUID assigneeId) {
-        ticketService.update(ticketDto,id,departmentId,assigneeId);
+        ticketService.update(ticketDto, id, departmentId, assigneeId);
     }
 
     @Operation(summary = "метод удаления конкретной заявки по ее id")
@@ -54,27 +54,32 @@ public class TicketController {
 
     @Operation(summary = "метод получения списка всех заявок по исполнителю")
     @GetMapping("/tickets/assignee/{assigneeId}")
-    public List<TicketResponseDto> getAllByAssignee(@PathVariable UUID assigneeId) {
-        return ticketService.findTicketsByAssignee(assigneeId);
+    public Page<TicketResponseDto> getAllByAssignee(TicketPage page, @PathVariable UUID assigneeId) {
+        return ticketService.findTicketsByAssignee(assigneeId, page);
     }
 
     @Operation(summary = "метод для получения списка заявок по исполнителю и статусу")
     @GetMapping("/tickets/{assigneeId}/{status}")
-    public List<TicketResponseDto> getAllByAssigneeAndStatus(@PathVariable UUID assigneeId, @PathVariable String status) {
-        return ticketService.findTicketsByAssigneeAndStatus(assigneeId, status);
+    public Page<TicketResponseDto> getAllByAssigneeAndStatus(@PathVariable UUID assigneeId, @PathVariable String status, TicketPage page) {
+        return ticketService.findTicketsByAssigneeAndStatus(assigneeId, status, page);
     }
 
     @Operation(summary = "метод для получения списка заявок по частичному совпадение заголовка")
     @GetMapping("/tickets/search/{title}")
-    public List<TicketResponseDto> getTicketsByTitle(@PathVariable String title) {
-        return ticketService.findTicketByTitle(title);
+    public Page<TicketResponseDto> getTicketsByTitle(@PathVariable String title, TicketPage page) {
+        return ticketService.findTicketByTitle(page, title);
     }
 
     @Operation(summary = "метод для получения списка заявок по отделу")
-    @GetMapping("/tickets/department/{id}")
-    public List<TicketResponseDto> getTicketsByDepartment(@PathVariable Long departmentId) {
-        return ticketService.findTicketsByDepartment(departmentId);
+    @GetMapping("/tickets/department/{departmentId}")
+    public Page<TicketResponseDto> getTicketsByDepartment(@PathVariable Long departmentId, TicketPage page) {
+        return ticketService.findTicketsByDepartment(page, departmentId);
     }
 
+    @Operation(summary = "метод получения заявки по статусу")
+    @GetMapping("/tickets/status/{status}")
+    public Page<TicketResponseDto> getTicketsByStatus(@PathVariable String status, TicketPage page) {
+        return ticketService.findTicketByStatus(page, status);
+    }
 
 }

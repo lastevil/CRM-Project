@@ -1,13 +1,18 @@
 package org.unicrm.ticket.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.unicrm.lib.dto.UserDto;
-import org.unicrm.ticket.dto.TicketDto;
+import org.unicrm.lib.dto.TicketDto;
+import org.unicrm.ticket.dto.TicketPage;
 import org.unicrm.ticket.dto.TicketRequestDto;
 import org.unicrm.ticket.dto.TicketResponseDto;
 import org.unicrm.ticket.entity.Ticket;
@@ -15,8 +20,6 @@ import org.unicrm.ticket.entity.TicketDepartment;
 import org.unicrm.ticket.entity.TicketStatus;
 import org.unicrm.ticket.entity.TicketUser;
 import org.unicrm.ticket.exception.ResourceNotFoundException;
-import org.unicrm.ticket.mapper.TicketDepartmentMapper;
-import org.unicrm.ticket.mapper.TicketUserMapper;
 import org.unicrm.ticket.services.utils.TicketFacade;
 
 import java.time.LocalDate;
@@ -25,7 +28,6 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -37,8 +39,6 @@ public class TicketService {
     private final TicketFacade facade;
     private final TicketDepartmentService departmentService;
     private final TicketUserService userService;
-    private final TicketUserMapper ticketUserMapper;
-    private final TicketDepartmentMapper ticketDepartmentMapper;
 
     @KafkaListener(topics = "userTopic", containerFactory = "userKafkaListenerContainerFactory")
     @Transactional
@@ -81,13 +81,15 @@ public class TicketService {
         facade.getUserRepository().save(user);
     }
 
-    public List<TicketDto> findAll() {
-        return facade.getTicketRepository().findAll().stream().map(facade.getTicketMapper()::toDto).collect(Collectors.toList());
+    public Page<TicketResponseDto> findAll(TicketPage index) {
+        Pageable pageable = PageRequest.of(index.getPage() - 1, index.getCountElements(), Sort.by("updatedAt").descending());
+        return facade.getTicketRepository().findAllTickets(pageable)
+                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
     }
 
-    public TicketDto findTicketById(UUID id) {
+    public TicketResponseDto findTicketById(UUID id) {
         Ticket ticket = facade.getTicketRepository().findById(id).orElse(null);
-        return facade.getTicketMapper().toDto(ticket);
+        return facade.getTicketMapper().toResponseDtoFromEntity(ticket);
     }
 
     @Transactional
@@ -95,29 +97,29 @@ public class TicketService {
         facade.getTicketRepository().deleteById(id);
     }
 
-    public List<TicketResponseDto> findTicketsByAssignee(UUID assignee) {
+    public Page<TicketResponseDto> findTicketsByAssignee(UUID assignee, TicketPage index) {
+        Pageable pageable = PageRequest.of(index.getPage() - 1, index.getCountElements(), Sort.by("updatedAt").descending());
         return facade.getTicketRepository()
-                .findAllByAssignee(assignee)
-                        .stream().map(facade.getTicketMapper()::toResponseDtoFromEntity)
-                        .collect(Collectors.toList());
+                .findAllByAssignee(pageable, assignee)
+                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
     }
 
-    public List<TicketResponseDto> findTicketsByDepartment(Long ticketDepartment) {
-        return facade.getTicketRepository().findAllByDepartment(ticketDepartment)
-                .stream().map(facade.getTicketMapper()::toResponseDtoFromEntity)
-                .collect(Collectors.toList());
+    public Page<TicketResponseDto> findTicketsByDepartment(TicketPage index, Long ticketDepartment) {
+        Pageable pageable = PageRequest.of(index.getPage() - 1, index.getCountElements(), Sort.by("updatedAt").descending());
+        return facade.getTicketRepository().findAllByDepartment(pageable, ticketDepartment)
+                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
     }
 
-    public List<TicketResponseDto> findTicketsByAssigneeAndStatus(UUID assignee, String status) {
-        return facade.getTicketRepository().findAllByAssigneeIdAndStatus(assignee, TicketStatus.valueOf(status))
-                .stream().map(facade.getTicketMapper()::toResponseDtoFromEntity)
-                .collect(Collectors.toList());
+    public Page<TicketResponseDto> findTicketsByAssigneeAndStatus(UUID assignee, String status, TicketPage index) {
+        Pageable pageable = PageRequest.of(index.getPage() - 1, index.getCountElements(), Sort.by("updatedAt").descending());
+        return facade.getTicketRepository().findAllByAssigneeIdAndStatus(pageable, assignee, TicketStatus.valueOf(status))
+                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
     }
 
-    public List<TicketResponseDto> findTicketByTitle(String title) {
-        return facade.getTicketRepository().findTicketsByTitle(title)
-                .stream().map(facade.getTicketMapper()::toResponseDtoFromEntity)
-                .collect(Collectors.toList());
+    public Page<TicketResponseDto> findTicketByTitle(TicketPage index, String title) {
+        Pageable pageable = PageRequest.of(index.getPage() - 1, index.getCountElements());
+        return facade.getTicketRepository().findTicketsByTitle(pageable, title)
+                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
     }
 
     @Transactional
@@ -135,6 +137,7 @@ public class TicketService {
     @Transactional
     public void update(TicketRequestDto ticketDto, UUID id, Long departmentId, UUID assigneeId) {
         Ticket ticket = facade.getTicketRepository().findById(id).orElseThrow(() -> new ResourceNotFoundException("Ticket not found"));
+        TicketStatus status = ticket.getStatus();
         if (departmentId != null) {
             TicketDepartment department = facade.getDepartmentRepository().findById(departmentId)
                     .orElseThrow(() -> new ResourceNotFoundException("Department not found"));
@@ -153,11 +156,11 @@ public class TicketService {
         if (ticketDto.getDueDate() != null) {
             ticket.setDueDate(LocalDateTime.of(ticketDto.getDueDate(), LocalTime.of(21, 0, 0)));
         }
-        if(ticketDto.getStatus() != null) {
+        if (ticketDto.getStatus() != null) {
             ticket.setStatus(ticketDto.getStatus());
         }
-        if(ticketDto.getStatus().equals(TicketStatus.DONE) || ticketDto.getStatus().equals(TicketStatus.ACCEPTED)) {
-            if(!ticket.getOverdue().equals(TicketStatus.OVERDUE))
+        if (status.equals(TicketStatus.DONE) || status.equals(TicketStatus.ACCEPTED) || status.equals(TicketStatus.DELETED)) {
+            if (!ticket.getOverdue().equals(TicketStatus.OVERDUE))
                 ticket.setOverdue(null);
         }
         kafkaTemplate.send("ticketTopic", UUID.randomUUID(), facade.getTicketMapper().toDto(ticket));
@@ -180,5 +183,11 @@ public class TicketService {
                 .forEach(t -> t.setOverdue(TicketStatus.TODAY_LEFT));
         ticketList.stream().filter(t -> t.getDueDate().minusDays(1).toLocalDate().isBefore(LocalDate.now()))
                 .forEach(t -> t.setOverdue(TicketStatus.OVERDUE));
+    }
+
+    public Page<TicketResponseDto> findTicketByStatus(TicketPage index, String status) {
+        Pageable pageable = PageRequest.of(index.getPage() - 1, index.getCountElements(), Sort.by("updatedAt").descending());
+        return facade.getTicketRepository().findTicketsByStatus(pageable,TicketStatus.valueOf(status))
+                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
     }
 }
