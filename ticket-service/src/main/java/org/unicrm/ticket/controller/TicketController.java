@@ -5,9 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import org.unicrm.ticket.dto.TicketPage;
-import org.unicrm.ticket.dto.TicketRequestDto;
-import org.unicrm.ticket.dto.TicketResponseDto;
+import org.unicrm.ticket.dto.*;
 import org.unicrm.ticket.services.TicketService;
 
 import java.util.UUID;
@@ -81,5 +79,9 @@ public class TicketController {
     public Page<TicketResponseDto> getTicketsByStatus(@PathVariable String status, TicketPage page) {
         return ticketService.findTicketByStatus(page, status);
     }
+
+
+
+
 
 }
