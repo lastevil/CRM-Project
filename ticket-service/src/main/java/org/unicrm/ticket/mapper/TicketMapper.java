@@ -50,7 +50,6 @@ public interface TicketMapper {
     @Mapping(target = "dueDate", expression = "java(ticketDto.getDueDate().atTime(21, 00, 00))")
     Ticket toEntityFromTicketRequest(TicketRequestDto ticketDto, TicketUser assignee, TicketUser reporter, TicketDepartment department);
 
-
     TicketResponseDto toResponseDtoFromEntity(Ticket ticket);
 
 
