@@ -1,7 +1,6 @@
 package org.unicrm.analytic.services;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,10 +16,9 @@ import org.unicrm.analytic.repositorys.TicketRepository;
 import org.unicrm.lib.dto.TicketDto;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -109,20 +107,27 @@ public class TicketService {
         }
     }
 
-    public Map<Status, Integer> getAssigneeTicketsByStatus(UUID userId, TimeInterval time) {
-        return ticketRepository.countByStatusDueDateBetweenAndAssignee(userId, getTimeForInterval(time), LocalDateTime.now());
-    }
 
-    public Map<Status, Integer> getAssigneeTicketsByOverdue(UUID userId, TimeInterval time) {
-        return ticketRepository.countByOverdueDueDateBetweenAndAssignee(userId, getTimeForInterval(time), LocalDateTime.now());
+    public Map<Status, Integer> getAssigneeTicketsByStatus(UUID userId, TimeInterval time) {
+        Map<Status, Integer> map = new HashMap<>(Status.values().length);
+        Status[] enums = Status.values();
+        for (Status s : enums) {
+            map.put(s,ticketRepository.countTicketAssigneeByStatusDueDateBetweenTime(userId,s.name(), getTimeForInterval(time), LocalDateTime.now()).intValue());
+        }
+        return map;
     }
 
     public Map<Status, Integer> getDepartmentTicketsByStatus(Long departmentId, TimeInterval time) {
-        return ticketRepository.countByStatusDueDateBetweenDepAndDepartment(departmentId, getTimeForInterval(time), LocalDateTime.now());
-    }
+        Map<Status, Integer> map = new HashMap<>(Status.values().length);
+        Status[] enums = Status.values();
+        for (Status s : enums) {
+            map.put(s,ticketRepository.countTicketDepartmentByStatusDueDateBetweenTime(departmentId,s.name(), getTimeForInterval(time), LocalDateTime.now()));
+            if (map.get(s)==null){
+                map.put(s,0);
+            }
+        }
+        return map;
 
-    public Map<Status, Integer> getDepartmentTicketsByOverdue(Long departmentId, TimeInterval time) {
-        return ticketRepository.countByOverdueDueDateBetweenAndDepartment(departmentId, getTimeForInterval(time), LocalDateTime.now());
     }
 
     public Integer getTicketsCountByAssignee(UUID userId, TimeInterval time) {

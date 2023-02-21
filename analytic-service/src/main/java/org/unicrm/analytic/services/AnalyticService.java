@@ -9,18 +9,11 @@ import org.unicrm.analytic.api.Status;
 import org.unicrm.analytic.api.TimeInterval;
 import org.unicrm.analytic.dto.*;
 import org.unicrm.analytic.entities.Department;
-import org.unicrm.analytic.entities.Ticket;
 import org.unicrm.analytic.entities.User;
 import org.unicrm.lib.dto.UserDto;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +22,7 @@ public class AnalyticService {
     private final DepartmentService departmentService;
     private final TicketService ticketService;
 
-    private final double DONE_INDEX = 0.5;
+    private final double DONE_INDEX = 0.7;
     private final double IN_PROGRESS_INDEX = 0.1;
 
     @KafkaListener(topics = "userTopic", containerFactory = "userKafkaListenerContainerFactory")
@@ -48,7 +41,6 @@ public class AnalyticService {
         userInfo.setLastName(user.getLastName());
         userInfo.setTicketCount(ticketService.getTicketsCountByAssignee(user.getId(), time));
         return calculateGlobalInformation(userInfo,
-                ticketService.getAssigneeTicketsByOverdue(user.getId(), time),
                 ticketService.getAssigneeTicketsByStatus(user.getId(), time));
     }
 
@@ -59,7 +51,6 @@ public class AnalyticService {
         departmentInfo.setDepartmentId(departmentId);
         departmentInfo.setDepartmentTitle(departmentService.findById(departmentId).getTitle());
         return calculateGlobalInformation(departmentInfo,
-                ticketService.getDepartmentTicketsByOverdue(departmentId, time),
                 ticketService.getDepartmentTicketsByStatus(departmentId, time));
     }
 
@@ -74,14 +65,8 @@ public class AnalyticService {
     }
 
     private GlobalInfo calculateGlobalInformation(GlobalInfo globalInfo,
-                                                  Map<Status, Integer> map1, Map<Status, Integer> map2) {
-        Map<Status, Integer> info = Stream.of(map1, map2)
-                .flatMap(map -> map.entrySet().stream())
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        Integer::sum));
-        globalInfo.setMapTicketsStatusCount(info);
+                                                  Map<Status, Integer> info) {
+                globalInfo.setMapTicketsStatusCount(info);
         Integer kpi = 0;
         if (globalInfo.getTicketCount() > 0) {
             Double calculate = (((info.get(Status.ACCEPTED) + (info.get(Status.DONE) * DONE_INDEX)
