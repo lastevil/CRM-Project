@@ -29,6 +29,9 @@ public class TicketResponseDto {
     @Schema(description = "Статус заявки", example = "Запланировано")
     private TicketStatus status;
 
+    @Schema(description = "Описание заявки", example = "Сделать задачу...")
+    private String description;
+
     @Schema(description = "id исполнителя")
     @JsonSerialize(contentUsing = UUIDSerializer.class)
     @JsonDeserialize(contentUsing = UUIDDeserializer.class)

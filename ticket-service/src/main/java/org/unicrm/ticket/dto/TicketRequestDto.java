@@ -12,9 +12,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TicketRequestDto {
-    @Schema(description="title", example="Task")
+    @Schema(description = "title", example="Task")
     String title;
-    @Schema(description="description", example="I need new task")
+    @Schema(description = "description", example="I need new task")
     String description;
 
     @Schema(description = "Статус заявки", example = "BACKLOG")
