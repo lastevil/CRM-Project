@@ -19,7 +19,9 @@ import org.unicrm.ticket.entity.Ticket;
 import org.unicrm.ticket.entity.TicketDepartment;
 import org.unicrm.ticket.entity.TicketStatus;
 import org.unicrm.ticket.entity.TicketUser;
+import org.unicrm.ticket.exception.NoPermissionToChangeException;
 import org.unicrm.ticket.exception.ResourceNotFoundException;
+import org.unicrm.ticket.repository.TicketRepository;
 import org.unicrm.ticket.services.utils.TicketFacade;
 
 import java.time.LocalDate;
@@ -39,6 +41,7 @@ public class TicketService {
     private final TicketFacade facade;
     private final TicketDepartmentService departmentService;
     private final TicketUserService userService;
+    private final TicketRepository ticketRepository;
 
     @KafkaListener(topics = "userTopic", containerFactory = "userKafkaListenerContainerFactory")
     @Transactional
@@ -171,7 +174,7 @@ public class TicketService {
     public void updateDueStatus() {
         List<Ticket> ticketList = facade.getTicketRepository()
                 .findAllWithStatuses(TicketStatus.BACKLOG, TicketStatus.IN_PROGRESS, LocalDateTime.now().plusDays(1), LocalDateTime.now().minusDays(4));
-        ticketList.stream().forEach(t -> t.setOverdue(null));
+        ticketList.stream().filter(t -> t.getOverdue() != null).forEach(t -> t.setOverdue(null));
         ticketList.stream().filter(t -> t.getDueDate().minusDays(4).toLocalDate().isBefore(LocalDate.now()))
                 .forEach(t -> {
                     t.setOverdue(TicketStatus.THREE_DAYS_LEFT);
@@ -198,5 +201,46 @@ public class TicketService {
         Pageable pageable = PageRequest.of(index.getPage() - 1, index.getCountElements(), Sort.by("updatedAt").descending());
         return facade.getTicketRepository().findTicketsByStatus(pageable,TicketStatus.valueOf(status))
                 .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
+    }
+
+    @Transactional
+    public void acceptTask(String username, UUID ticketId) {
+        TicketUser user = userService.findUserByUsername(username);
+        Ticket ticket = facade.getTicketRepository().findById(ticketId)
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found"));
+        if(ticket.getReporter().equals(user)) {
+            ticket.setStatus(TicketStatus.ACCEPTED);
+        } else {
+            throw new NoPermissionToChangeException("User: " + username + "has no rights to perform this action.");
+
+        }
+    }
+
+    public Page<TicketResponseDto> findAllByReporter(TicketPage index, String reporter) {
+        Pageable pageable = PageRequest.of(index.getPage() - 1, index.getCountElements(), Sort.by("updatedAt").descending());
+        return facade.getTicketRepository().findTicketsByReporter(pageable, reporter)
+                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
+    }
+
+    @Transactional
+    public void rejectTicket(UUID ticketId, String username) {
+        TicketUser reporter = userService.findUserByUsername(username);
+        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(()-> new ResourceNotFoundException("Ticket not found"));
+        if(ticket.getStatus().equals(TicketStatus.DONE) && ticket.getReporter().equals(reporter)) {
+            ticket.setStatus(TicketStatus.IN_PROGRESS);
+        } else {
+            throw new NoPermissionToChangeException("Unable to reject the task with id: " + ticketId);
+        }
+    }
+
+    @Transactional
+    public void setTicketDone(UUID ticketId, String username) {
+        TicketUser assignee = userService.findUserByUsername(username);
+        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(()-> new ResourceNotFoundException("Ticket not found"));
+        if(ticket.getStatus().equals(TicketStatus.IN_PROGRESS) && ticket.getAssignee().equals(assignee)) {
+            ticket.setStatus(TicketStatus.DONE);
+        } else {
+            throw new NoPermissionToChangeException("Unable to reject the task with id: " + ticketId);
+        }
     }
 }

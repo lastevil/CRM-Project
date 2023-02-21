@@ -26,4 +26,10 @@ public class GlobalExceptionsHandler {
         log.error(e.toString(), e.getMessage());
         return new ResponseEntity<>(new AppError(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<AppError> permissionExceptionHandler(NoPermissionToChangeException e) {
+        log.error(e.toString(), e.getMessage());
+        return new ResponseEntity<>(new AppError(HttpStatus.FORBIDDEN.value(), e.getMessage()), HttpStatus.FORBIDDEN);
+    }
 }
