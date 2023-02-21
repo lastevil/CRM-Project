@@ -26,8 +26,7 @@ public interface TicketRepository extends JpaRepository<Ticket, UUID> {
     @Query(value = "select t from Ticket t where t.assignee.id = :assigneId and t.status = :status")
     Page<Ticket> findAllByAssigneeIdAndStatus(Pageable pageable, UUID assigneId, TicketStatus status);
 
-    @Query(value = "select * from tickets_schema.tickets where due_date between '2023-02-17T19:51:40.032740' and '2023-02-22T19:51:40.032740' and  (status = 'BACKLOG' or status = 'IN_PROGRESS')"
-    , nativeQuery = true)
+    @Query(value = "select t from Ticket t where t.status = :backlog or t.status = :inProgress and t.dueDate between :before and :after")
     List<Ticket> findAllWithStatuses(TicketStatus backlog, TicketStatus inProgress, LocalDateTime before, LocalDateTime after);
 
     @Query(value = "select * from tickets_schema.tickets where title ilike concat('%', :title, '%') order by updated_at desc", nativeQuery = true)

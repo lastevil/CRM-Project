@@ -178,11 +178,20 @@ public class TicketService {
                     kafkaTemplate.send("ticketTopic", UUID.randomUUID(), facade.getTicketMapper().toDto(t));
                 });
         ticketList.stream().filter(t -> t.getDueDate().minusDays(3).toLocalDate().isBefore(LocalDate.now()))
-                .forEach(t -> t.setOverdue(TicketStatus.TWO_DAYS_LEFT));
+                .forEach(t -> {
+                    t.setOverdue(TicketStatus.TWO_DAYS_LEFT);
+                    kafkaTemplate.send("ticketTopic", UUID.randomUUID(), facade.getTicketMapper().toDto(t));
+                });
         ticketList.stream().filter(t -> t.getDueDate().minusDays(2).toLocalDate().isBefore(LocalDate.now()))
-                .forEach(t -> t.setOverdue(TicketStatus.TODAY_LEFT));
+                .forEach(t -> {
+                    t.setOverdue(TicketStatus.TODAY_LEFT);
+                    kafkaTemplate.send("ticketTopic", UUID.randomUUID(), facade.getTicketMapper().toDto(t));
+                });
         ticketList.stream().filter(t -> t.getDueDate().minusDays(1).toLocalDate().isBefore(LocalDate.now()))
-                .forEach(t -> t.setOverdue(TicketStatus.OVERDUE));
+                .forEach(t -> {
+                    t.setOverdue(TicketStatus.OVERDUE);
+                    kafkaTemplate.send("ticketTopic", UUID.randomUUID(), facade.getTicketMapper().toDto(t));
+                });
     }
 
     public Page<TicketResponseDto> findTicketByStatus(TicketPage index, String status) {
