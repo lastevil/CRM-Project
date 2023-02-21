@@ -14,7 +14,7 @@ import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.unicrm.lib.dto.UserDto;
-import org.unicrm.ticket.dto.TicketDto;
+import org.unicrm.lib.dto.TicketDto;
 
 import java.util.HashMap;
 import java.util.Map;
