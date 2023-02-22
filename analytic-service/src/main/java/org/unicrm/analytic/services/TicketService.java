@@ -12,11 +12,10 @@ import org.unicrm.analytic.entities.Department;
 import org.unicrm.analytic.entities.Ticket;
 import org.unicrm.analytic.entities.User;
 import org.unicrm.analytic.exceptions.ResourceNotFoundException;
+import org.unicrm.analytic.exceptions.validators.TicketValidator;
 import org.unicrm.analytic.repositorys.TicketRepository;
 import org.unicrm.lib.dto.TicketDto;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,12 +27,15 @@ public class TicketService {
     private final TicketMapper ticketMapper;
     private final TicketRepository ticketRepository;
     private final UserService userService;
+
+    private final TicketValidator ticketValidator;
     private final DepartmentService departmentService;
 
 
     @KafkaListener(topics = "ticketTopic", containerFactory = "ticketKafkaListenerContainerFactory")
     @Transactional
     public void createOrUpdateTicket(TicketDto ticketDto) {
+        ticketValidator.validate(ticketDto);
         Ticket ticket;
         if (ticketRepository.existsById(ticketDto.getId())) {
             if (ticketDto.getStatus().equals(Status.DELETED.getValue())) {
@@ -42,25 +44,10 @@ public class TicketService {
                 updateTicket(ticketDto);
             }
         } else {
-            if (ticketDto.getAssigneeDepartmentId() != null) {
                 ticket = createTicket(ticketDto);
                 ticketRepository.save(ticket);
-            }
+
         }
-    }
-
-    public List<TicketResponseDto> getTicketByAssignee(UUID userId, Status status, TimeInterval timeInterval) {
-        LocalDateTime between = getTimeForInterval(timeInterval);
-        return ticketRepository
-                .findAllByAssigneeIdWithStatus(userId, status, between, LocalDateTime.now()).stream()
-                .map(ticketMapper::fromEntityToFrontDto).collect(Collectors.toList());
-    }
-
-    public List<TicketResponseDto> getTicketByAssigneeDepartment(Long departmentId, Status status, TimeInterval timeInterval) {
-        LocalDateTime between = getTimeForInterval(timeInterval);
-        return ticketRepository
-                .findAllByAssigneeDepartmentWithStatus(departmentId, status, between, LocalDateTime.now()).stream()
-                .map(ticketMapper::fromEntityToFrontDto).collect(Collectors.toList());
     }
 
     private Ticket updateTicket(TicketDto ticketDto) {
@@ -89,6 +76,20 @@ public class TicketService {
         return ticketMapper.fromTicketDto(ticketDto, reporter, assignee, department);
     }
 
+    public List<TicketResponseDto> getTicketByAssignee(UUID userId, Status status, TimeInterval timeInterval) {
+        LocalDateTime between = getTimeForInterval(timeInterval);
+        return ticketRepository
+                .findAllByAssigneeIdWithStatus(userId, status, between, LocalDateTime.now()).stream()
+                .map(ticketMapper::fromEntityToFrontDto).collect(Collectors.toList());
+    }
+
+    public List<TicketResponseDto> getTicketByAssigneeDepartment(Long departmentId, Status status, TimeInterval timeInterval) {
+        LocalDateTime between = getTimeForInterval(timeInterval);
+        return ticketRepository
+                .findAllByAssigneeDepartmentWithStatus(departmentId, status, between, LocalDateTime.now()).stream()
+                .map(ticketMapper::fromEntityToFrontDto).collect(Collectors.toList());
+    }
+
     public LocalDateTime getTimeForInterval(TimeInterval interval) {
         switch (interval) {
             case WEEK:
@@ -112,7 +113,10 @@ public class TicketService {
         Map<Status, Integer> map = new HashMap<>(Status.values().length);
         Status[] enums = Status.values();
         for (Status s : enums) {
-            map.put(s,ticketRepository.countTicketAssigneeByStatusDueDateBetweenTime(userId,s.name(), getTimeForInterval(time), LocalDateTime.now()).intValue());
+            map.put(s, ticketRepository.countTicketAssigneeByStatusDueDateBetweenTime(userId, s.name(), getTimeForInterval(time), LocalDateTime.now()).intValue());
+            if (map.get(s) == null) {
+                map.put(s, 0);
+            }
         }
         return map;
     }
@@ -121,9 +125,9 @@ public class TicketService {
         Map<Status, Integer> map = new HashMap<>(Status.values().length);
         Status[] enums = Status.values();
         for (Status s : enums) {
-            map.put(s,ticketRepository.countTicketDepartmentByStatusDueDateBetweenTime(departmentId,s.name(), getTimeForInterval(time), LocalDateTime.now()));
-            if (map.get(s)==null){
-                map.put(s,0);
+            map.put(s, ticketRepository.countTicketDepartmentByStatusDueDateBetweenTime(departmentId, s.name(), getTimeForInterval(time), LocalDateTime.now()));
+            if (map.get(s) == null) {
+                map.put(s, 0);
             }
         }
         return map;

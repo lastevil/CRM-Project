@@ -31,4 +31,10 @@ public class DepartmentController {
     public @ResponseBody GlobalInfo getDepartmentInfo(@PathVariable Long id, @PathVariable TimeInterval interval) {
         return analyticService.getDepartmentInfo(id, interval);
     }
+
+    @Operation(summary = "метод, для получения общей информации, о деятельности отдела текущего пользователя, за промежуток времени")
+    @GetMapping("/{interval}")
+    public @ResponseBody GlobalInfo getMyDepartmentInfo(@PathVariable TimeInterval interval, @RequestHeader String username) {
+        return analyticService.getMyDepartmentInfo(username, interval);
+    }
 }

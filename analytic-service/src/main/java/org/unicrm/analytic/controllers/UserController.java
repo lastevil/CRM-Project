@@ -26,6 +26,11 @@ public class UserController {
     public List<UserResponseDto> getDepartmentEmployees(@PathVariable Long id) {
         return userService.getUsersFromDepartment(id);
     }
+    @Operation(summary = "Метод получения пользователей отдела текущего пользователя")
+    @GetMapping("department")
+    public List<UserResponseDto> getMyDepartmentEmployees(@RequestHeader String username){
+        return userService.getUsersByUserDepartment(username);
+    }
     @Operation(summary = "метод получения информации о текущем пользователе, за промежуток времени")
     @GetMapping("/info/{interval}")
     public @ResponseBody GlobalInfo getCurrentUserInfo(@PathVariable TimeInterval interval, @RequestHeader String username) {
