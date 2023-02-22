@@ -15,7 +15,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/tickets")
 @RequiredArgsConstructor
-@Tag(name = "Аналитика", description = "Контроллер обработки запросов по задачам")
+@Tag(name = "Задачи", description = "Контроллер обработки запросов по задачам")
 public class TicketController {
     private final TicketService ticketService;
 

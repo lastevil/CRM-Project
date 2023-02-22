@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/department")
-@Tag(name = "Аналитика", description = "Контроллер обработки запросов по департаментам")
+@Tag(name = "Отделы", description = "Контроллер обработки запросов по департаментам")
 public class DepartmentController {
     private final DepartmentService departmentService;
     private final AnalyticService analyticService;
