@@ -149,6 +149,7 @@ public class TicketService {
         if (assigneeId != null) {
             TicketUser user = facade.getUserRepository().findById(assigneeId)
                     .orElseThrow(() -> new ResourceNotFoundException("Department not found"));
+            ticket.setAssignee(user);
         }
         if (ticketDto.getTitle() != null) {
             ticket.setTitle(ticketDto.getTitle());
@@ -258,4 +259,6 @@ public class TicketService {
             throw new NoPermissionToChangeException("Unable to set status 'IN_PROGRESS' for this task with id: " + ticketId);
         }
     }
+
+
 }
