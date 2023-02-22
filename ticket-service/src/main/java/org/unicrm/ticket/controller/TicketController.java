@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import org.unicrm.ticket.dto.*;
 import org.unicrm.ticket.entity.TicketStatus;
 import org.unicrm.ticket.entity.TicketUser;
-import org.unicrm.ticket.repository.TicketRepository;
 import org.unicrm.ticket.services.TicketService;
 import org.unicrm.ticket.services.TicketUserService;
 
@@ -85,7 +84,6 @@ public class TicketController {
         return ticketService.findTicketByStatus(page, status);
     }
 
-
     @Operation(summary = "метод для передачи заявки в работу и присвоения статуса IN_PROGRESS")
     @PostMapping("/ticket/progress/{ticketId}")
     public void takeTicketToWork(@RequestHeader String username, @PathVariable UUID ticketId) {
@@ -117,6 +115,5 @@ public class TicketController {
     @PostMapping("/ticket/done/{ticketId}")
     public void setTicketDone(@PathVariable UUID ticketId, @RequestHeader String username) {
         ticketService.setTicketDone(ticketId, username);
-
     }
 }

@@ -210,6 +210,7 @@ public class TicketService {
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found"));
         if(ticket.getReporter().equals(user)) {
             ticket.setStatus(TicketStatus.ACCEPTED);
+            kafkaTemplate.send("ticketTopic", UUID.randomUUID(), facade.getTicketMapper().toDto(ticket));
         } else {
             throw new NoPermissionToChangeException("User: " + username + "has no rights to perform this action.");
 
@@ -228,6 +229,7 @@ public class TicketService {
         Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(()-> new ResourceNotFoundException("Ticket not found"));
         if(ticket.getStatus().equals(TicketStatus.DONE) && ticket.getReporter().equals(reporter)) {
             ticket.setStatus(TicketStatus.IN_PROGRESS);
+            kafkaTemplate.send("ticketTopic", UUID.randomUUID(), facade.getTicketMapper().toDto(ticket));
         } else {
             throw new NoPermissionToChangeException("Unable to reject the task with id: " + ticketId);
         }
@@ -239,6 +241,7 @@ public class TicketService {
         Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(()-> new ResourceNotFoundException("Ticket not found"));
         if(ticket.getStatus().equals(TicketStatus.IN_PROGRESS) && ticket.getAssignee().equals(assignee)) {
             ticket.setStatus(TicketStatus.DONE);
+            kafkaTemplate.send("ticketTopic", UUID.randomUUID(), facade.getTicketMapper().toDto(ticket));
         } else {
             throw new NoPermissionToChangeException("Unable to reject the task with id: " + ticketId);
         }
