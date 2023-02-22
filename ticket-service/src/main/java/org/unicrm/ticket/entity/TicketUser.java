@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ser.std.UUIDSerializer;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -32,4 +33,17 @@ public class TicketUser {
    @ManyToOne(fetch = FetchType.LAZY)
    @JoinColumn(name = "department_id")
    private TicketDepartment department;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TicketUser)) return false;
+        TicketUser user = (TicketUser) o;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

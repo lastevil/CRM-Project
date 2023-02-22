@@ -149,6 +149,7 @@ public class TicketService {
         if (assigneeId != null) {
             TicketUser user = facade.getUserRepository().findById(assigneeId)
                     .orElseThrow(() -> new ResourceNotFoundException("Department not found"));
+            ticket.setAssignee(user);
         }
         if (ticketDto.getTitle() != null) {
             ticket.setTitle(ticketDto.getTitle());
@@ -210,6 +211,7 @@ public class TicketService {
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found"));
         if(ticket.getReporter().equals(user)) {
             ticket.setStatus(TicketStatus.ACCEPTED);
+            kafkaTemplate.send("ticketTopic", UUID.randomUUID(), facade.getTicketMapper().toDto(ticket));
         } else {
             throw new NoPermissionToChangeException("User: " + username + "has no rights to perform this action.");
 
@@ -228,6 +230,7 @@ public class TicketService {
         Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(()-> new ResourceNotFoundException("Ticket not found"));
         if(ticket.getStatus().equals(TicketStatus.DONE) && ticket.getReporter().equals(reporter)) {
             ticket.setStatus(TicketStatus.IN_PROGRESS);
+            kafkaTemplate.send("ticketTopic", UUID.randomUUID(), facade.getTicketMapper().toDto(ticket));
         } else {
             throw new NoPermissionToChangeException("Unable to reject the task with id: " + ticketId);
         }
@@ -239,8 +242,23 @@ public class TicketService {
         Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(()-> new ResourceNotFoundException("Ticket not found"));
         if(ticket.getStatus().equals(TicketStatus.IN_PROGRESS) && ticket.getAssignee().equals(assignee)) {
             ticket.setStatus(TicketStatus.DONE);
+            kafkaTemplate.send("ticketTopic", UUID.randomUUID(), facade.getTicketMapper().toDto(ticket));
         } else {
-            throw new NoPermissionToChangeException("Unable to reject the task with id: " + ticketId);
+            throw new NoPermissionToChangeException("Unable to set status 'Done' for this task with id: " + ticketId);
         }
     }
+
+    @Transactional
+    public void startWorkingOnTask(UUID ticketId, String username) {
+        TicketUser assignee = userService.findUserByUsername(username);
+        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(()-> new ResourceNotFoundException("Ticket not found"));
+        if(ticket.getStatus().equals(TicketStatus.BACKLOG) && ticket.getAssignee().equals(assignee)) {
+            ticket.setStatus(TicketStatus.IN_PROGRESS);
+            kafkaTemplate.send("ticketTopic", UUID.randomUUID(), facade.getTicketMapper().toDto(ticket));
+        } else {
+            throw new NoPermissionToChangeException("Unable to set status 'IN_PROGRESS' for this task with id: " + ticketId);
+        }
+    }
+
+
 }
