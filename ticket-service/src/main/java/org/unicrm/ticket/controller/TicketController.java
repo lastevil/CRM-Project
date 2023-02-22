@@ -7,8 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.unicrm.ticket.dto.*;
 import org.unicrm.ticket.services.TicketService;
-import org.unicrm.ticket.services.TicketUserService;
-
 import java.util.UUID;
 
 @RestController
@@ -47,8 +45,8 @@ public class TicketController {
 
     @Operation(summary = "метод удаления конкретной заявки по ее id")
     @DeleteMapping("/{id}")
-    public void deleteTicketById(@PathVariable UUID id) {
-        ticketService.deleteById(id);
+    public void deleteTicketById(@PathVariable UUID id, @RequestHeader String username) {
+        ticketService.deleteById(id, username);
     }
 
     @Operation(summary = "метод получения списка всех заявок по исполнителю")

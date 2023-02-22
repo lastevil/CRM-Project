@@ -96,8 +96,14 @@ public class TicketService {
     }
 
     @Transactional
-    public void deleteById(UUID id) {
-        facade.getTicketRepository().deleteById(id);
+    public void deleteById(UUID id, String username) {
+        Ticket ticket = facade.getTicketRepository().findById(id).orElseThrow(() -> new ResourceNotFoundException("Ticket not found"));
+        TicketUser reporter = userService.findUserByUsername(username);
+        if(ticket.getStatus().equals(TicketStatus.BACKLOG) && ticket.getReporter().equals(reporter)) {
+            ticket.setStatus(TicketStatus.DELETED);
+            kafkaTemplate.send("ticketTopic", UUID.randomUUID(), facade.getTicketMapper().toDto(ticket));
+            facade.getTicketRepository().deleteById(id);
+        }
     }
 
     public Page<TicketResponseDto> findTicketsByAssignee(UUID assignee, TicketPage index) {
