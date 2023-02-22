@@ -15,10 +15,10 @@ public class UserValidator {
             errors.add("id пользователя не может быть пустым");
         }
         if (userDto.getFirstName()==null){
-            errors.add("Имя польлзователя не может быть пустым");
+            errors.add("Имя пользователя не может быть пустым");
         }
         if (userDto.getLastName()==null){
-            errors.add("Фамилия польлзователя не может быть пустым");
+            errors.add("Фамилия пользователя не может быть пустым");
         }
         if (!errors.isEmpty()) {
             throw new ValidationException(errors);
