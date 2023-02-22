@@ -1,12 +1,12 @@
 <h1>Проект</h1>
 <h3>Унифицированная CRM (UniCrm)</h3>
 Состав команды:
-<p>
-<a src="https://github.com/lastevil"> <img width="30" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="Lastevil"> Lastevil </a>
-<a src="https://github.com/BaFkit"> <img width="30" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="BaFkit"> BaFkit </a>
-<a src="https://github.com/basilomp"> <img width="30" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="basilomp"> basilomp </a>
-<a src="https://github.com/LidiaEvmenenko"><img width="30" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="LidiaEvmenenko"> LidiaEvmenenko</a>
-</p>
+<div>
+<a href="https://github.com/lastevil"> <img style="background-color:white; border-radius: 8px" width="20" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="Lastevil"> Lastevil </a>
+<a href="https://github.com/BaFkit"> <img style="background-color:white; border-radius: 8px" width="20" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="BaFkit"> BaFkit </a>
+<a href="https://github.com/basilomp"> <img style="background-color:white; border-radius: 8px" width="20" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="basilomp"> basilomp </a>
+<a href="https://github.com/LidiaEvmenenko"><img style="background-color:white; border-radius: 8px" width="20" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="LidiaEvmenenko"> LidiaEvmenenko</a>
+</div>
 <h1>Цель</h1>
 <p>Разработать многомодульную унифицированную CRM систему.
 </p>
@@ -57,11 +57,11 @@
 <p border="2">
 <img width="60" src="https://www.svgrepo.com/show/303388/java-4-logo.svg"  alt="Java 11+">
 <img width="60" src="https://www.svgrepo.com/show/452045/js.svg" alt="JavaScrypt">
-<img width="60" src="https://www.svgrepo.com/show/478176/html.svg" alt="Html">
-<img width="60" src="https://www.svgrepo.com/show/376350/spring.svg" alt="Spring">
+<img style="background-color:white; border-radius: 8px" width="60" src="https://www.svgrepo.com/show/478176/html.svg" alt="Html">
+<img style="background-color:white; border-radius: 8px" width="60" src="https://www.svgrepo.com/show/376350/spring.svg" alt="Spring">
 <img width="60" src="https://www.svgrepo.com/show/354200/postgresql.svg" alt="Postgresql">
-<img width="60" src="https://www.svgrepo.com/show/329947/apachekafka.svg" alt="Apache Kafka">
-<img width="60" src="https://fontawesomeicons.com/lib/svg/liquibase.svg" alt="Liquibase">
+<img style="background-color:white; border-radius: 8px"  width="60" src="https://www.svgrepo.com/show/329947/apachekafka.svg" alt="Apache Kafka">
+<img style="background-color:white; border-radius: 8px" width="60" src="https://fontawesomeicons.com/lib/svg/liquibase.svg" alt="Liquibase">
 <img width="60" src="https://www.svgrepo.com/show/354420/swagger.svg" alt="Swagger">
 <img width="60" src="https://www.svgrepo.com/show/452192/docker.svg" alt="Docker">
 <img width="60" src="https://www.svgrepo.com/show/452210/git.svg" alt="Git">
