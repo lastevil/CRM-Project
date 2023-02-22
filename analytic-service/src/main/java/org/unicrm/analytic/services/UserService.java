@@ -30,6 +30,7 @@ public class UserService {
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
+
     public List<UserResponseDto> getUsersFromDepartment(Long departmentId) {
         return userRepository.findAllByDepartmentId(departmentId).stream()
                 .map(userMapper::fromEntityToFrontDto).collect(Collectors.toList());
@@ -47,5 +48,10 @@ public class UserService {
             user.setLastName(user.getLastName());
             user.setUsername(dto.getUsername());
         }
+    }
+
+    public List<UserResponseDto> getUsersByUserDepartment(String username) {
+        User user = findByUsername(username);
+        return getUsersFromDepartment(user.getDepartment().getId());
     }
 }

@@ -77,4 +77,9 @@ public class AnalyticService {
         globalInfo.setKpi(kpi);
         return globalInfo;
     }
+
+    public GlobalInfo getMyDepartmentInfo(String username, TimeInterval interval) {
+        User user = userService.findByUsername(username);
+        return getDepartmentInfo(user.getDepartment().getId(), interval);
+    }
 }
