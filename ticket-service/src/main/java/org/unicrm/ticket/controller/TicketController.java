@@ -6,8 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.unicrm.ticket.dto.*;
-import org.unicrm.ticket.entity.TicketStatus;
-import org.unicrm.ticket.entity.TicketUser;
 import org.unicrm.ticket.services.TicketService;
 import org.unicrm.ticket.services.TicketUserService;
 
@@ -19,7 +17,6 @@ import java.util.UUID;
 @Tag(name = "Заявки", description = "Контроллер для обработки запросов сервиса заявок")
 public class TicketController {
 
-    private final TicketUserService userService;
     private final TicketService ticketService;
 
     @Operation(summary = "метод для получения всех заявок")
@@ -86,11 +83,8 @@ public class TicketController {
 
     @Operation(summary = "метод для передачи заявки в работу и присвоения статуса IN_PROGRESS")
     @PostMapping("/ticket/progress/{ticketId}")
-    public void takeTicketToWork(@RequestHeader String username, @PathVariable UUID ticketId) {
-        TicketUser user = userService.findUserByUsername(username);
-        TicketRequestDto requestDto = new TicketRequestDto();
-        requestDto.setStatus(TicketStatus.IN_PROGRESS);
-        ticketService.update(requestDto, ticketId, user.getDepartment().getId(), user.getId());
+    public void takeTicketToWork(@PathVariable UUID ticketId, @RequestHeader String username) {
+        ticketService.startWorkingOnTask(ticketId, username);
     }
 
     @Operation(summary = "метод для принятия заявки и передачи в статус ACCEPTED")
