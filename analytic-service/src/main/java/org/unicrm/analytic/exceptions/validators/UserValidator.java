@@ -1,8 +1,8 @@
 package org.unicrm.analytic.exceptions.validators;
 
 import org.springframework.stereotype.Component;
+import org.unicrm.analytic.dto.kafka.KafkaUserDto;
 import org.unicrm.analytic.exceptions.ValidationException;
-import org.unicrm.lib.dto.UserDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
 public class UserValidator {
     List<String> errors  = new ArrayList<>();
 
-    public void validate(UserDto userDto) {
+    public void validate(KafkaUserDto userDto) {
         if (userDto.getId() == null) {
             errors.add("id пользователя не может быть пустым");
         }

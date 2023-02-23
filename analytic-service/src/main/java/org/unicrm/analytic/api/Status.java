@@ -8,11 +8,7 @@ public enum Status {
     IN_PROGRESS("В работе"),
     DONE("Выполнено"),
     ACCEPTED("Принято"),
-    DELETED("Удалено"),
-    OVERDUE("Просрочено"),
-    THREE_DAYS_LEFT("Осталось 3 дня"),
-    TWO_DAYS_LEFT("Осталось 2 дня"),
-    TODAY_LEFT("Истечет сегодня");
+    DELETED("Удалено");
     private final String value;
 
     private Status(String value) {

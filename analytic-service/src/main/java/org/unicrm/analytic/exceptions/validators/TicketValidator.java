@@ -1,15 +1,15 @@
 package org.unicrm.analytic.exceptions.validators;
 
 import org.springframework.stereotype.Component;
+import org.unicrm.analytic.dto.kafka.KafkaTicketDto;
 import org.unicrm.analytic.exceptions.ValidationException;
-import org.unicrm.lib.dto.TicketDto;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class TicketValidator {
-    public void validate(TicketDto ticketDto){
+    public void validate(KafkaTicketDto ticketDto){
         List<String> errors = new ArrayList<>();
 
         if (ticketDto.getId()==null){

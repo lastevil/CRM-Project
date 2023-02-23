@@ -11,8 +11,8 @@ import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import org.unicrm.lib.dto.TicketDto;
-import org.unicrm.lib.dto.UserDto;
+import org.unicrm.analytic.dto.kafka.KafkaTicketDto;
+import org.unicrm.analytic.dto.kafka.KafkaUserDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,18 +38,18 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConsumerFactory<UUID, UserDto> userConsumerFactory() {
+    public ConsumerFactory<UUID, KafkaUserDto> userConsumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfig());
     }
 
     @Bean
-    public ConsumerFactory<UUID, TicketDto> ticketsConsumerFactory() {
+    public ConsumerFactory<UUID, KafkaTicketDto> ticketsConsumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfig());
     }
 
     @Bean
     public KafkaListenerContainerFactory userKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<UUID, UserDto> factory =
+        ConcurrentKafkaListenerContainerFactory<UUID, KafkaUserDto> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(userConsumerFactory());
         return factory;
@@ -57,7 +57,7 @@ public class KafkaConfig {
 
     @Bean
     public KafkaListenerContainerFactory ticketKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<UUID, TicketDto> factory =
+        ConcurrentKafkaListenerContainerFactory<UUID, KafkaTicketDto> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(ticketsConsumerFactory());
         return factory;

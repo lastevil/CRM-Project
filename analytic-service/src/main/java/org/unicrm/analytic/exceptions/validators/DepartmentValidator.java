@@ -1,14 +1,14 @@
 package org.unicrm.analytic.exceptions.validators;
 
 import org.springframework.stereotype.Component;
+import org.unicrm.analytic.dto.kafka.KafkaUserDto;
 import org.unicrm.analytic.exceptions.ValidationException;
-import org.unicrm.lib.dto.UserDto;
 
 import java.util.ArrayList;
 import java.util.List;
 @Component
 public class DepartmentValidator {
-    public void validate(UserDto userDto){
+    public void validate(KafkaUserDto userDto){
         List<String> errors = new ArrayList<>();
 
         if (userDto.getDepartmentTitle().isBlank()){

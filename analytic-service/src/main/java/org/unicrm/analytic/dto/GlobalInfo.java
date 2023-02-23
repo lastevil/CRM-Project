@@ -22,9 +22,9 @@ public class GlobalInfo {
     @Schema(description = "Название отдела", example = "Планово-экономический отдел")
     private String departmentTitle;
     @Schema(description = "Количество задач за заданый интервал", example = "300")
-    private Integer ticketCount;
+    private Long ticketCount;
     @Schema(description = "Колличество задач по статусам")
-    Map<Status, Integer> mapTicketsStatusCount;
+    Map<String, Long> mapTicketsStatusCount;
     @Schema(description = "Показатель результативности", example = "75")
     private Integer kpi;
 }

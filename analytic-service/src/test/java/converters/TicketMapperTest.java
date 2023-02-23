@@ -7,15 +7,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.unicrm.analytic.api.Status;
 import org.unicrm.analytic.converter.TicketMapper;
 import org.unicrm.analytic.dto.TicketResponseDto;
+import org.unicrm.analytic.dto.kafka.KafkaTicketDto;
 import org.unicrm.analytic.entities.Department;
 import org.unicrm.analytic.entities.Ticket;
 import org.unicrm.analytic.entities.User;
-import org.unicrm.lib.dto.TicketDto;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@SpringBootTest(classes = {TicketMapper.class, TicketDto.class, Ticket.class, User.class, Department.class})
+@SpringBootTest(classes = {TicketMapper.class, KafkaTicketDto.class, Ticket.class, User.class, Department.class})
 class TicketMapperTest {
 
     @Autowired
@@ -35,7 +35,7 @@ class TicketMapperTest {
                 .lastName("Reporter").department(repDepartment)
                 .build();
 
-        TicketDto ticketDto = TicketDto.builder()
+        KafkaTicketDto ticketDto = KafkaTicketDto.builder()
                 .id(UUID.randomUUID()).status(Status.IN_PROGRESS.name()).title("Title")
                 .assigneeDepartmentId(assDepartment.getId()).assigneeId(assignee.getId())
                 .reporterId(reporter.getId())
