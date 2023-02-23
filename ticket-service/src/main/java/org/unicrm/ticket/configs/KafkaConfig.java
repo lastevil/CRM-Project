@@ -13,8 +13,8 @@ import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import org.unicrm.lib.dto.UserDto;
-import org.unicrm.lib.dto.TicketDto;
+import org.unicrm.ticket.dto.kafka.KafkaTicketDto;
+import org.unicrm.ticket.dto.kafka.KafkaUserDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,16 +36,17 @@ public class KafkaConfig {
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, UUIDSerializer.class);
+        props.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, false);
         return props;
     }
 
     @Bean
-    public ProducerFactory<UUID, TicketDto> producerFactory() {
+    public ProducerFactory<UUID, KafkaTicketDto> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfig());
     }
 
     @Bean
-    public KafkaTemplate<UUID, TicketDto> kafkaTemplate() {
+    public KafkaTemplate<UUID, KafkaTicketDto> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
@@ -61,13 +62,13 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConsumerFactory<UUID, UserDto> userKafkaContainerFactory() {
+    public ConsumerFactory<UUID, KafkaUserDto> userKafkaContainerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfig());
     }
 
     @Bean
-    public KafkaListenerContainerFactory<?> userKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<UUID, UserDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public KafkaListenerContainerFactory userKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<UUID, KafkaUserDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(userKafkaContainerFactory());
         return factory;
     }
