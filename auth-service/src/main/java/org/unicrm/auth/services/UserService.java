@@ -13,13 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.unicrm.auth.dto.UpdatedUserDto;
 import org.unicrm.auth.dto.UserInfoDto;
 import org.unicrm.auth.dto.UserRegDto;
+import org.unicrm.auth.dto.kafka.KafkaUserDto;
 import org.unicrm.auth.entities.Role;
 import org.unicrm.auth.entities.Status;
 import org.unicrm.auth.entities.User;
 import org.unicrm.auth.exceptions.ResourceNotFoundException;
 import org.unicrm.auth.mappers.EntityDtoMapper;
 import org.unicrm.auth.repositories.UserRepository;
-import org.unicrm.lib.dto.UserDto;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,12 +49,12 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserDto> findAll() {
+    public List<KafkaUserDto> findAll() {
         return userRepository.findAll().stream().map(EntityDtoMapper.INSTANCE::toDto).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public UserDto getByUsername(String username) {
+    public KafkaUserDto getByUsername(String username) {
         return EntityDtoMapper.INSTANCE.toDto(findByUsername(username));
     }
 
@@ -117,7 +117,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserDto> findAllByStatusEqualsNoActive() {
+    public List<KafkaUserDto> findAllByStatusEqualsNoActive() {
         return userRepository.findAllByStatusEquals(Status.NOT_ACTIVE).stream().map(EntityDtoMapper.INSTANCE::toDto).collect(Collectors.toList());
     }
 
