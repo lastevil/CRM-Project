@@ -74,3 +74,27 @@
 Страница вывода задач:
 
 ![tickets](/images/tickets.jpg)
+
+Окно создания задач:
+
+![tickets create](/images/tickets_create.jpg)
+
+Окно изменения задачи:
+
+![tickets update](/images/tickets_update.jpg)
+
+Страница чата:
+
+![Chat](/images/chat.jpg)
+
+Окно создания группы чата:
+
+![Chat group](/images/chatgroup.jpg)
+
+Окно панели администратора:
+
+![Adminpanel](/images/adminpanel.jpg)
+
+Окно информации пользователя:
+
+![User page](/images/userpage.jpg)
