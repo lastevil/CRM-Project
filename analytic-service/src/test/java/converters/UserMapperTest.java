@@ -1,21 +1,21 @@
 package converters;
 
-import org.apache.http.util.Asserts;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.unicrm.analytic.converter.DepartmentMapper;
 import org.unicrm.analytic.converter.UserMapper;
 import org.unicrm.analytic.dto.UserResponseDto;
+import org.unicrm.analytic.dto.kafka.KafkaUserDto;
 import org.unicrm.analytic.entities.Department;
 import org.unicrm.analytic.entities.User;
-import org.unicrm.lib.dto.UserDto;
 
 import java.util.UUID;
-@SpringBootTest(classes = {UserMapper.class, UserResponseDto.class, User.class, Department.class, UserDto.class})
+@SpringBootTest(classes = {UserMapper.class, UserResponseDto.class, User.class, Department.class, KafkaUserDto.class})
 class UserMapperTest {
     @Test
     void convertFromUserDto() {
-        UserDto userDto = new UserDto();
+        KafkaUserDto userDto = new KafkaUserDto();
         UUID id = UUID.randomUUID();
         userDto.setId(id);
         userDto.setUsername("login");
@@ -29,15 +29,13 @@ class UserMapperTest {
         Department department = DepartmentMapper.INSTANCE.fromUserDto(userDto);
 
         User user = UserMapper.INSTANCE.fromUserDto(userDto, department);
-        System.out.println("Test 1:");
-        System.out.println(userDto);
-        System.out.println(user);
-        Asserts.notNull(user, "user is empty!");
-        Asserts.check(user.getId().equals(userDto.getId()), "wrong id");
-        Asserts.check(user.getDepartment().equals(department), "wrong department");
-        Asserts.check(user.getUsername().equals(userDto.getUsername()),"wrong username");
-        Asserts.check(user.getFirstName().equals(userDto.getFirstName()), "wrong FirstName");
-        Asserts.check(user.getLastName().equals(userDto.getLastName()), "wrong FirstName");
+        Assertions.assertNotNull(user, "user is empty!");
+        Assertions.assertEquals(user.getId(), userDto.getId(), "wrong id");
+        Assertions.assertEquals(user.getId(), userDto.getId(), "wrong id");
+        Assertions.assertEquals(user.getDepartment(), department, "wrong department");
+        Assertions.assertEquals(user.getUsername(), userDto.getUsername(), "wrong username");
+        Assertions.assertEquals(user.getFirstName(), userDto.getFirstName(), "wrong FirstName");
+        Assertions.assertEquals(user.getLastName(), userDto.getLastName(), "wrong FirstName");
     }
 
     @Test
@@ -50,13 +48,10 @@ class UserMapperTest {
                 .id(1L).title("Test").build());
 
         UserResponseDto dto = UserMapper.INSTANCE.fromEntityToFrontDto(user);
-        System.out.println("Test 2:");
-        System.out.println(user);
-        System.out.println(dto);
-        Asserts.notNull(dto,"dto is empty!");
-        Asserts.check(dto.getFirstName().equals(user.getFirstName()),"wrong FirstName");
-        Asserts.check(dto.getLastName().equals(user.getLastName()),"wrong LastName");
-        Asserts.check(dto.getId().equals(user.getId()),"wrong ID");
+        Assertions.assertNotNull(dto, "dto is empty!");
+        Assertions.assertEquals(dto.getFirstName(), user.getFirstName(), "wrong FirstName");
+        Assertions.assertEquals(dto.getLastName(), user.getLastName(), "wrong LastName");
+        Assertions.assertEquals(dto.getId(), user.getId(), "wrong ID");
     }
 
 }

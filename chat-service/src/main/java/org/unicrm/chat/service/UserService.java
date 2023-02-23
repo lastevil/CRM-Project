@@ -6,13 +6,12 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.unicrm.chat.dto.LocalUserDto;
+import org.unicrm.chat.dto.kafka.KafkaUserDto;
 import org.unicrm.chat.entity.Group;
 import org.unicrm.chat.entity.User;
 import org.unicrm.chat.mapper.UserMapper;
-import org.unicrm.chat.model.UserRegistration;
 import org.unicrm.chat.model.ChatMessage;
 import org.unicrm.chat.repository.UserRepository;
-import org.unicrm.lib.dto.UserDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +66,7 @@ public class UserService {
     }
     @KafkaListener(topics = "userTopic", containerFactory = "userKafkaListenerContainerFactory")
     @Transactional
-    public void save(UserDto userReg){
+    public void save(KafkaUserDto userReg){
         Optional<User> userOptional = userRepository.findByUserName(userReg.getUsername());
         if (userOptional.isEmpty()) {
             User user = userMapper.toEntity(userReg);

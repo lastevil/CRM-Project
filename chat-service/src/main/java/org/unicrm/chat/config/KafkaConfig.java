@@ -11,7 +11,7 @@ import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import org.unicrm.lib.dto.UserDto;
+import org.unicrm.chat.dto.kafka.KafkaUserDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,13 +37,13 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConsumerFactory<UUID, UserDto> userConsumerFactory() {
+    public ConsumerFactory<UUID, KafkaUserDto> userConsumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfig());
     }
 
     @Bean
     public KafkaListenerContainerFactory userKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<UUID, UserDto> factory =
+        ConcurrentKafkaListenerContainerFactory<UUID, KafkaUserDto> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(userConsumerFactory());
         return factory;

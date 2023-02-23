@@ -4,11 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.unicrm.analytic.converter.DepartmentMapper;
 import org.unicrm.analytic.dto.DepartmentFrontDto;
+import org.unicrm.analytic.dto.kafka.KafkaUserDto;
 import org.unicrm.analytic.entities.Department;
 import org.unicrm.analytic.exceptions.ResourceNotFoundException;
 import org.unicrm.analytic.exceptions.validators.DepartmentValidator;
 import org.unicrm.analytic.repositorys.DepartmentRepository;
-import org.unicrm.lib.dto.UserDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +30,7 @@ public class DepartmentService {
                 .collect(Collectors.toList());
     }
 
-    public Department departmentSaveOrUpdate(UserDto dto) {
+    public Department departmentSaveOrUpdate(KafkaUserDto dto) {
         validator.validate(dto);
         Department department;
         if (!departmentRepository.existsById(dto.getDepartmentId())) {

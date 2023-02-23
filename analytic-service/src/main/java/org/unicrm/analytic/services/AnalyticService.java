@@ -5,12 +5,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.unicrm.analytic.api.OverdueStatus;
 import org.unicrm.analytic.api.Status;
 import org.unicrm.analytic.api.TimeInterval;
 import org.unicrm.analytic.dto.*;
+import org.unicrm.analytic.dto.kafka.KafkaUserDto;
 import org.unicrm.analytic.entities.Department;
 import org.unicrm.analytic.entities.User;
-import org.unicrm.lib.dto.UserDto;
 
 import java.util.Map;
 import java.util.UUID;
@@ -27,7 +28,7 @@ public class AnalyticService {
 
     @KafkaListener(topics = "userTopic", containerFactory = "userKafkaListenerContainerFactory")
     @Transactional
-    public void createOrUpdateUserAndDepartment(UserDto userDto) {
+    public void createOrUpdateUserAndDepartment(KafkaUserDto userDto) {
         Department department = departmentService.departmentSaveOrUpdate(userDto);
         userService.userSaveOrUpdate(userDto, department);
 
@@ -54,30 +55,33 @@ public class AnalyticService {
                 ticketService.getDepartmentTicketsByStatus(departmentId, time));
     }
 
+    @Transactional
     public GlobalInfo getCurrentUserInfo(String username, TimeInterval interval) {
         User user = userService.findByUsername(username);
         return getUserInfo(user, interval);
     }
 
+    @Transactional
     public GlobalInfo getUserInfoById(UUID userId, TimeInterval interval) {
         User user = userService.findById(userId);
         return getUserInfo(user, interval);
     }
 
     private GlobalInfo calculateGlobalInformation(GlobalInfo globalInfo,
-                                                  Map<Status, Integer> info) {
-                globalInfo.setMapTicketsStatusCount(info);
+                                                  Map<String, Long> info) {
+        globalInfo.setMapTicketsStatusCount(info);
         Integer kpi = 0;
         if (globalInfo.getTicketCount() > 0) {
-            Double calculate = (((info.get(Status.ACCEPTED) + (info.get(Status.DONE) * DONE_INDEX)
-                    + (info.get(Status.IN_PROGRESS) * IN_PROGRESS_INDEX)) / globalInfo.getTicketCount()) * 100)
-                    - ((info.get(Status.OVERDUE)));
+            Double calculate = (((info.get(Status.ACCEPTED.name()) + (info.get(Status.DONE.name()) * DONE_INDEX)
+                    + (info.get(Status.IN_PROGRESS.name()) * IN_PROGRESS_INDEX)) / globalInfo.getTicketCount()) * 100)
+                    - ((info.get(OverdueStatus.OVERDUE.name())));
             kpi = calculate.intValue();
         }
         globalInfo.setKpi(kpi);
         return globalInfo;
     }
 
+    @Transactional
     public GlobalInfo getMyDepartmentInfo(String username, TimeInterval interval) {
         User user = userService.findByUsername(username);
         return getDepartmentInfo(user.getDepartment().getId(), interval);

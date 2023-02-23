@@ -6,16 +6,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.unicrm.analytic.converter.DepartmentMapper;
 import org.unicrm.analytic.dto.DepartmentFrontDto;
 import org.unicrm.analytic.dto.UserResponseDto;
+import org.unicrm.analytic.dto.kafka.KafkaUserDto;
 import org.unicrm.analytic.entities.Department;
-import org.unicrm.lib.dto.UserDto;
 
 import java.util.UUID;
 
-@SpringBootTest(classes = {DepartmentMapper.class, UserDto.class, Department.class, UserResponseDto.class, DepartmentFrontDto.class})
+@SpringBootTest(classes = {KafkaUserDto.class, DepartmentMapper.class, Department.class,
+        UserResponseDto.class, DepartmentFrontDto.class})
 class DepartmentMapperTest {
     @Test
     void convertFromUserDto() {
-        UserDto userDto = new UserDto();
+        KafkaUserDto userDto = new KafkaUserDto();
         userDto.setId(UUID.randomUUID());
         userDto.setFirstName("FirstName");
         userDto.setLastName("LastName");

@@ -3,6 +3,7 @@ package org.unicrm.analytic.entities;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.UUIDSerializer;
 import lombok.*;
+import org.unicrm.analytic.api.OverdueStatus;
 import org.unicrm.analytic.api.Status;
 
 import javax.persistence.*;
@@ -44,7 +45,7 @@ public class Ticket {
     private LocalDateTime dueDate;
     @Column(name = "overdue_status")
     @Enumerated(EnumType.STRING)
-    private Status overdue;
+    private OverdueStatus overdue;
 
     @Override
     public String toString() {

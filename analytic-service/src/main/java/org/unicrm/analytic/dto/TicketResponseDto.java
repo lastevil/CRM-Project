@@ -2,6 +2,7 @@ package org.unicrm.analytic.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import org.unicrm.analytic.api.OverdueStatus;
 import org.unicrm.analytic.api.Status;
 
 import java.time.OffsetDateTime;
@@ -28,5 +29,5 @@ public class TicketResponseDto {
     @Schema(description = "Срок исполнения")
     private OffsetDateTime dueDate;
     @Schema(description = "Статус срока выполнения задачи")
-    private Status overdue;
+    private OverdueStatus overdue;
 }

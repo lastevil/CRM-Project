@@ -7,7 +7,7 @@
     <groupId>org.unicrm.dev</groupId>
     <artifactId>analytic-service</artifactId>
     <version>1.0-SNAPSHOT</version>
-
+    <packaging>jar</packaging>
     <parent>
         <groupId>org.unicrm</groupId>
         <artifactId>CRM-Project</artifactId>
@@ -37,12 +37,6 @@
             <artifactId>mapstruct</artifactId>
             <version>${mapstruct.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.unicrm.dev</groupId>
-            <artifactId>crm-local-lib</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>

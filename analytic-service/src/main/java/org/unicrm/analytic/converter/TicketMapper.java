@@ -4,10 +4,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.unicrm.analytic.dto.TicketResponseDto;
+import org.unicrm.analytic.dto.kafka.KafkaTicketDto;
 import org.unicrm.analytic.entities.Department;
 import org.unicrm.analytic.entities.Ticket;
 import org.unicrm.analytic.entities.User;
-import org.unicrm.lib.dto.TicketDto;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -24,7 +24,7 @@ public interface TicketMapper {
     @Mapping(target = "reporter", source = "reporter")
     @Mapping(target = "assignee", source = "assignee")
     @Mapping(target = "department", source = "ticketDepartment")
-    Ticket fromTicketDto(TicketDto ticketDto, User reporter, User assignee, Department ticketDepartment);
+    Ticket fromTicketDto(KafkaTicketDto ticketDto, User reporter, User assignee, Department ticketDepartment);
 
     @Mapping(target = "assignee.id",source = "assignee.id")
     @Mapping(target = "assignee.firstName",source = "assignee.firstName")

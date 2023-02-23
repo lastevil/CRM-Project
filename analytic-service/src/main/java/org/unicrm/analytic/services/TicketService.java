@@ -4,17 +4,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.unicrm.analytic.api.OverdueStatus;
 import org.unicrm.analytic.api.Status;
 import org.unicrm.analytic.api.TimeInterval;
 import org.unicrm.analytic.converter.TicketMapper;
 import org.unicrm.analytic.dto.TicketResponseDto;
+import org.unicrm.analytic.dto.kafka.KafkaTicketDto;
 import org.unicrm.analytic.entities.Department;
 import org.unicrm.analytic.entities.Ticket;
 import org.unicrm.analytic.entities.User;
 import org.unicrm.analytic.exceptions.ResourceNotFoundException;
 import org.unicrm.analytic.exceptions.validators.TicketValidator;
 import org.unicrm.analytic.repositorys.TicketRepository;
-import org.unicrm.lib.dto.TicketDto;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -27,14 +28,12 @@ public class TicketService {
     private final TicketMapper ticketMapper;
     private final TicketRepository ticketRepository;
     private final UserService userService;
-
     private final TicketValidator ticketValidator;
     private final DepartmentService departmentService;
 
-
     @KafkaListener(topics = "ticketTopic", containerFactory = "ticketKafkaListenerContainerFactory")
     @Transactional
-    public void createOrUpdateTicket(TicketDto ticketDto) {
+    public void createOrUpdateTicket(KafkaTicketDto ticketDto) {
         ticketValidator.validate(ticketDto);
         Ticket ticket;
         if (ticketRepository.existsById(ticketDto.getId())) {
@@ -44,18 +43,18 @@ public class TicketService {
                 updateTicket(ticketDto);
             }
         } else {
-                ticket = createTicket(ticketDto);
-                ticketRepository.save(ticket);
+            ticket = createTicket(ticketDto);
+            ticketRepository.save(ticket);
 
         }
     }
 
-    private Ticket updateTicket(TicketDto ticketDto) {
+    private Ticket updateTicket(KafkaTicketDto ticketDto) {
         Ticket ticket = ticketRepository.findById(ticketDto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Задача с id " + ticketDto.getId() + " не найдена"));
         ticket.setUpdatedAt(ticketDto.getUpdatedAt());
         if (ticketDto.getOverdue() != null) {
-            ticket.setOverdue(Status.valueOf(ticketDto.getOverdue()));
+            ticket.setOverdue(OverdueStatus.valueOf(ticketDto.getOverdue()));
         }
         ticket.setStatus(Status.valueOf(ticketDto.getStatus()));
         if (ticketDto.getAssigneeId() != null) {
@@ -64,7 +63,7 @@ public class TicketService {
         return ticket;
     }
 
-    private Ticket createTicket(TicketDto ticketDto) {
+    private Ticket createTicket(KafkaTicketDto ticketDto) {
         Department department = departmentService.findById(ticketDto.getAssigneeDepartmentId());
         User reporter = userService.findById(ticketDto.getReporterId());
         User assignee;
@@ -108,37 +107,37 @@ public class TicketService {
         }
     }
 
-
-    public Map<Status, Integer> getAssigneeTicketsByStatus(UUID userId, TimeInterval time) {
-        Map<Status, Integer> map = new HashMap<>(Status.values().length);
+    public Map<String, Long> getAssigneeTicketsByStatus(UUID userId, TimeInterval time) {
+        Map<String, Long> map = new HashMap<>();
         Status[] enums = Status.values();
         for (Status s : enums) {
-            map.put(s, ticketRepository.countTicketAssigneeByStatusDueDateBetweenTime(userId, s.name(), getTimeForInterval(time), LocalDateTime.now()).intValue());
-            if (map.get(s) == null) {
-                map.put(s, 0);
-            }
+            map.put(s.name(), ticketRepository.countByStatusAndAssigneeGroupByStatus(userId, s, getTimeForInterval(time), LocalDateTime.now()).orElse(0l));
+        }
+        OverdueStatus[] statuses = OverdueStatus.values();
+        for (OverdueStatus s : statuses) {
+            map.put(s.name(), ticketRepository.countByOverdueAndAssigneeGroupByOverdue(userId, s, getTimeForInterval(time), LocalDateTime.now()).orElse(0l));
         }
         return map;
     }
 
-    public Map<Status, Integer> getDepartmentTicketsByStatus(Long departmentId, TimeInterval time) {
-        Map<Status, Integer> map = new HashMap<>(Status.values().length);
+    public Map<String, Long> getDepartmentTicketsByStatus(Long departmentId, TimeInterval time) {
+        Map<String, Long> map = new HashMap<>();
         Status[] enums = Status.values();
         for (Status s : enums) {
-            map.put(s, ticketRepository.countTicketDepartmentByStatusDueDateBetweenTime(departmentId, s.name(), getTimeForInterval(time), LocalDateTime.now()));
-            if (map.get(s) == null) {
-                map.put(s, 0);
-            }
+            map.put(s.name(), ticketRepository.countByStatusAndDepartmentGroupByStatus(departmentId, s, getTimeForInterval(time), LocalDateTime.now()).orElse(0l));
+        }
+        OverdueStatus[] statuses = OverdueStatus.values();
+        for (OverdueStatus s : statuses) {
+            map.put(s.name(), ticketRepository.countByOverdueAndDepartmentGroupByOverdue(departmentId, s, getTimeForInterval(time), LocalDateTime.now()).orElse(0l));
         }
         return map;
-
     }
 
-    public Integer getTicketsCountByAssignee(UUID userId, TimeInterval time) {
-        return ticketRepository.countByAssigneeAndDueDateBetween(userId, getTimeForInterval(time), LocalDateTime.now());
+    public Long getTicketsCountByAssignee(UUID userId, TimeInterval time) {
+        return ticketRepository.countByAssigneeAndDueDateBetween(userId, getTimeForInterval(time), LocalDateTime.now()).orElse(0l);
     }
 
-    public Integer getTicketsCountByDepartment(Long departmentId, TimeInterval time) {
-        return ticketRepository.countByDepartmentAndDueDateBetween(departmentId, getTimeForInterval(time), LocalDateTime.now());
+    public Long getTicketsCountByDepartment(Long departmentId, TimeInterval time) {
+        return ticketRepository.countByDepartmentAndDueDateBetween(departmentId, getTimeForInterval(time), LocalDateTime.now()).orElse(0l);
     }
 }

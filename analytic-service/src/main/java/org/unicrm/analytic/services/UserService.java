@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.unicrm.analytic.converter.UserMapper;
 import org.unicrm.analytic.dto.UserResponseDto;
+import org.unicrm.analytic.dto.kafka.KafkaUserDto;
 import org.unicrm.analytic.entities.Department;
 import org.unicrm.analytic.entities.User;
 import org.unicrm.analytic.exceptions.ResourceNotFoundException;
 import org.unicrm.analytic.exceptions.validators.UserValidator;
 import org.unicrm.analytic.repositorys.UserRepository;
-import org.unicrm.lib.dto.UserDto;
 
 import java.util.List;
 import java.util.UUID;
@@ -36,7 +36,7 @@ public class UserService {
                 .map(userMapper::fromEntityToFrontDto).collect(Collectors.toList());
     }
 
-    public void userSaveOrUpdate(UserDto dto, Department department) {
+    public void userSaveOrUpdate(KafkaUserDto dto, Department department) {
         validator.validate(dto);
         if (!userRepository.existsById(dto.getId())) {
             User user = userMapper.fromUserDto(dto, department);
