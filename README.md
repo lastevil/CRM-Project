@@ -55,16 +55,16 @@
 <p>В проекте используются следующие технологии:
 </p>
 <p border="2">
-<img width="60" src="https://www.svgrepo.com/show/303388/java-4-logo.svg"  alt="Java 11+">
-<img width="60" src="https://www.svgrepo.com/show/452045/js.svg" alt="JavaScrypt">
-<img width="60" src="https://www.svgrepo.com/show/7866/html.svg" alt="Html">
-<img width="60" src="https://www.svgrepo.com/show/376350/spring.svg" alt="Spring">
-<img width="60" src="https://www.svgrepo.com/show/354200/postgresql.svg" alt="Postgresql">
-<img width="60" src="https://www.businessprocessincubator.com/wp-content/uploads/thumbnails/thumbnail-152417.png" alt="Apache Kafka">
-<img width="60" src="/images/Liquibase1.svg" alt="Liquibase">
-<img width="60" src="https://www.svgrepo.com/show/354420/swagger.svg" alt="Swagger">
-<img width="60" src="https://www.svgrepo.com/show/452192/docker.svg" alt="Docker">
-<img width="60" src="https://www.svgrepo.com/show/452210/git.svg" alt="Git">
+<img width="60" src="https://www.svgrepo.com/show/303388/java-4-logo.svg"  title="Java 11+">
+<img width="60" src="https://www.svgrepo.com/show/452045/js.svg" title="JavaScrypt">
+<img width="60" src="https://www.svgrepo.com/show/7866/html.svg" title="Html">
+<img width="60" src="https://www.svgrepo.com/show/376350/spring.svg" title="Spring">
+<img width="60" src="https://www.svgrepo.com/show/354200/postgresql.svg" title="Postgresql">
+<img width="60" src="https://www.businessprocessincubator.com/wp-content/uploads/thumbnails/thumbnail-152417.png" title="Apache Kafka">
+<img width="60" src="/images/Liquibase1.svg" title="Liquibase">
+<img width="60" src="https://www.svgrepo.com/show/354420/swagger.svg" title="Swagger">
+<img width="60" src="https://www.svgrepo.com/show/452192/docker.svg" title="Docker">
+<img width="60" src="https://www.svgrepo.com/show/452210/git.svg" title="Git">
 </p>
 <h1>Скриншоты:</h1>
 Страница входа:
