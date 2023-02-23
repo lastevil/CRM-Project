@@ -6,22 +6,22 @@ import org.mapstruct.factory.Mappers;
 import org.unicrm.auth.dto.DepartmentDto;
 import org.unicrm.auth.dto.UserInfoDto;
 import org.unicrm.auth.dto.UserRegDto;
+import org.unicrm.auth.dto.kafka.KafkaUserDto;
 import org.unicrm.auth.entities.Department;
 import org.unicrm.auth.entities.User;
-import org.unicrm.lib.dto.UserDto;
 
 @Mapper
 public interface EntityDtoMapper {
     EntityDtoMapper INSTANCE = Mappers.getMapper(EntityDtoMapper.class);
 
-    User toEntity(UserDto userDto);
+    User toEntity(KafkaUserDto kafkaUserDto);
 
     User toEntity(UserRegDto userRegDto);
 
     @Mapping(source = "uuid", target = "id")
     @Mapping(source = "department.id", target = "departmentId")
     @Mapping(source = "department.title", target = "departmentTitle")
-    UserDto toDto(User user);
+    KafkaUserDto toDto(User user);
 
     UserInfoDto toInfoDto(User user);
 

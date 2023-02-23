@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import org.unicrm.auth.dto.UpdatedUserDto;
 import org.unicrm.auth.dto.UserInfoDto;
 import org.unicrm.auth.dto.UserVerificationDto;
+import org.unicrm.auth.dto.kafka.KafkaUserDto;
 import org.unicrm.auth.services.UserService;
-import org.unicrm.lib.dto.UserDto;
 
 import java.util.List;
 
@@ -26,14 +26,14 @@ public class UserController {
     @Operation(summary = "Get user by username")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/users/{username}")
-    public UserDto getUserByUsername(@PathVariable String username) {
+    public KafkaUserDto getUserByUsername(@PathVariable String username) {
         return userService.getByUsername(username);
     }
 
     @Operation(summary = "Getting a list of all users")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/users")
-    public List<UserDto> getAllUsers() {
+    public List<KafkaUserDto> getAllUsers() {
         return userService.findAll();
     }
 
@@ -61,7 +61,7 @@ public class UserController {
     @Operation(summary = "Request to get all inactive users")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/users/not_active")
-    public List<UserDto> findAllByStatusEqualsNoActive() {
+    public List<KafkaUserDto> findAllByStatusEqualsNoActive() {
         return userService.findAllByStatusEqualsNoActive();
     }
 

@@ -10,7 +10,7 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import org.unicrm.lib.dto.UserDto;
+import org.unicrm.auth.dto.kafka.KafkaUserDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,16 +29,17 @@ public class KafkaConfig {
         producer.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, server);
         producer.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, UUIDSerializer.class);
         producer.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        producer.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, false);
         return producer;
     }
 
     @Bean
-    public ProducerFactory<UUID, UserDto> producerFactory(){
+    public ProducerFactory<UUID, KafkaUserDto> producerFactory(){
         return new DefaultKafkaProducerFactory<>(producerConfig());
     }
 
     @Bean
-    public KafkaTemplate<UUID, UserDto> kafkaTemplate(){
+    public KafkaTemplate<UUID, KafkaUserDto> kafkaTemplate(){
         return new KafkaTemplate<>(producerFactory());
     }
 }
