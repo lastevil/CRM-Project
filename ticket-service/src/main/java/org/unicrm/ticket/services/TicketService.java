@@ -10,11 +10,11 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.unicrm.lib.dto.UserDto;
-import org.unicrm.lib.dto.TicketDto;
 import org.unicrm.ticket.dto.TicketPage;
 import org.unicrm.ticket.dto.TicketRequestDto;
 import org.unicrm.ticket.dto.TicketResponseDto;
+import org.unicrm.ticket.dto.kafka.KafkaTicketDto;
+import org.unicrm.ticket.dto.kafka.KafkaUserDto;
 import org.unicrm.ticket.entity.Ticket;
 import org.unicrm.ticket.entity.TicketDepartment;
 import org.unicrm.ticket.entity.TicketStatus;
@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class TicketService {
 
-    private final KafkaTemplate<UUID, TicketDto> kafkaTemplate;
+    private final KafkaTemplate<UUID, KafkaTicketDto> kafkaTemplate;
 
     private final TicketFacade facade;
     private final TicketDepartmentService departmentService;
@@ -45,12 +45,12 @@ public class TicketService {
 
     @KafkaListener(topics = "userTopic", containerFactory = "userKafkaListenerContainerFactory")
     @Transactional
-    public void createOrUpdateUserAndDepartment(UserDto userDto) {
+    public void createOrUpdateUserAndDepartment(KafkaUserDto userDto) {
         TicketDepartment department = departmentSaveOrUpdate(userDto);
         userSaveOrUpdate(userDto, department);
     }
 
-    private TicketDepartment departmentSaveOrUpdate(UserDto dto) {
+    private TicketDepartment departmentSaveOrUpdate(KafkaUserDto dto) {
         TicketDepartment department;
         if (!facade.getDepartmentRepository().existsById(dto.getDepartmentId())) {
             department = facade.getDepartmentMapper().toEntity(dto);
@@ -66,7 +66,7 @@ public class TicketService {
         return department;
     }
 
-    private void userSaveOrUpdate(UserDto dto, TicketDepartment department) {
+    private void userSaveOrUpdate(KafkaUserDto dto, TicketDepartment department) {
         TicketUser user;
         if (!facade.getUserRepository().existsById(dto.getId())) {
             user = facade.getUserMapper().tofromGlobalDto(dto, department);

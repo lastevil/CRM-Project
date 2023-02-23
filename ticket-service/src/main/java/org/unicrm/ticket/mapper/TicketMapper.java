@@ -5,8 +5,8 @@ import org.mapstruct.Mapper;
 
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import org.unicrm.lib.dto.TicketDto;
 import org.unicrm.ticket.dto.*;
+import org.unicrm.ticket.dto.kafka.KafkaTicketDto;
 import org.unicrm.ticket.entity.Ticket;
 import org.unicrm.ticket.entity.TicketDepartment;
 import org.unicrm.ticket.entity.TicketUser;
@@ -28,7 +28,7 @@ public interface TicketMapper {
     @Mapping(target = "updatedAt", source = "updatedAt")
     @Mapping(target = "dueDate", source = "dueDate")
     @Mapping(target = "overdue", source = "overdue")
-    TicketDto toDto(Ticket ticket);
+    KafkaTicketDto toDto(Ticket ticket);
 
     default OffsetDateTime map(String value) {
         LocalDateTime localDateTime = LocalDateTime.parse(value.toString(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);

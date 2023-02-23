@@ -3,8 +3,8 @@ package org.unicrm.ticket.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import org.unicrm.lib.dto.UserDto;
 import org.unicrm.ticket.dto.TicketUserDto;
+import org.unicrm.ticket.dto.kafka.KafkaUserDto;
 import org.unicrm.ticket.entity.TicketDepartment;
 import org.unicrm.ticket.entity.TicketUser;
 
@@ -20,5 +20,5 @@ public interface TicketUserMapper {
     
     @Mapping(target = "id", source = "userDto.id")
     @Mapping(target = "department", source = "department")
-    TicketUser tofromGlobalDto(UserDto userDto, TicketDepartment department);
+    TicketUser tofromGlobalDto(KafkaUserDto userDto, TicketDepartment department);
 }

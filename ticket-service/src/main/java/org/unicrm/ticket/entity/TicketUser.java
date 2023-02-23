@@ -34,16 +34,17 @@ public class TicketUser {
    @JoinColumn(name = "department_id")
    private TicketDepartment department;
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof TicketUser)) return false;
-        TicketUser user = (TicketUser) o;
-        return Objects.equals(id, user.id);
+        TicketUser that = (TicketUser) o;
+        return getId().equals(that.getId()) && Objects.equals(getUsername(), that.getUsername()) && Objects.equals(getFirstName(), that.getFirstName()) && Objects.equals(getLastName(), that.getLastName()) && Objects.equals(getDepartment(), that.getDepartment());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(getId(), getUsername(), getFirstName(), getLastName(), getDepartment());
     }
 }
