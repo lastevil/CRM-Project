@@ -11,6 +11,7 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
+import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.unicrm.ticket.dto.kafka.KafkaTicketDto;
@@ -31,7 +32,7 @@ public class KafkaConfig {
     private String groupId;
 
     @Bean
-    public Map<String, Object> producerConfig () {
+    public Map<String, Object> producerConfig() {
         Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
@@ -52,13 +53,16 @@ public class KafkaConfig {
 
     @Bean
     public Map<String, Object> consumerConfig() {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, UUIDDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        return props;
+        Map<String, Object> consumer = new HashMap<>();
+        consumer.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        consumer.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, UUIDDeserializer.class);
+        consumer.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
+        consumer.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
+        consumer.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class.getName());
+        consumer.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "org.unicrm.ticket.dto.kafka.KafkaUserDto");
+        consumer.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+        consumer.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        return consumer;
     }
 
     @Bean

@@ -8,6 +8,13 @@ spring:
   kafka:
     bootstrap-servers: "localhost:9092"
     consumer:
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring:
+          deserializer:
+            value:
+              delegate:
+                class: org.springframework.kafka.support.serializer.JsonDeserializer
       group-id: 2
   datasource:
     url: jdbc:postgresql://localhost:5432/unicrmdb
