@@ -14,6 +14,7 @@ public class UserInfoDto {
     private String firstName;
     private String lastName;
     private String email;
+    private Long departmentId;
     private String departmentTitle;
 
 }
