@@ -2,9 +2,7 @@ package org.unicrm.analytic.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.unicrm.analytic.api.Status;
 
-import java.math.BigInteger;
 import java.util.Map;
 import java.util.UUID;
 

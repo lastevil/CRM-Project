@@ -2,7 +2,6 @@ package converters;
 
 import org.apache.http.util.Asserts;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.unicrm.analytic.api.Status;
 import org.unicrm.analytic.converter.TicketMapper;
