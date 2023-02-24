@@ -23,14 +23,12 @@ import org.unicrm.ticket.exception.NoPermissionToChangeException;
 import org.unicrm.ticket.exception.ResourceNotFoundException;
 import org.unicrm.ticket.repository.TicketRepository;
 import org.unicrm.ticket.services.utils.TicketFacade;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
 
 @Service
 @RequiredArgsConstructor
@@ -85,8 +83,87 @@ public class TicketService {
     }
 
     public Page<TicketResponseDto> findAll(TicketPage index) {
-        Pageable pageable = PageRequest.of(index.getPage() - 1, index.getCountElements(), Sort.by("updatedAt").descending());
+        if(index.getPage() < 1) {
+            index.setPage(1);
+        }
+        if(index.getSize() < 1) {
+            index.setSize(1);
+        }
+        Pageable pageable = PageRequest.of(index.getPage() - 1, index.getSize(), Sort.by("updatedAt").descending());
         return facade.getTicketRepository().findAllTickets(pageable)
+                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
+    }
+
+    public Page<TicketResponseDto> findTicketsByAssignee(UUID assignee, TicketPage index) {
+        if(index.getPage() < 1) {
+            index.setPage(1);
+        }
+        if(index.getSize() < 1) {
+            index.setSize(1);
+        }
+        Pageable pageable = PageRequest.of(index.getPage() - 1, index.getSize(), Sort.by("updatedAt").descending());
+        return facade.getTicketRepository()
+                .findAllByAssignee(pageable, assignee)
+                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
+    }
+
+    public Page<TicketResponseDto> findTicketsByDepartment(TicketPage index, Long ticketDepartment) {
+        if(index.getPage() < 1) {
+            index.setPage(1);
+        }
+        if(index.getSize() < 1) {
+            index.setSize(1);
+        }
+        Pageable pageable = PageRequest.of(index.getPage() - 1, index.getSize(), Sort.by("updatedAt").descending());
+        return facade.getTicketRepository().findAllByDepartment(pageable, ticketDepartment)
+                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
+    }
+
+    public Page<TicketResponseDto> findTicketsByAssigneeAndStatus(UUID assignee, String status, TicketPage index) {
+        if(index.getPage() < 1) {
+            index.setPage(1);
+        }
+        if(index.getSize() < 1) {
+            index.setSize(1);
+        }
+        Pageable pageable = PageRequest.of(index.getPage() - 1, index.getSize(), Sort.by("updatedAt").descending());
+        return facade.getTicketRepository().findAllByAssigneeIdAndStatus(pageable, assignee, TicketStatus.valueOf(status))
+                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
+    }
+
+    public Page<TicketResponseDto> findTicketByTitle(TicketPage index, String title) {
+        if(index.getPage() < 1) {
+            index.setPage(1);
+        }
+        if(index.getSize() < 1) {
+            index.setSize(1);
+        }
+        Pageable pageable = PageRequest.of(index.getPage() - 1, index.getSize());
+        return facade.getTicketRepository().findTicketsByTitle(pageable, title)
+                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
+    }
+
+    public Page<TicketResponseDto> findTicketByStatus(TicketPage index, String status) {
+        if(index.getPage() < 1) {
+            index.setPage(1);
+        }
+        if(index.getSize() < 1) {
+            index.setSize(1);
+        }
+        Pageable pageable = PageRequest.of(index.getPage() - 1, index.getSize(), Sort.by("updatedAt").descending());
+        return facade.getTicketRepository().findTicketsByStatus(pageable,TicketStatus.valueOf(status))
+                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
+    }
+
+    public Page<TicketResponseDto> findAllByReporter(TicketPage index, String reporter) {
+        if(index.getPage() < 1) {
+            index.setPage(1);
+        }
+        if(index.getSize() < 1) {
+            index.setSize(1);
+        }
+        Pageable pageable = PageRequest.of(index.getPage() - 1, index.getSize(), Sort.by("updatedAt").descending());
+        return facade.getTicketRepository().findTicketsByReporter(pageable, reporter)
                 .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
     }
 
@@ -104,31 +181,6 @@ public class TicketService {
             kafkaTemplate.send("ticketTopic", UUID.randomUUID(), facade.getTicketMapper().toDto(ticket));
             facade.getTicketRepository().deleteById(id);
         }
-    }
-
-    public Page<TicketResponseDto> findTicketsByAssignee(UUID assignee, TicketPage index) {
-        Pageable pageable = PageRequest.of(index.getPage() - 1, index.getCountElements(), Sort.by("updatedAt").descending());
-        return facade.getTicketRepository()
-                .findAllByAssignee(pageable, assignee)
-                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
-    }
-
-    public Page<TicketResponseDto> findTicketsByDepartment(TicketPage index, Long ticketDepartment) {
-        Pageable pageable = PageRequest.of(index.getPage() - 1, index.getCountElements(), Sort.by("updatedAt").descending());
-        return facade.getTicketRepository().findAllByDepartment(pageable, ticketDepartment)
-                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
-    }
-
-    public Page<TicketResponseDto> findTicketsByAssigneeAndStatus(UUID assignee, String status, TicketPage index) {
-        Pageable pageable = PageRequest.of(index.getPage() - 1, index.getCountElements(), Sort.by("updatedAt").descending());
-        return facade.getTicketRepository().findAllByAssigneeIdAndStatus(pageable, assignee, TicketStatus.valueOf(status))
-                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
-    }
-
-    public Page<TicketResponseDto> findTicketByTitle(TicketPage index, String title) {
-        Pageable pageable = PageRequest.of(index.getPage() - 1, index.getCountElements());
-        return facade.getTicketRepository().findTicketsByTitle(pageable, title)
-                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
     }
 
     @Transactional
@@ -204,12 +256,6 @@ public class TicketService {
                 });
     }
 
-    public Page<TicketResponseDto> findTicketByStatus(TicketPage index, String status) {
-        Pageable pageable = PageRequest.of(index.getPage() - 1, index.getCountElements(), Sort.by("updatedAt").descending());
-        return facade.getTicketRepository().findTicketsByStatus(pageable,TicketStatus.valueOf(status))
-                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
-    }
-
     @Transactional
     public void acceptTask(String username, UUID ticketId) {
         TicketUser user = userService.findUserByUsername(username);
@@ -222,12 +268,6 @@ public class TicketService {
             throw new NoPermissionToChangeException("User: " + username + "has no rights to perform this action.");
 
         }
-    }
-
-    public Page<TicketResponseDto> findAllByReporter(TicketPage index, String reporter) {
-        Pageable pageable = PageRequest.of(index.getPage() - 1, index.getCountElements(), Sort.by("updatedAt").descending());
-        return facade.getTicketRepository().findTicketsByReporter(pageable, reporter)
-                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
     }
 
     @Transactional
@@ -265,6 +305,4 @@ public class TicketService {
             throw new NoPermissionToChangeException("Unable to set status 'IN_PROGRESS' for this task with id: " + ticketId);
         }
     }
-
-
 }

@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.unicrm.ticket.dto.*;
 import org.unicrm.ticket.services.TicketService;
+
+import javax.validation.Valid;
 import java.util.UUID;
 
 @RestController
@@ -19,7 +21,7 @@ public class TicketController {
 
     @Operation(summary = "метод для получения всех заявок")
     @GetMapping()
-    public Page<TicketResponseDto> getAllTickets(TicketPage page) {
+    public Page<TicketResponseDto> getAllTickets(@Valid TicketPage page) {
         return ticketService.findAll(page);
     }
 
@@ -51,31 +53,31 @@ public class TicketController {
 
     @Operation(summary = "метод получения списка всех заявок по исполнителю")
     @GetMapping("/tickets/assignee/{assigneeId}")
-    public Page<TicketResponseDto> getAllByAssignee(TicketPage page, @PathVariable UUID assigneeId) {
+    public Page<TicketResponseDto> getAllByAssignee(@Valid TicketPage page, @PathVariable UUID assigneeId) {
         return ticketService.findTicketsByAssignee(assigneeId, page);
     }
 
     @Operation(summary = "метод для получения списка заявок по исполнителю и статусу")
     @GetMapping("/tickets/{assigneeId}/{status}")
-    public Page<TicketResponseDto> getAllByAssigneeAndStatus(@PathVariable UUID assigneeId, @PathVariable String status, TicketPage page) {
+    public Page<TicketResponseDto> getAllByAssigneeAndStatus(@PathVariable UUID assigneeId, @PathVariable String status, @Valid TicketPage page) {
         return ticketService.findTicketsByAssigneeAndStatus(assigneeId, status, page);
     }
 
     @Operation(summary = "метод для получения списка заявок по частичному совпадение заголовка")
     @GetMapping("/tickets/search/{title}")
-    public Page<TicketResponseDto> getTicketsByTitle(@PathVariable String title, TicketPage page) {
+    public Page<TicketResponseDto> getTicketsByTitle(@PathVariable String title, @Valid TicketPage page) {
         return ticketService.findTicketByTitle(page, title);
     }
 
     @Operation(summary = "метод для получения списка заявок по отделу")
     @GetMapping("/tickets/department/{departmentId}")
-    public Page<TicketResponseDto> getTicketsByDepartment(@PathVariable Long departmentId, TicketPage page) {
+    public Page<TicketResponseDto> getTicketsByDepartment(@PathVariable Long departmentId, @Valid TicketPage page) {
         return ticketService.findTicketsByDepartment(page, departmentId);
     }
 
     @Operation(summary = "метод получения заявки по статусу")
     @GetMapping("/tickets/status/{status}")
-    public Page<TicketResponseDto> getTicketsByStatus(@PathVariable String status, TicketPage page) {
+    public Page<TicketResponseDto> getTicketsByStatus(@PathVariable String status, @Valid TicketPage page) {
         return ticketService.findTicketByStatus(page, status);
     }
 
@@ -93,7 +95,7 @@ public class TicketController {
 
     @Operation(summary = "метод для выборки заявок по ответственному")
     @GetMapping("/ticket/reporter/{reporter}")
-    public Page<TicketResponseDto> getTicketsByReporter(TicketPage page, @PathVariable String reporter) {
+    public Page<TicketResponseDto> getTicketsByReporter(@Valid TicketPage page, @PathVariable String reporter) {
         return ticketService.findAllByReporter(page, reporter);
     }
 
