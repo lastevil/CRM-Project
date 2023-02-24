@@ -24,7 +24,6 @@ import java.util.UUID;
 class AnalyticServiceTest {
     @Autowired
     private AnalyticService analyticService;
-
     @MockBean
     private TicketService ticketService;
     @MockBean
@@ -50,16 +49,16 @@ class AnalyticServiceTest {
         Mockito.doReturn(map).when(ticketService).getAssigneeTicketsByStatus(user.getId(), TimeInterval.DAY);
 
         GlobalInfo globalInfo = analyticService.getUserInfo(user, TimeInterval.DAY);
-        Assertions.assertNotNull(globalInfo,"Результат не может быть null");
-        Assertions.assertTrue(globalInfo.getKpi()>0,"В данном примере kpi > 0");
-        Assertions.assertNull(globalInfo.getDepartmentTitle(),"департамент должен быть пустым");
-        Assertions.assertEquals(2L, globalInfo.getMapTicketsStatusCount().get(Status.IN_PROGRESS.name()),"Неверное значение в мапе");
+        Assertions.assertNotNull(globalInfo, "Результат не может быть null");
+        Assertions.assertTrue(globalInfo.getKpi() > 0, "В данном примере kpi > 0");
+        Assertions.assertNull(globalInfo.getDepartmentTitle(), "департамент должен быть пустым");
+        Assertions.assertEquals(2L, globalInfo.getMapTicketsStatusCount().get(Status.IN_PROGRESS.name()), "Неверное значение в мапе");
     }
 
     @Test
     void getDepartmentInfoTest() {
         Long departmentId = 1L;
-        Department department = new Department(1L, "TestDepartment") ;
+        Department department = new Department(1L, "TestDepartment");
         Mockito.doReturn(department).when(departmentService).findById(departmentId);
         Map<String, Long> map = new HashMap<>();
         for (Status s : Status.values()) {
@@ -73,14 +72,14 @@ class AnalyticServiceTest {
         map.put(Status.BACKLOG.name(), 1L);
         map.put(OverdueStatus.OVERDUE.name(), 2L);
         Mockito.doReturn(map).when(ticketService).getDepartmentTicketsByStatus(departmentId, TimeInterval.DAY);
-        Mockito.doReturn(5L).when(ticketService).getTicketsCountByDepartment(departmentId,TimeInterval.DAY);
+        Mockito.doReturn(5L).when(ticketService).getTicketsCountByDepartment(departmentId, TimeInterval.DAY);
 
         GlobalInfo globalInfo = analyticService.getDepartmentInfo(departmentId, TimeInterval.DAY);
-        Assertions.assertNotNull(globalInfo,"Результат не может быть null");
-        Assertions.assertTrue(globalInfo.getKpi()>0,"В данном примере kpi > 0");
-        Assertions.assertNull(globalInfo.getLastName(),"имя пользователя должно быть null");
-        Assertions.assertNotNull(globalInfo.getDepartmentTitle(),"департамент должен быть пустым");
-        Assertions.assertEquals(2L, globalInfo.getMapTicketsStatusCount().get(Status.IN_PROGRESS.name()),"Неверное значение в мапе");
+        Assertions.assertNotNull(globalInfo, "Результат не может быть null");
+        Assertions.assertTrue(globalInfo.getKpi() > 0, "В данном примере kpi > 0");
+        Assertions.assertNull(globalInfo.getLastName(), "имя пользователя должно быть null");
+        Assertions.assertNotNull(globalInfo.getDepartmentTitle(), "департамент должен быть пустым");
+        Assertions.assertEquals(2L, globalInfo.getMapTicketsStatusCount().get(Status.IN_PROGRESS.name()), "Неверное значение в мапе");
     }
 
 }
