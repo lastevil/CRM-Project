@@ -46,7 +46,7 @@
                     </button>
                   </div>
                   <div>
-                      <button id="btn-mytasks-refresh" type="button" class="btn btn-success" ng-click="loadTickets()" >
+                      <button id="btn-mytasks-refresh" type="button" class="btn btn-success" ng-click="loadAllTickets()" >
                           Обновить список заявок
                       </button>
                   </div>
@@ -59,22 +59,25 @@
                     </div>
              </div>
                 <div class="btnAll">
-                    <label class="col-form-label">Ответственный</label>
+                    <label id="labelRepo" class="col-form-label">Ответственный</label>
                     <select id="selReporter" class="form-select" ></select>
                </div>
                 <div class="btnAll">
-                    <label class="col-form-label">Отдел</label>
+                    <label id="labelDep" class="col-form-label">Отдел</label>
                     <select id="selDepartment" class="form-select" ></select>
                 </div>
                 <div class="btnAll">
                     <label class="col-form-label">Статус</label>
                     <select id="selStatus" class="form-select" >
-                        <option>Запланировано</option>
-                        <option>В работе</option>
-                        <option>Выполнено</option>
-                        <option>Принято</option>
-                        <option>Удалено</option>
-                        <option>Закрыто</option>
+                        <option value="BACKLOG">Запланировано</option>
+                        <option value="IN_PROGRESS">В работе</option>
+                        <option value="DONE">Выполнено</option>
+                        <option value="ACCEPTED">Принято</option>
+                        <option value="DELETED">Удалено</option>
+                        <option value="OVERDUE">Просрочено</option>
+                        <option value="THREE_DAYS_LEFT">Осталось 3 дня</option>
+                        <option value="TWO_DAYS_LEFT">Осталось 2 дня</option>
+                        <option value="TODAY_LEFT">Истечет сегодня</option>
                     </select>
                </div>
               </div>
@@ -89,6 +92,7 @@
                           <th>Статус</th>
                           <th>Выполнить до</th>
                           <th>Создано</th>
+                          <th></th>
                           <th></th>
 
                       </tr>
@@ -105,7 +109,11 @@
                               <td>{{t.createdAt}}</td>
                               <td>
                                   <button type="button" class="btn btn-primary" ng-click="infoTicket(t)" data-bs-toggle="modal" data-bs-target="#infoTicket">
-                                      Подробнее</button>
+                                      Редактировать</button>
+                              </td>
+                              <td>
+                                  <button type="button" class="btn btn-primary" ng-click="deleteTicket(t)"data-bs-toggle="modal" data-bs-target="#delTicket" >
+                                      Удалить</button>
                               </td>
 
                           </tr>
@@ -121,7 +129,7 @@
                           </li>
 
                           <li class="page-item" ng-repeat="pageIndex in paginationArray">
-                              <button class="page-link" ng-click="loadProductsPage(pageIndex)">{{pageIndex}}</button>
+                              <button class="page-link" ng-click="loadTickets(pageIndex)">{{pageIndex}}</button>
                           </li>
 
                           <li class="page-item">
@@ -142,8 +150,8 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-
                     <h5 class="title" style="justify-content: center;">Новая заявка</h5>
+<!--                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Отмена"></button>-->
                 </div>
                 <div class="modal-body">
                     <form  novalidate ng-submit="createNewTicket()">
@@ -155,10 +163,10 @@
                             <label for="newAssignee" class="col-form-label">Исполнитель</label>
                             <select id="newAssignee" class="form-control"  ng-model="new_Ticket.assigneeId"></select>
                         </div>
-                        <div class="input-group mb-3">
-                            <label for="newReporter" class="col-form-label">Ответственный</label>
-                            <select id="newReporter" class="form-control"  ng-model="new_Ticket.reporterId"></select>
-                        </div>
+<!--                        <div class="input-group mb-3">-->
+<!--                            <label for="newReporter" class="col-form-label">Ответственный</label>-->
+<!--                            <select id="newReporter" class="form-control"  ng-model="new_Ticket.reporterId"></select>-->
+<!--                        </div>-->
                         <div class="input-group mb-3">
                             <label for="newDepartment" class="col-form-label">Отдел</label>
                             <select id="newDepartment" class="form-control"  ng-model="new_Ticket.departmentId"></select>
@@ -172,7 +180,7 @@
                             <textarea class="form-control" id="newDescription" ng-model="new_Ticket.description"></textarea>
                         </div>
                         <div>
-                            <button type="submit" class="btn btn-primary">Создать</button>
+                            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Создать</button>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
                         </div>
                     </form>
@@ -262,11 +270,28 @@
                       </div>
                       <div style="display: flex;">
                         <div  style="margin: 3px;">
-                            <button type="submit" class="btn btn-primary">Обновить</button>
+                            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Обновить</button>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
                         </div>
                       </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal"  id="delTicket" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Удаление заявки</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Отмена"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Вы действительно хотите удалить заявку?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" ng-click="yes()">Да</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Отмена</button>
                 </div>
             </div>
         </div>
