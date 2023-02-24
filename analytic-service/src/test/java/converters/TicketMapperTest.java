@@ -2,7 +2,6 @@ package converters;
 
 import org.apache.http.util.Asserts;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.unicrm.analytic.api.Status;
 import org.unicrm.analytic.converter.TicketMapper;
@@ -17,9 +16,6 @@ import java.util.UUID;
 
 @SpringBootTest(classes = {TicketMapper.class, KafkaTicketDto.class, Ticket.class, User.class, Department.class})
 class TicketMapperTest {
-
-    @Autowired
-    User user;
     @Test
     void convertFromTicketDto() {
         Department assDepartment = Department.builder()
@@ -75,9 +71,6 @@ class TicketMapperTest {
                 .dueDate(LocalDateTime.now()).build();
 
         TicketResponseDto dto = TicketMapper.INSTANCE.fromEntityToFrontDto(ticket);
-
-        System.out.println(ticket);
-        System.out.println(dto);
 
         Asserts.check(dto.getId().equals(ticket.getId()), "wrong id");
         Asserts.check(dto.getAssignee().getFirstName().equals(ticket.getAssignee().getFirstName()), "wrong assignee name");

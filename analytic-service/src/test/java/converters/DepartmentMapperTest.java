@@ -1,6 +1,7 @@
 package converters;
 
 import org.apache.http.util.Asserts;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.unicrm.analytic.converter.DepartmentMapper;
@@ -29,7 +30,7 @@ class DepartmentMapperTest {
         System.out.println(userDto);
         System.out.println(department);
 
-        Asserts.notNull(department, "department is null");
+        Assertions.assertNotNull(department, "department is null");
         Asserts.check(userDto.getDepartmentId().equals(department.getId()), "wrong id");
         Asserts.check(userDto.getDepartmentTitle().equals(department.getTitle()), "wrong name");
     }
@@ -45,7 +46,7 @@ class DepartmentMapperTest {
         System.out.println(department);
         System.out.println(dto);
 
-        Asserts.notNull(dto, "dto is null!");
+        Assertions.assertNotNull(dto, "dto is null!");
         Asserts.check(dto.getId().equals(department.getId()), "wrong id");
         Asserts.check(dto.getTitle().equals(department.getTitle()), "wrong department name");
     }
