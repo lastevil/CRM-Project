@@ -23,6 +23,8 @@ public interface EntityDtoMapper {
     @Mapping(source = "department.title", target = "departmentTitle")
     KafkaUserDto toDto(User user);
 
+    @Mapping(source = "uuid", target = "id")
+    @Mapping(source = "department.title", target = "departmentTitle")
     UserInfoDto toInfoDto(User user);
 
     DepartmentDto toDto(Department department);
