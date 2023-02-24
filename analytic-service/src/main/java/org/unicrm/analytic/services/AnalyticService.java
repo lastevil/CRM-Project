@@ -23,15 +23,11 @@ public class AnalyticService {
     private final DepartmentService departmentService;
     private final TicketService ticketService;
 
-    private final double DONE_INDEX = 0.7;
-    private final double IN_PROGRESS_INDEX = 0.1;
-
     @KafkaListener(topics = "userTopic", containerFactory = "userKafkaListenerContainerFactory")
     @Transactional
     public void createOrUpdateUserAndDepartment(KafkaUserDto userDto) {
         Department department = departmentService.departmentSaveOrUpdate(userDto);
         userService.userSaveOrUpdate(userDto, department);
-
     }
 
     @Transactional
@@ -70,12 +66,14 @@ public class AnalyticService {
     private GlobalInfo calculateGlobalInformation(GlobalInfo globalInfo,
                                                   Map<String, Long> info) {
         globalInfo.setMapTicketsStatusCount(info);
-        Integer kpi = 0;
+        long kpi = 0;
         if (globalInfo.getTicketCount() > 0) {
-            Double calculate = (((info.get(Status.ACCEPTED.name()) + (info.get(Status.DONE.name()) * DONE_INDEX)
-                    + (info.get(Status.IN_PROGRESS.name()) * IN_PROGRESS_INDEX)) / globalInfo.getTicketCount()) * 100)
-                    - ((info.get(OverdueStatus.OVERDUE.name())));
-            kpi = calculate.intValue();
+            double doneIndex = 0.7;
+            double inProgressIndex = 0.1;
+            double calculate = (((info.get(Status.ACCEPTED.name()) + (info.get(Status.DONE.name()) * doneIndex)
+                    + (info.get(Status.IN_PROGRESS.name()) * inProgressIndex)) / globalInfo.getTicketCount()) * 100)
+                    - (info.get(OverdueStatus.OVERDUE.name()));
+            kpi = Math.round(calculate);
         }
         globalInfo.setKpi(kpi);
         return globalInfo;

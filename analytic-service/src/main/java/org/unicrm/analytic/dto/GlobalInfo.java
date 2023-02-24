@@ -2,9 +2,7 @@ package org.unicrm.analytic.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.unicrm.analytic.api.Status;
 
-import java.math.BigInteger;
 import java.util.Map;
 import java.util.UUID;
 
@@ -26,5 +24,5 @@ public class GlobalInfo {
     @Schema(description = "Колличество задач по статусам")
     Map<String, Long> mapTicketsStatusCount;
     @Schema(description = "Показатель результативности", example = "75")
-    private Integer kpi;
+    private Long kpi;
 }
