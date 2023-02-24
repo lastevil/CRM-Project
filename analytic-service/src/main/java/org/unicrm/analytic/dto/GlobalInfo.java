@@ -26,5 +26,5 @@ public class GlobalInfo {
     @Schema(description = "Колличество задач по статусам")
     Map<String, Long> mapTicketsStatusCount;
     @Schema(description = "Показатель результативности", example = "75")
-    private Integer kpi;
+    private Long kpi;
 }
