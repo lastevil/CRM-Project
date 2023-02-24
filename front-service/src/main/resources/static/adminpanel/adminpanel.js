@@ -52,6 +52,7 @@ $scope.createNewDepartment = function(){
                 alert(response.data);
        });
 }
+
 $scope.loadDepartments = function(){
    $http.get(contextPath+'departments')
                 .then(function successCallback(response) {
@@ -85,6 +86,7 @@ $scope.editDepartmentTitle = function(){
                 .then(function successCallback(response) {
                    alert("Отдел отредактирован.");
                    selectDepartment.selectedIndex = -1;
+                   selDepartment.selectedIndex = -1;
                    $scope.loadDepartments();
              }, function errorCallback(response) {
                    alert(response.data);
@@ -92,7 +94,7 @@ $scope.editDepartmentTitle = function(){
 }
 
 $scope.editDepartmentUser = function(){
-   if ( selectDepartment.selectedIndex != -1) {
+   if ( selDepartment.selectedIndex != -1) {
        const message = {
             username: selUser.options[selUser.selectedIndex].value,
             status: null,
