@@ -7,9 +7,6 @@
     <artifactId>CRM-Project</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
-    <modules>
-        <module>crm-local-lib</module>
-    </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
