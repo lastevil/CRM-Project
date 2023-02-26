@@ -23,16 +23,6 @@
           <a class="nav-link" href="#!/adminpanel"> Администрирование </a>
         </div>
       </div>
-      <!--            <div class="menu-crm 2">-->
-      <!--                <div class="menu-item1"></div>-->
-      <!--            </div>-->
-      <!--            <div class="menu-crm 3">-->
-      <!--                <div >-->
-      <!--                    <button class="btn-bd-primary1">   </button>-->
-      <!--                    <a class="nav-link" href="#!/createtask"> Create task </a>-->
-      <!--                </div>-->
-
-      <!--            </div>-->
     </nav>
     <div class="page-crm">
       <div class="header">
@@ -46,23 +36,32 @@
       <div class="analitic-content">
         <div class="menu">
           <div class="d-grid gap-2" >
-            <button class="btn btn-success" style="background: #8bbf73;" type="button" ng-click="myAnalitic()">Моя статистика</button>
+            <button id="btnMyAnalitic" class="btn btn-success" style="background: #8bbf73;" type="button" ng-click="myAnalitic()">Моя статистика</button>
           </div>
           <div class="d-grid gap-2" style="background: #8bbf73;">
-            <button class="btn btn-success" style="background: #8bbf73;" type="button" ng-click="analiticDepartment()">Статистика отдела</button>
+            <button id="btnAnaliticDepartment" class="btn btn-success" style="background: #8bbf73;" type="button" ng-click="analiticDepartment()">Статистика отдела</button>
           </div>
           <div class="d-grid gap-2" style="background: #8bbf73;">
-            <button class="btn btn-success" style="background: #8bbf73;" type="button">Статистика организации</button>
+            <button id="btnAnaliticOffice" class="btn btn-success" style="background: #8bbf73;" type="button" ng-click="analiticOffice()">Статистика организации</button>
           </div>
-<!--          <div style="width: 30%;"></div>-->
+          <div id="choiceInterval" class="input-group mb-3">
+            <div id="selInterv" >
+              <label id="labelSelInter" for="selInterval" class="col-form-label">Выберите период:</label>
+              <select id="selInterval" class="form-control" >
+                <option value="DAY">день</option>
+                <option value="WEEK">неделю</option>
+                <option value="MONTH">месяц</option>
+                <option value="THREE_MONTH">квартал</option>
+                <option value="HALF_YEAR">полугодие</option>
+                <option value="YEAR">год</option>
+              </select>
 
-        </div>
-        <div class="d-grid gap-2">
+            </div>
+          </div>
           <div id="choiceStatus" class="input-group mb-3">
-<!--            <div>-->
-<!--              <span for="selStatus" class="input-group-text">Выберите статус</span>-->
-<!--            </div>-->
-<!--            <div>-->
+            <div style="display: flex;">
+              <label for="selStatus" class="col-form-label">Выберите статус:</label>
+
               <select id="selStatus" class="form-control" >
                 <option value="BACKLOG">Запланировано</option>
                 <option value="IN_PROGRESS">В работе</option>
@@ -75,79 +74,68 @@
                 <option value="TODAY_LEFT">Истечет сегодня</option>
                 <option value="CLOSED">Закрыто</option>
               </select>
-<!--            </div>-->
+
+            </div>
           </div>
-          <div id="choiceInterval" class="input-group mb-3">
-<!--            <div>-->
-<!--              <span for="selInterval" class="input-group-text">Выберите период</span>-->
-<!--            </div>-->
-<!--            <div>-->
-              <select id="selInterval" class="form-control" >
-                <option value="DAY">День</option>
-                <option value="WEEK">Неделя</option>
-                <option value="MONTH">Месяц</option>
-                <option value="THREE_MONTH">Квартал</option>
-                <option value="HALF_YEAR">Полугодие</option>
-                <option value="YEAR">Год</option>
-              </select>
-<!--            </div>-->
+          <div id="choiceDepartment" class="input-group mb-3">
+              <div class="input-group mb-3" style="display: flex;">
+                  <label for="departm" class="col-form-label">Выберите отдел:</label>
+                  <select id="departm" class="form-control"></select>
+              </div>
           </div>
         </div>
-        <div class="diagram" style="display: flex;">
-          <div id="fio">
-            <div>
-              <label  for="last" class="col-form-label">Фамилия</label>
-            </div>
-            <div class="input-group mb-3">
-              <input id="last" type="text" class="form-control" style="border: none;" disabled>
-            </div>
-            <div>
-              <label  for="first" class="col-form-label">Имя</label>
-            </div>
-            <div class="input-group mb-3">
-              <input id="first" type="text" class="form-control" style="border: none;" disabled>
-            </div>
-            <div>
-              <label  for="kpi" class="col-form-label">KPI по задачам за сегодня:</label>
-            </div>
-            <div class="input-group mb-3">
-
-              <input id="kpi" type="text" class="form-control" style="border: none;" disabled>
-            </div>
-          </div>
-          <div id="depart">
-            <div>
-              <label class="col-form-label">Информация за месяц</label>
-            </div>
-            <div>
-              <label  for="allTicket" class="col-form-label">Всего заявок в отделе:</label>
-            </div>
-            <div class="input-group mb-3">
-              <input id="allTicket" type="text" class="form-control" style="border: none;" disabled>
-            </div>
-            <div>
-              <label  for="closeTicket" class="col-form-label">Закрыто:</label>
-            </div>
-            <div class="input-group mb-3">
-              <input id="closeTicket" type="text" class="form-control" style="border: none;" disabled>
-            </div>
-            <div>
-              <label  for="overdue" class="col-form-label">Просрочено:</label>
-            </div>
-            <div class="input-group mb-3">
-              <input id="overdue" type="text" class="form-control" style="border: none;" disabled>
-            </div>
-            <div>
-              <label  for="inWork" class="col-form-label">В работе:</label>
-            </div>
-            <div class="input-group mb-3">
-              <input id="inWork" type="text" class="form-control" style="border: none;" disabled>
-            </div>
-          </div>
-          <div  id="diagramMy"  ></div>
-          <div  id="diagramDepartment"  >
-            <div id="diagramDepart"></div>
-            <nav id="navStore" aria-label="Page navigation example">
+        <div class="d-grid gap-2">
+           <div class="diagram" style="display: flex;">
+              <div id="fio">
+                 <div>
+                   <label  for="last" class="col-form-label">Фамилия</label>
+                 </div>
+                 <div class="input-group mb-3">
+                   <input id="last" type="text" class="form-control" style="border: none; text-align: center;" disabled>
+                 </div>
+                 <div>
+                   <label  for="first" class="col-form-label">Имя</label>
+                 </div>
+                 <div class="input-group mb-3">
+                   <input id="first" type="text" class="form-control" style="border: none; text-align: center;" disabled>
+                 </div>
+                 <div>
+                   <label  for="kpi" class="col-form-label">KPI по задачам:</label>
+                 </div>
+                 <div class="input-group mb-3">
+                   <input id="kpi" type="text" class="form-control" style="border: none; text-align: center;" disabled>
+                 </div>
+              </div>
+              <div id="depart">
+                 <div class="input-group mb-3" style="displat: flex;">
+                   <label class="col-form-label">Информация за: </label>
+                   <input id="interv" type="text" class="form-control" style="border: none; text-align: center;" disabled>
+                 </div>
+                 <div class="input-group mb-3" style="displat: flex;">
+                   <label  for="allTicket" class="col-form-label">Всего заявок в отделе:</label>
+                   <input id="allTicket" type="text" class="form-control" style="border: none; text-align: center;" disabled>
+                 </div>
+                 <div class="input-group mb-3" style="displat: flex;">
+                   <label  for="closeTicket" class="col-form-label">Принято:</label>
+                   <input id="closeTicket" type="text" class="form-control" style="border: none; text-align: center;" disabled>
+                 </div>
+                  <div class="input-group mb-3" style="displat: flex;">
+                      <label  for="backlogTicket" class="col-form-label">Запланировано:</label>
+                      <input id="backlogTicket" type="text" class="form-control" style="border: none; text-align: center;" disabled>
+                  </div>
+                 <div class="input-group mb-3" style="displat: flex;">
+                   <label  for="overdue" class="col-form-label">Просрочено:</label>
+                   <input id="overdue" type="text" class="form-control" style="border: none; text-align: center;" disabled>
+                 </div>
+                 <div class="input-group mb-3" style="displat: flex;">
+                   <label  for="inWork" class="col-form-label">В работе:</label>
+                   <input id="inWork" type="text" class="form-control" style="border: none; text-align: center;" disabled>
+                 </div>
+              </div>
+              <div  id="diagramMy"  ></div>
+              <div  id="diagramDepartment"  >
+              <div id="diagramDepart"></div>
+              <nav id="navStore" aria-label="Page navigation example">
               <ul class="pagination">
                 <li class="page-item">
                   <a class="page-link" aria-label="Previous" ng-click="prevPage()">
@@ -168,7 +156,9 @@
             </nav>
           </div>
         </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
