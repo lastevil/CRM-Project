@@ -87,7 +87,7 @@ public class TicketService {
             index.setPage(1);
         }
         if(index.getSize() < 1) {
-            index.setSize(1);
+            index.setSize(10);
         }
         Pageable pageable = PageRequest.of(index.getPage() - 1, index.getSize(), Sort.by("updatedAt").descending());
         return facade.getTicketRepository().findAllTickets(pageable)
@@ -99,7 +99,7 @@ public class TicketService {
             index.setPage(1);
         }
         if(index.getSize() < 1) {
-            index.setSize(1);
+            index.setSize(10);
         }
         Pageable pageable = PageRequest.of(index.getPage() - 1, index.getSize(), Sort.by("updatedAt").descending());
         return facade.getTicketRepository()
@@ -112,7 +112,7 @@ public class TicketService {
             index.setPage(1);
         }
         if(index.getSize() < 1) {
-            index.setSize(1);
+            index.setSize(10);
         }
         Pageable pageable = PageRequest.of(index.getPage() - 1, index.getSize(), Sort.by("updatedAt").descending());
         return facade.getTicketRepository().findAllByDepartment(pageable, ticketDepartment)
@@ -124,7 +124,7 @@ public class TicketService {
             index.setPage(1);
         }
         if(index.getSize() < 1) {
-            index.setSize(1);
+            index.setSize(10);
         }
         Pageable pageable = PageRequest.of(index.getPage() - 1, index.getSize(), Sort.by("updatedAt").descending());
         return facade.getTicketRepository().findAllByAssigneeIdAndStatus(pageable, assignee, TicketStatus.valueOf(status))
@@ -136,7 +136,7 @@ public class TicketService {
             index.setPage(1);
         }
         if(index.getSize() < 1) {
-            index.setSize(1);
+            index.setSize(10);
         }
         Pageable pageable = PageRequest.of(index.getPage() - 1, index.getSize());
         return facade.getTicketRepository().findTicketsByTitle(pageable, title)
@@ -148,7 +148,7 @@ public class TicketService {
             index.setPage(1);
         }
         if(index.getSize() < 1) {
-            index.setSize(1);
+            index.setSize(10);
         }
         Pageable pageable = PageRequest.of(index.getPage() - 1, index.getSize(), Sort.by("updatedAt").descending());
         return facade.getTicketRepository().findTicketsByStatus(pageable,TicketStatus.valueOf(status))
@@ -160,7 +160,7 @@ public class TicketService {
             index.setPage(1);
         }
         if(index.getSize() < 1) {
-            index.setSize(1);
+            index.setSize(10);
         }
         Pageable pageable = PageRequest.of(index.getPage() - 1, index.getSize(), Sort.by("updatedAt").descending());
         return facade.getTicketRepository().findTicketsByReporter(pageable, reporter)
