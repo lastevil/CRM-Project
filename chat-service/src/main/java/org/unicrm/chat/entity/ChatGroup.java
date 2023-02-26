@@ -19,7 +19,7 @@ public class ChatGroup {
     @Id
     @GenericGenerator(name = "UUIDGenerator", strategy = "uuid2")
     @GeneratedValue(generator = "UUIDGenerator")
-    @Column(name = "uuid")
+    @Column(name = "id")
     private UUID uuid;
 
     @Column(name = "chatdate")
