@@ -71,9 +71,9 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void saveNewUser(UserRegDto userRegDto) {
         userRegValidator.validate(userRegDto);
-        if (userRepository.findUserByEmail(userRegDto.getEmail()) != null) throw new ResourceExistsException("user with this email exists");
         User user = EntityDtoMapper.INSTANCE.toEntity(userRegDto);
         String[] username = userRegDto.getEmail().split("@");
+        if (userRepository.existsUserByUsername(username[0])) throw new ResourceExistsException("This user already exists");
         user.setUsername(username[0]);
         user.setPassword(passwordEncoder.encode(userRegDto.getPassword()));
         Role roleUser = roleService.findRoleByName("ROLE_USER");
