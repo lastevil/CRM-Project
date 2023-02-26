@@ -98,3 +98,7 @@
 Окно информации пользователя:
 
 ![User page](/images/userpage.jpg)
+
+Аналитика текущего пользователя:
+
+![User analytic](/images/Analytic.jpg)

@@ -49,7 +49,7 @@ public class TicketService {
         }
     }
 
-    private Ticket updateTicket(KafkaTicketDto ticketDto) {
+    private void updateTicket(KafkaTicketDto ticketDto) {
         Ticket ticket = ticketRepository.findById(ticketDto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Задача с id " + ticketDto.getId() + " не найдена"));
         ticket.setUpdatedAt(ticketDto.getUpdatedAt());
@@ -60,7 +60,6 @@ public class TicketService {
         if (ticketDto.getAssigneeId() != null) {
             ticket.setAssignee(userService.findById(ticketDto.getAssigneeId()));
         }
-        return ticket;
     }
 
     private Ticket createTicket(KafkaTicketDto ticketDto) {
@@ -109,35 +108,31 @@ public class TicketService {
 
     public Map<String, Long> getAssigneeTicketsByStatus(UUID userId, TimeInterval time) {
         Map<String, Long> map = new HashMap<>();
-        Status[] enums = Status.values();
-        for (Status s : enums) {
-            map.put(s.name(), ticketRepository.countByStatusAndAssigneeGroupByStatus(userId, s, getTimeForInterval(time), LocalDateTime.now()).orElse(0l));
+        for (Status s : Status.values()) {
+            map.put(s.name(), ticketRepository.countByStatusAndAssigneeGroupByStatus(userId, s, getTimeForInterval(time), LocalDateTime.now()).orElse(0L));
         }
-        OverdueStatus[] statuses = OverdueStatus.values();
-        for (OverdueStatus s : statuses) {
-            map.put(s.name(), ticketRepository.countByOverdueAndAssigneeGroupByOverdue(userId, s, getTimeForInterval(time), LocalDateTime.now()).orElse(0l));
+        for (OverdueStatus s : OverdueStatus.values()) {
+            map.put(s.name(), ticketRepository.countByOverdueAndAssigneeGroupByOverdue(userId, s, getTimeForInterval(time), LocalDateTime.now()).orElse(0L));
         }
         return map;
     }
 
     public Map<String, Long> getDepartmentTicketsByStatus(Long departmentId, TimeInterval time) {
         Map<String, Long> map = new HashMap<>();
-        Status[] enums = Status.values();
-        for (Status s : enums) {
-            map.put(s.name(), ticketRepository.countByStatusAndDepartmentGroupByStatus(departmentId, s, getTimeForInterval(time), LocalDateTime.now()).orElse(0l));
+        for (Status s : Status.values()) {
+            map.put(s.name(), ticketRepository.countByStatusAndDepartmentGroupByStatus(departmentId, s, getTimeForInterval(time), LocalDateTime.now()).orElse(0L));
         }
-        OverdueStatus[] statuses = OverdueStatus.values();
-        for (OverdueStatus s : statuses) {
-            map.put(s.name(), ticketRepository.countByOverdueAndDepartmentGroupByOverdue(departmentId, s, getTimeForInterval(time), LocalDateTime.now()).orElse(0l));
+        for (OverdueStatus s : OverdueStatus.values()) {
+            map.put(s.name(), ticketRepository.countByOverdueAndDepartmentGroupByOverdue(departmentId, s, getTimeForInterval(time), LocalDateTime.now()).orElse(0L));
         }
         return map;
     }
 
     public Long getTicketsCountByAssignee(UUID userId, TimeInterval time) {
-        return ticketRepository.countByAssigneeAndDueDateBetween(userId, getTimeForInterval(time), LocalDateTime.now()).orElse(0l);
+        return ticketRepository.countByAssigneeAndDueDateBetween(userId, getTimeForInterval(time), LocalDateTime.now()).orElse(0L);
     }
 
     public Long getTicketsCountByDepartment(Long departmentId, TimeInterval time) {
-        return ticketRepository.countByDepartmentAndDueDateBetween(departmentId, getTimeForInterval(time), LocalDateTime.now()).orElse(0l);
+        return ticketRepository.countByDepartmentAndDueDateBetween(departmentId, getTimeForInterval(time), LocalDateTime.now()).orElse(0L);
     }
 }
