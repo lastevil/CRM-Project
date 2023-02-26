@@ -16,7 +16,8 @@
 
 <h1>Как запустить:</h1>
 Установить docker
-Развернуть docker-compouse командой
+
+Развернуть приложение из docker-compose файла в корне проекта командой:
 
 ```
 $ docker-compose up
@@ -38,3 +39,9 @@ $ docker-compose up
 <a href="https://www.docker.com/products/docker-desktop/"><img width="60" src="https://www.svgrepo.com/show/452192/docker.svg" title="Docker" alt=""></a>
 <img width="60" src="https://www.svgrepo.com/show/452210/git.svg" title="Git" alt="">
 </p>
+
+<h2>Ещё не реализовано:</h2>
+
+Передача файлов(Чат/Заявки)
+
+История чата в MongoDB (На данный маомент история хранится в PostgreSQL)
