@@ -6,7 +6,7 @@ spring:
   application:
     name: ticket-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/unicrmdb
+    url: jdbc:postgresql://postgres:5432/unicrmdb
     username: postgres
     password: Qwe123
     driver-class-name: org.postgresql.Driver
@@ -30,11 +30,11 @@ spring:
               delegate:
                 class: org.springframework.kafka.support.serializer.JsonDeserializer
       group-id: 1
-    bootstrap-servers: "localhost:9092"
+    bootstrap-servers: "kafka:9092"
 eureka:
   instance:
-    hostname: localhost
+    hostname: ticket-service
   client:
     serviceUrl:
-      defaultZone: ${EUREKA_URI:http://localhost:8700/eureka}
+      defaultZone: ${EUREKA_URI:http://discovery:8700/eureka}
       fetchRegistry: false

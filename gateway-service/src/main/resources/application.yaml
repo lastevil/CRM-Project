@@ -8,7 +8,7 @@ eureka:
     hostname: localhost
   client:
     serviceUrl:
-      defaultZone: ${EUREKA_URI:http://localhost:8700/eureka}
+      defaultZone: ${EUREKA_URI:http://discovery:8700/eureka}
       fetchRegistry: false
 
 spring:
@@ -19,7 +19,7 @@ spring:
       globalcors:
         corsConfigurations:
           '[/**]':
-            allowedOrigins: "http://localhost:8080"
+            allowedOrigins: "*"
             allowedMethods:
               - GET
               - PUT

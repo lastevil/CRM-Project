@@ -59,8 +59,8 @@ angular.module('front').controller('indexController', function ($rootScope, $sco
                    $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.webUserToken.token;
                }
            }
+   // const contextPath = 'http://gateway:8701/auth/api/v1/';
 const contextPath = 'http://localhost:8701/auth/api/v1/';
-
 document.querySelector("#username-page-reg").style.visibility = 'hidden';
 document.querySelector("#err").style.visibility = 'hidden';
 document.querySelector("#errAuth").style.visibility = 'hidden';
