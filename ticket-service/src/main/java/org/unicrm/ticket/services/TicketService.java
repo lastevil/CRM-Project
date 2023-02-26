@@ -21,6 +21,9 @@ import org.unicrm.ticket.entity.TicketStatus;
 import org.unicrm.ticket.entity.TicketUser;
 import org.unicrm.ticket.exception.NoPermissionToChangeException;
 import org.unicrm.ticket.exception.ResourceNotFoundException;
+import org.unicrm.ticket.exception.validators.TicketDepartmentValidator;
+import org.unicrm.ticket.exception.validators.TicketUserValidator;
+import org.unicrm.ticket.exception.validators.TicketValidator;
 import org.unicrm.ticket.repository.TicketRepository;
 import org.unicrm.ticket.services.utils.TicketFacade;
 import java.time.LocalDate;
@@ -35,15 +38,19 @@ import java.util.concurrent.TimeUnit;
 public class TicketService {
 
     private final KafkaTemplate<UUID, KafkaTicketDto> kafkaTemplate;
-
     private final TicketFacade facade;
     private final TicketDepartmentService departmentService;
     private final TicketUserService userService;
     private final TicketRepository ticketRepository;
+    private final TicketValidator ticketValidator;
+    private final TicketUserValidator userValidator;
+    private final TicketDepartmentValidator departmentValidator;
 
     @KafkaListener(topics = "userTopic", containerFactory = "userKafkaListenerContainerFactory")
     @Transactional
     public void createOrUpdateUserAndDepartment(KafkaUserDto userDto) {
+        departmentValidator.validate(userDto);
+        userValidator.validate(userDto);
         TicketDepartment department = departmentSaveOrUpdate(userDto);
         userSaveOrUpdate(userDto, department);
     }
@@ -185,6 +192,7 @@ public class TicketService {
 
     @Transactional
     public void createTicket(TicketRequestDto ticketDto, Long departmentId, UUID assigneeId, String username) {
+        ticketValidator.validateCreation(ticketDto, departmentId, assigneeId, username);
         TicketUser assignee = userService.findUserById(assigneeId);
         TicketUser reporter = userService.findUserByUsername(username);
         TicketDepartment department = departmentService.findDepartmentById(departmentId);
