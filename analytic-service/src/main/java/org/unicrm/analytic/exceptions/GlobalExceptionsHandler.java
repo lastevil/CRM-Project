@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.time.LocalDateTime;
+
 
 @ControllerAdvice
 @Slf4j
@@ -24,6 +26,6 @@ public class GlobalExceptionsHandler {
     @ExceptionHandler
     public ResponseEntity<AppError> handleAllOtherExceptions(RuntimeException e) {
         log.error(e.toString(), e.getMessage());
-        return new ResponseEntity<>(new AppError(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new AppError(HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now()+ "Local server error"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
