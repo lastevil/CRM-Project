@@ -11,10 +11,10 @@ public class DepartmentValidator {
     public void validate(KafkaUserDto userDto){
         List<String> errors = new ArrayList<>();
 
-        if (userDto.getDepartmentTitle().isBlank()){
+        if (userDto.getDepartmentTitle().isBlank() || userDto.getDepartmentTitle() == null){
             errors.add("Название департамента не может быть пустым");
         }
-        if (userDto.getDepartmentId()==0){
+        if (userDto.getDepartmentId()==0 || userDto.getDepartmentId()==null){
             errors.add("id департамента не может равняться 0");
         }
         if (!errors.isEmpty()){
