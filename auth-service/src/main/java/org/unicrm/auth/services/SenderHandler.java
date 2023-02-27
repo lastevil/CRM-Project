@@ -7,15 +7,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.unicrm.auth.dto.kafka.KafkaUserDto;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
 @RequiredArgsConstructor
 public class SenderHandler {
 
-    private final List<KafkaUserDto> listUserDtoForSend = new ArrayList<>();
+    private final List<KafkaUserDto> listUserDtoForSend = new CopyOnWriteArrayList<>();
     private final KafkaTemplate<UUID, KafkaUserDto> kafkaTemplate;
 
     public List<KafkaUserDto> get() {
@@ -23,10 +24,11 @@ public class SenderHandler {
     }
 
     public void sendToKafka() {
-        while (listUserDtoForSend.iterator().hasNext()) {
-            ListenableFuture<SendResult<UUID, KafkaUserDto>> future = kafkaTemplate.send("userTopic", UUID.randomUUID(), listUserDtoForSend.iterator().next());
+        Iterator<KafkaUserDto> iter = listUserDtoForSend.iterator();
+        while (iter.hasNext()) {
+            ListenableFuture<SendResult<UUID, KafkaUserDto>> future = kafkaTemplate.send("userTopic", UUID.randomUUID(), iter.next());
             kafkaTemplate.flush();
-            if (future.isDone()) listUserDtoForSend.remove(listUserDtoForSend.iterator().next());
+            if (future.isDone()) iter.remove();
         }
     }
 }

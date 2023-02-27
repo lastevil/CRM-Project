@@ -18,10 +18,8 @@ import org.unicrm.auth.dto.kafka.KafkaUserDto;
 import org.unicrm.auth.entities.Role;
 import org.unicrm.auth.entities.Status;
 import org.unicrm.auth.entities.User;
-import org.unicrm.auth.exceptions.FieldsValidationError;
 import org.unicrm.auth.exceptions.ResourceExistsException;
 import org.unicrm.auth.exceptions.ResourceNotFoundException;
-import org.unicrm.auth.exceptions.ValidationException;
 import org.unicrm.auth.mappers.EntityDtoMapper;
 import org.unicrm.auth.repositories.UserRepository;
 import org.unicrm.auth.validators.UpdatedUserValidator;
@@ -88,6 +86,7 @@ public class UserService implements UserDetailsService {
     public void updateUser(UpdatedUserDto updatedUserDto) {
         updatedUserValidator.validate(updatedUserDto);
         User user = findByUsername(updatedUserDto.getUsername());
+        if (user.getStatus() != Status.ACTIVE) throw new RuntimeException("Need to get verified");
         if (updatedUserDto.getEmail() != null) {
             user.setEmail(updatedUserDto.getEmail());
         }
@@ -95,7 +94,6 @@ public class UserService implements UserDetailsService {
         if (updatedUserDto.getLastName() != null) user.setLastName(updatedUserDto.getLastName());
         if (updatedUserDto.getPassword() != null)
             user.setPassword(passwordEncoder.encode(updatedUserDto.getPassword()));
-        userRepository.save(user);
         senderHandler.get().add(EntityDtoMapper.INSTANCE.toDto(user));
         senderHandler.sendToKafka();
     }
