@@ -14,7 +14,7 @@ public class UpdatedUserValidator {
 
         List<String> errors = new ArrayList<>();
 
-        if (updatedUserDto.getUsername() == null) errors.add("First name must not be null");
+        if (updatedUserDto.getUsername() == null) errors.add("Username must not be null");
         if (updatedUserDto.getFirstName() != null) if (updatedUserDto.getFirstName().isBlank()) errors.add("First name must not be blank");
         if (updatedUserDto.getLastName() != null) if (updatedUserDto.getLastName().isBlank()) errors.add("Last name must not be blank");
         if (updatedUserDto.getPassword() != null) if (updatedUserDto.getPassword().isBlank()) errors.add("Password must not be blank");
