@@ -44,6 +44,8 @@ public class UserService implements UserDetailsService {
     private final UserRegValidator userRegValidator;
     private final UpdatedUserValidator updatedUserValidator;
     private final UserVerificationValidator userVerificationValidator;
+    private final List<KafkaUserDto> listUserDtoForSend = new ArrayList<>();
+
 
     @Override
     @Transactional(readOnly = true)
@@ -94,8 +96,8 @@ public class UserService implements UserDetailsService {
         if (updatedUserDto.getLastName() != null) user.setLastName(updatedUserDto.getLastName());
         if (updatedUserDto.getPassword() != null)
             user.setPassword(passwordEncoder.encode(updatedUserDto.getPassword()));
-        senderHandler.get().add(EntityDtoMapper.INSTANCE.toDto(user));
-        senderHandler.sendToKafka();
+        listUserDtoForSend.add(EntityDtoMapper.INSTANCE.toDto(user));
+        senderHandler.sendToKafka(listUserDtoForSend);
     }
 
     @Transactional
@@ -103,8 +105,8 @@ public class UserService implements UserDetailsService {
         User user = findByUsername(username);
         if (login == null || login.isBlank()) throw new RuntimeException("login must not be empty");
         user.setUsername(login);
-        senderHandler.get().add(EntityDtoMapper.INSTANCE.toDto(user));
-        senderHandler.sendToKafka();
+        listUserDtoForSend.add(EntityDtoMapper.INSTANCE.toDto(user));
+        senderHandler.sendToKafka(listUserDtoForSend);
     }
 
     @Transactional
@@ -117,8 +119,8 @@ public class UserService implements UserDetailsService {
             throw new ResourceNotFoundException("incorrect status selected");
         }
         user.setDepartment(departmentService.findDepartmentByTitle(userVerificationDto.getDepartmentTitle()));
-        senderHandler.get().add(EntityDtoMapper.INSTANCE.toDto(user));
-        senderHandler.sendToKafka();
+        listUserDtoForSend.add(EntityDtoMapper.INSTANCE.toDto(user));
+        senderHandler.sendToKafka(listUserDtoForSend);
     }
 
     @Transactional

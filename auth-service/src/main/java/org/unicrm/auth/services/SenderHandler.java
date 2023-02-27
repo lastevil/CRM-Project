@@ -10,20 +10,14 @@ import org.unicrm.auth.dto.kafka.KafkaUserDto;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
 @RequiredArgsConstructor
 public class SenderHandler {
 
-    private final List<KafkaUserDto> listUserDtoForSend = new CopyOnWriteArrayList<>();
     private final KafkaTemplate<UUID, KafkaUserDto> kafkaTemplate;
 
-    public List<KafkaUserDto> get() {
-        return listUserDtoForSend;
-    }
-
-    public void sendToKafka() {
+    public void sendToKafka(List<KafkaUserDto> listUserDtoForSend) {
         Iterator<KafkaUserDto> iter = listUserDtoForSend.iterator();
         while (iter.hasNext()) {
             ListenableFuture<SendResult<UUID, KafkaUserDto>> future = kafkaTemplate.send("userTopic", UUID.randomUUID(), iter.next());
