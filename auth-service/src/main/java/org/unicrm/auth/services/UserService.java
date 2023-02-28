@@ -46,7 +46,6 @@ public class UserService implements UserDetailsService {
     private final UserVerificationValidator userVerificationValidator;
     private final List<KafkaUserDto> listUserDtoForSend = new ArrayList<>();
 
-
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -84,9 +83,25 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    @Transactional
     public void updateUser(UpdatedUserDto updatedUserDto) {
         updatedUserValidator.validate(updatedUserDto);
+        applyChangesForUser(updatedUserDto);
+        sendUser(updatedUserDto.getUsername());
+    }
+
+    public void userVerification(UserVerificationDto userVerificationDto) {
+        userVerificationValidator.validate(userVerificationDto);
+        applyUserVerification(userVerificationDto);
+        sendUser(userVerificationDto.getUsername());
+    }
+
+    public void changeLogin(String username, String login) {
+        applyChangeLogin(username, login);
+        sendUser(login);
+    }
+
+    @Transactional
+    void applyChangesForUser(UpdatedUserDto updatedUserDto) {
         User user = findByUsername(updatedUserDto.getUsername());
         if (user.getStatus() != Status.ACTIVE) throw new RuntimeException("Need to get verified");
         if (updatedUserDto.getEmail() != null) {
@@ -96,22 +111,11 @@ public class UserService implements UserDetailsService {
         if (updatedUserDto.getLastName() != null) user.setLastName(updatedUserDto.getLastName());
         if (updatedUserDto.getPassword() != null)
             user.setPassword(passwordEncoder.encode(updatedUserDto.getPassword()));
-        listUserDtoForSend.add(EntityDtoMapper.INSTANCE.toDto(user));
-        senderHandler.sendToKafka(listUserDtoForSend);
+        userRepository.save(user);
     }
 
     @Transactional
-    public void changeLogin(String username, String login) {
-        User user = findByUsername(username);
-        if (login == null || login.isBlank()) throw new RuntimeException("login must not be empty");
-        user.setUsername(login);
-        listUserDtoForSend.add(EntityDtoMapper.INSTANCE.toDto(user));
-        senderHandler.sendToKafka(listUserDtoForSend);
-    }
-
-    @Transactional
-    public void userVerification(UserVerificationDto userVerificationDto) {
-        userVerificationValidator.validate(userVerificationDto);
+    void applyUserVerification(UserVerificationDto userVerificationDto) {
         User user = findByUsername(userVerificationDto.getUsername());
         try {
             user.setStatus(userVerificationDto.getStatus());
@@ -119,8 +123,15 @@ public class UserService implements UserDetailsService {
             throw new ResourceNotFoundException("incorrect status selected");
         }
         user.setDepartment(departmentService.findDepartmentByTitle(userVerificationDto.getDepartmentTitle()));
-        listUserDtoForSend.add(EntityDtoMapper.INSTANCE.toDto(user));
-        senderHandler.sendToKafka(listUserDtoForSend);
+        userRepository.save(user);
+    }
+
+    @Transactional
+    void applyChangeLogin(String username, String login) {
+        User user = findByUsername(username);
+        if (login == null || login.isBlank()) throw new RuntimeException("login must not be empty");
+        user.setUsername(login);
+        userRepository.save(user);
     }
 
     @Transactional
@@ -145,5 +156,11 @@ public class UserService implements UserDetailsService {
             throw new ResourceNotFoundException(String.format("User '%s' not found", username));
         }
         return user;
+    }
+
+    private void sendUser(String username) {
+        User user = findByUsername(username);
+        listUserDtoForSend.add(EntityDtoMapper.INSTANCE.toDto(user));
+        senderHandler.sendToKafka(listUserDtoForSend);
     }
 }
