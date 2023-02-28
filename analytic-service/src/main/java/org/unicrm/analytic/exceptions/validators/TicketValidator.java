@@ -15,7 +15,7 @@ public class TicketValidator {
         if (ticketDto.getId()==null){
             errors.add("Id задачи не может быть пустым");
         }
-        if (ticketDto.getAssigneeDepartmentId()==null){
+        if (ticketDto.getAssigneeDepartmentId()==null || ticketDto.getAssigneeDepartmentId()==0){
             errors.add("id департамента не может равняться 0");
         }
         if (ticketDto.getReporterId()==null){
