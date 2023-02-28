@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.MockBeans;
 import org.unicrm.analytic.api.OverdueStatus;
 import org.unicrm.analytic.api.Status;
 import org.unicrm.analytic.api.TimeInterval;
@@ -15,11 +16,12 @@ import org.unicrm.analytic.entities.User;
 import org.unicrm.analytic.services.AnalyticService;
 import org.unicrm.analytic.services.DepartmentService;
 import org.unicrm.analytic.services.TicketService;
+import org.unicrm.analytic.services.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
+@MockBeans(value = {@MockBean (UserService.class)})
 @SpringBootTest(classes = {AnalyticService.class})
 class AnalyticServiceTest {
     @Autowired

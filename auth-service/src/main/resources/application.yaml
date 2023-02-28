@@ -6,9 +6,9 @@ spring:
   application:
     name: auth-service
   kafka:
-    bootstrap-servers: "localhost:9092"
+    bootstrap-servers: "kafka:9092"
   datasource:
-    url: jdbc:postgresql://localhost:5432/unicrmdb
+    url: jdbc:postgresql://postgres:5432/unicrmdb
     username: postgres
     password: Qwe123
     driver-class-name: org.postgresql.Driver
@@ -25,8 +25,8 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 eureka:
   instance:
-    hostname: localhost
+    hostname: auth-service
   client:
     serviceUrl:
-      defaultZone: ${EUREKA_URI:http://localhost:8700/eureka}
+      defaultZone: ${EUREKA_URI:http://discovery:8700/eureka}
       fetchRegistry: false
