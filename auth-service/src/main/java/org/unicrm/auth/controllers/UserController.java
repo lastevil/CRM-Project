@@ -55,7 +55,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("users/verification")
     public void userVerification(@RequestBody UserVerificationDto userVerificationDto){
-        userService.userVerification(userVerificationDto.getUsername(), userVerificationDto.getStatus(), userVerificationDto.getDepartmentTitle());
+        userService.userVerification(userVerificationDto);
     }
 
     @Operation(summary = "Request to get all inactive users")

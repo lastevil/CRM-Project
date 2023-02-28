@@ -13,13 +13,18 @@ import org.springframework.transaction.annotation.Transactional;
 import org.unicrm.auth.dto.UpdatedUserDto;
 import org.unicrm.auth.dto.UserInfoDto;
 import org.unicrm.auth.dto.UserRegDto;
+import org.unicrm.auth.dto.UserVerificationDto;
 import org.unicrm.auth.dto.kafka.KafkaUserDto;
 import org.unicrm.auth.entities.Role;
 import org.unicrm.auth.entities.Status;
 import org.unicrm.auth.entities.User;
+import org.unicrm.auth.exceptions.ResourceExistsException;
 import org.unicrm.auth.exceptions.ResourceNotFoundException;
 import org.unicrm.auth.mappers.EntityDtoMapper;
 import org.unicrm.auth.repositories.UserRepository;
+import org.unicrm.auth.validators.UpdatedUserValidator;
+import org.unicrm.auth.validators.UserRegValidator;
+import org.unicrm.auth.validators.UserVerificationValidator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,6 +41,11 @@ public class UserService implements UserDetailsService {
     private final RoleService roleService;
     private final SenderHandler senderHandler;
     private final PasswordEncoder passwordEncoder;
+    private final UserRegValidator userRegValidator;
+    private final UpdatedUserValidator updatedUserValidator;
+    private final UserVerificationValidator userVerificationValidator;
+    private final List<KafkaUserDto> listUserDtoForSend = new ArrayList<>();
+
 
     @Override
     @Transactional(readOnly = true)
@@ -60,8 +70,10 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void saveNewUser(UserRegDto userRegDto) {
+        userRegValidator.validate(userRegDto);
         User user = EntityDtoMapper.INSTANCE.toEntity(userRegDto);
         String[] username = userRegDto.getEmail().split("@");
+        if (userRepository.existsUserByUsername(username[0])) throw new ResourceExistsException("This user already exists");
         user.setUsername(username[0]);
         user.setPassword(passwordEncoder.encode(userRegDto.getPassword()));
         Role roleUser = roleService.findRoleByName("ROLE_USER");
@@ -74,7 +86,9 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void updateUser(UpdatedUserDto updatedUserDto) {
+        updatedUserValidator.validate(updatedUserDto);
         User user = findByUsername(updatedUserDto.getUsername());
+        if (user.getStatus() != Status.ACTIVE) throw new RuntimeException("Need to get verified");
         if (updatedUserDto.getEmail() != null) {
             user.setEmail(updatedUserDto.getEmail());
         }
@@ -82,32 +96,31 @@ public class UserService implements UserDetailsService {
         if (updatedUserDto.getLastName() != null) user.setLastName(updatedUserDto.getLastName());
         if (updatedUserDto.getPassword() != null)
             user.setPassword(passwordEncoder.encode(updatedUserDto.getPassword()));
-        userRepository.save(user);
-        senderHandler.get().add(EntityDtoMapper.INSTANCE.toDto(user));
-        senderHandler.sendToKafka();
+        listUserDtoForSend.add(EntityDtoMapper.INSTANCE.toDto(user));
+        senderHandler.sendToKafka(listUserDtoForSend);
     }
 
     @Transactional
     public void changeLogin(String username, String login) {
         User user = findByUsername(username);
+        if (login == null || login.isBlank()) throw new RuntimeException("login must not be empty");
         user.setUsername(login);
-        senderHandler.get().add(EntityDtoMapper.INSTANCE.toDto(user));
-        senderHandler.sendToKafka();
+        listUserDtoForSend.add(EntityDtoMapper.INSTANCE.toDto(user));
+        senderHandler.sendToKafka(listUserDtoForSend);
     }
 
     @Transactional
-    public void userVerification(String username, Status status, String departmentTitle) {
-        User user = findByUsername(username);
-        if (status != null) {
-            try {
-                user.setStatus(status);
-            } catch (IllegalArgumentException e) {
-                throw new ResourceNotFoundException("incorrect status selected");
-            }
+    public void userVerification(UserVerificationDto userVerificationDto) {
+        userVerificationValidator.validate(userVerificationDto);
+        User user = findByUsername(userVerificationDto.getUsername());
+        try {
+            user.setStatus(userVerificationDto.getStatus());
+        } catch (IllegalArgumentException e) {
+            throw new ResourceNotFoundException("incorrect status selected");
         }
-        if (departmentTitle != null) user.setDepartment(departmentService.findDepartmentByTitle(departmentTitle));
-        senderHandler.get().add(EntityDtoMapper.INSTANCE.toDto(user));
-        senderHandler.sendToKafka();
+        user.setDepartment(departmentService.findDepartmentByTitle(userVerificationDto.getDepartmentTitle()));
+        listUserDtoForSend.add(EntityDtoMapper.INSTANCE.toDto(user));
+        senderHandler.sendToKafka(listUserDtoForSend);
     }
 
     @Transactional
