@@ -1,6 +1,6 @@
 package org.unicrm.auth.entities;
 
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -9,7 +9,10 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Table(name = "roles")
 public class Role {
     @Id
