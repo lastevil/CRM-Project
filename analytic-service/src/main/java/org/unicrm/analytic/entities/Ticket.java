@@ -2,14 +2,22 @@ package org.unicrm.analytic.entities;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.UUIDSerializer;
-import lombok.Data;
+import lombok.*;
+import org.unicrm.analytic.api.OverdueStatus;
+import org.unicrm.analytic.api.Status;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Data
+@Setter
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "tickets")
 public class Ticket {
     @Id
     @Column(name = "id")
@@ -18,20 +26,53 @@ public class Ticket {
     @Column(name = "title")
     private String title;
     @Column(name = "status")
-    private String status;
-    @ManyToOne
-    @JoinColumn(name = "assigneeId")
+    @Enumerated(EnumType.STRING)
+    private Status status;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assignee_id")
     private User assignee;
-    @ManyToOne
-    @JoinColumn(name = "departmentId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
     private Department department;
-    @ManyToOne
-    @JoinColumn(name = "reporterId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reporter_id")
     private User reporter;
     @Column(name = "created_at")
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
     @Column(name = "updated_at")
-    private Timestamp updatedAt;
+    private LocalDateTime updatedAt;
     @Column(name = "due_date")
-    private Timestamp dueDate;
+    private LocalDateTime dueDate;
+    @Column(name = "overdue_status")
+    @Enumerated(EnumType.STRING)
+    private OverdueStatus overdue;
+
+    @Override
+    public String toString() {
+        return "Ticket{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", status='" + status + '\'' +
+                ", overdueStatus='" + overdue +'\''+
+                ", assigneeId='" + assignee.getId() + '\'' +
+                ", departmentId='" + department.getId() + '\'' +
+                ", reporterId='" + reporter.getId() + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", dueDate= " + dueDate +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Ticket)) return false;
+        Ticket ticket = (Ticket) o;
+        return Objects.equals(id, ticket.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

@@ -1,20 +1,19 @@
 package org.unicrm.ticket.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.UUIDSerializer;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class TicketDepartmentDto {
 
-    @JsonSerialize(using = UUIDSerializer.class)
-    private UUID departmentId;
+    @Schema(description = "id отдела", example = "1L")
+    private Long id;
 
-    private String departmentName;
+    @Schema(description = "Название отдела", example = "QA")
+    private String title;
 }

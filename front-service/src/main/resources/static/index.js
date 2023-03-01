@@ -19,12 +19,7 @@
                 templateUrl: 'chat/chat.html',
                 controller: 'chatController'
             })
-            .when('/createtask', {
-                templateUrl: 'createtask/createtask.html',
-                controller: 'createtaskController'
-            })
             .when('/mytasks', {
-
                 templateUrl: 'mytasks/mytasks.html',
                 controller: 'mytasksController'
             })
@@ -38,53 +33,71 @@
     }
 
     function run($rootScope, $http, $localStorage) {
-        if ($localStorage.marchMarketUser) {//если в локальном хранилище есть юзер, то он восстанавливается при входе
-            $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.marchMarketUser.token;
+        if ($localStorage.webUserToken) {//если в локальном хранилище есть юзер, то он восстанавливается при входе
+            $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.webUserToken.token;
         }
     }
 })();
 
 angular.module('front').controller('indexController', function ($rootScope, $scope, $http, $localStorage, $location) {
-        if ($localStorage.marchMarketUser) {
+        if ($localStorage.webUserToken) {
+
                try {
-               console.log("$localStorage.marchMarketUser = "+$localStorage.marchMarketUser);
-                   let jwt = $localStorage.marchMarketUser.token;
+                   let jwt = $localStorage.webUserToken.token;
                    let payload = JSON.parse(atob(jwt.split('.')[1]));
                    let currentTime = parseInt(new Date().getTime() / 1000);
                    if (currentTime > payload.exp) {
-                       console.log("Token is expired!!!");
-                       delete $localStorage.marchMarketUser;
+                       alert("Token is expired!!!");
+                       delete $localStorage.webUserToken;
                        $http.defaults.headers.common.Authorization = '';
                    }
+
                } catch (e) {
                }
 
-               if ($localStorage.marchMarketUser) {
-                   $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.marchMarketUser.token;
+               if ($localStorage.webUserToken) {
+                   $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.webUserToken.token;
                }
            }
-const contextPath = 'http://localhost:8701/auth/api/v1/auth';
+   // const contextPath = 'http://gateway:8701/auth/api/v1/';
+const contextPath = 'http://localhost:8701/auth/api/v1/';
+document.querySelector("#username-page-reg").style.visibility = 'hidden';
+document.querySelector("#err").style.visibility = 'hidden';
+document.querySelector("#errAuth").style.visibility = 'hidden';
+var stompClient = null;
 
 $scope.tryToAuth = function () {
-        $rootScope.username = $scope.user.username;
-        $http.post(contextPath, $scope.user)
+console.log(contextPath+'auth', $scope.user);
+        $http.post(contextPath+'auth', $scope.user)
             .then(function successCallback(response) {
-            alert("$scope.user.username = "+$scope.user.username);
                 if (response.data.token) {
-                    $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.token;
-                    $localStorage.webMarketUser = {username: $scope.user.username, token: response.data.token};
-
-                    $scope.user.username = null;
-                    $scope.user.password = null;
+                    $localStorage.webUserToken = {token: response.data.token};
+                    let jwt = $localStorage.webUserToken.token;
+                    let payload = JSON.parse(atob(jwt.split('.')[1]));
+                    $localStorage.username = payload.sub;
+                    $localStorage.userRoles = payload.roles;
+                    console.log("role = "+$localStorage.userRoles);
                 }
                 $location.path('mytasks');
             }, function errorCallback(response) {
-            console.log(response);
-            $location.path('mytasks');
+                document.querySelector("#errAuth").style.visibility = 'visible';
             });
-    };
+}
+
+$scope.registr = function(){
+   document.querySelector("#username-page-reg").style.visibility = 'visible';
+   document.querySelector("#username-page").style.visibility = 'hidden';
+}
+
+$scope.tryToReg = function () {
+           $http.post(contextPath + 'registration', $scope.new_user)
+               .then(function successCallback(response) {
+                  document.querySelector("#username-page-reg").style.visibility = 'hidden';
+                  document.querySelector("#username-page").style.visibility = 'visible';
+               }, function errorCallback(response) {
+                  document.querySelector("#err").style.visibility = 'visible';
+               });
+}
 
 });
-
-
 

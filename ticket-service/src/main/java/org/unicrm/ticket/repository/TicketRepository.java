@@ -1,36 +1,40 @@
 package org.unicrm.ticket.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
 import org.unicrm.ticket.entity.Ticket;
-import org.unicrm.ticket.entity.TicketUser;
-
+import org.unicrm.ticket.entity.TicketStatus;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, UUID> {
 
-    @Query(value = "select t from Ticket t where t.assigneeId = :assigneeId")
-    List<Ticket> findAllByAssignee(TicketUser assigneeId);
+    @Query(value = "select t from Ticket t")
+    Page<Ticket> findAllTickets (Pageable pageable);
 
-    //TODO: Fix
-    @Query(value = "select t from Ticket t where t.departmentId = :departmentId")
-    List<Ticket> findAllByDepartment(UUID departmentId);
+    @Query(value = "select t from Ticket t where t.assignee.id = :assignee")
+    Page<Ticket> findAllByAssignee(Pageable pageable, UUID assignee);
 
-    @Query(value = "select t from Ticket t where t.assigneeId = :assigneId and t.status = :status")
-    List<Ticket> findAllByAssigneeIdAndStatus(UUID assigneId, String status);
+    @Query(value = "select t from Ticket t where t.department.id = :departmentId")
+    Page<Ticket> findAllByDepartment(Pageable pageable, Long departmentId);
 
-    @Query(value = "select count(*) from Ticket t where t.departmentId = :departmentId and t.status = :status")
-    Integer countAllByDepartmentAndStatus(UUID departmentId, String status);
+    @Query(value = "select t from Ticket t where t.assignee.id = :assigneId and t.status = :status")
+    Page<Ticket> findAllByAssigneeIdAndStatus(Pageable pageable, UUID assigneId, TicketStatus status);
 
-    @Query(value = "select count(*) from Ticket t where t.assigneeId = :assigneeId and t.status = :status")
-    Integer countAllByAssigneeIdAndStatus(UUID assigneeId, String status);
+    @Query(value = "select t from Ticket t where t.status = :backlog or t.status = :inProgress and t.dueDate between :before and :after")
+    List<Ticket> findAllWithStatuses(TicketStatus backlog, TicketStatus inProgress, LocalDateTime before, LocalDateTime after);
 
-    @Query(value = "select count(*) from Ticket t where t.reporterId = :reporterId and t.status = :status")
-    Integer countAllByReporterIdAndStatus(UUID reporterId, String status);
+    @Query(value = "select * from tickets_schema.tickets where title ilike concat('%', :title, '%') order by updated_at desc", nativeQuery = true)
+    Page<Ticket> findTicketsByTitle(Pageable pageable, String title);
 
-    //TODO: Методы фильтрации и подсчета за период
+    @Query(value = "select t from Ticket t where t.status = :status")
+    Page<Ticket> findTicketsByStatus(Pageable pageable, TicketStatus status);
+
+    @Query(value = "select t from Ticket t where t.reporter.username = :username")
+    Page<Ticket> findTicketsByReporter(Pageable pageable, String username);
 }

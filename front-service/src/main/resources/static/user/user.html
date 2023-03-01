@@ -1,45 +1,90 @@
 <div class="main-crm" ng-app="front" ng-controller="userController">
  <div class="container-crm" >
   <nav class="panel-crm" >
-   <div class="menu-crm 1">
-    <div class="cell-crm" >
-     <button class="btn-bd-primary1"></button>
-     <a class="nav-link  active" href="#!/mytasks"> My tasks </a>
-    </div>
-    <div >
-     <button class="btn-bd-primary1"></button>
-     <a class="nav-link" href="#!/chat"> Chat </a>
-    </div>
-    <div  >
-     <button class="btn-bd-primary1"></button>
-     <a class="nav-link" href="#!/analytic"> Analytic </a>
-    </div>
-    <div >
-     <button class="btn-bd-primary1"></button>
-     <a class="nav-link" href="#!/adminpanel"> Admin panel </a>
-    </div>
-   </div>
-   <div class="menu-crm 2">
-    <div class="menu-item1"></div>
-   </div>
-   <div class="menu-crm 3">
-    <div >
-     <button class="btn-bd-primary1">   </button>
-     <a class="nav-link" href="#!/createtask"> Create task </a>
-    </div>
-    <div >
-     <button class="btn-bd-primary1">   </button>
-     <a class="nav-link" href="#!/user"> User </a>
-    </div>
-   </div>
-  </nav>
+         <div class="menu-crm 1">
+             <div class="cell-crm" >
+                 <button class="btn-bd-primary1" ></button>
+                 <a class="nav-link  active" href="#!/mytasks"> Задачи </a>
+             </div>
+             <div  class="cell-crm">
+                 <button class="btn-bd-primary1"></button>
+                 <a class="nav-link" href="#!/chat"> Чат </a>
+             </div>
+             <div  class="cell-crm">
+                 <button class="btn-bd-primary1">   </button>
+                 <a class="nav-link" href="#!/user"> Пользователь </a>
+             </div>
+             <div  >
+                 <button class="btn-bd-primary1"></button>
+                 <a class="nav-link" href="#!/analytic"> Аналитика </a>
+             </div>
+             <div class="cell-crm">
+                 <button class="btn-bd-primary1"></button>
+                 <a class="nav-link" href="#!/adminpanel"> Администрирование </a>
+             </div>
+         </div>
+
+     </nav>
   <div class="page-crm">
-   <div class="pageIndex"></div>
-  </div>
- </div>
- <div class="page-crm">
-  <div class="user">
-   <h1>User</h1>
+   <div class="header">
+      <h2 class="title" style="text-align: center;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+              <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"/>
+          </svg>
+          Пользователи</h2>
+   </div>
+   <div class="user-content">
+<!--      <div class="user-img">-->
+<!--          <div class="div-img">-->
+<!--             <img id="img" src="image/chimpanzee.png" alt="photo">-->
+<!--          </div>-->
+<!--          <div class="btn-img">-->
+<!--              <button id="btn-user-img" type="button" class="btn btn-primary" onclick="">Сменить фото</button>-->
+<!--          </div>-->
+<!--      </div>-->
+      <div class="user-details" >
+          <form novalidate ng-submit="updateUser()" >
+              <div class="input-group mb-3">
+                  <label  class="input-group-text">Фамилия</label>
+                  <input id="user_lastName" type="text" class="form-control" value="" ng-model="user_details.lastName">
+              </div>
+              <div class="input-group mb-3">
+                  <label  class="input-group-text">Имя</label>
+                  <input id="user_firstName" type="text" class="form-control" value="" ng-model="user_details.firstName">
+              </div>
+              <div class="input-group mb-3">
+                  <label  class="input-group-text">Email</label>
+                  <input id="user_email" type="email" class="form-control" value="" ng-model="user_details.email">
+              </div>
+              <div>
+                  <button type="submit" class="btn btn-primary">Изменить</button>
+              </div>
+          </form>
+          <div>
+              <label id="user_departmentTitle" class="title"></label>
+          </div>
+      </div>
+      <div class="user-password">
+          <h5 class="title">Смена пароля</h5>
+          <form class="form-create" novalidate ng-submit="updatePassword()">
+             <input id="oldPass" type="password" class="form-control" placeholder="Старый пароль" ng-model="new_password.old_pass" autocomplete="off" required/>
+             <input id="newPass1" type="password" class="form-control" placeholder="Новый пароль" ng-model="new_password.new_pass" autocomplete="off" required/>
+             <input id="newPass2" type="password" class="form-control" placeholder="Новый пароль"  autocomplete="off" required/>
+             <button id="btn-user-password" type="submit" class="btn btn-primary" ng-click="">Сменить пароль</button>
+          </form>
+      </div>
+   </div>
   </div>
  </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+

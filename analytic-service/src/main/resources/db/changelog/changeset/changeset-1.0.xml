@@ -14,5 +14,4 @@
                  stripComments="true"
                  path="sql/V0001.sql"/>
     </changeSet>
-
 </databaseChangeLog>

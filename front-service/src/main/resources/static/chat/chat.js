@@ -1,328 +1,417 @@
 angular.module('front').controller('chatController', function ($rootScope, $scope, $http, $localStorage, $location) {
 
-var connectingElement = document.querySelector('.connecting');
-var messageForm = document.querySelector('#messageForm');
-var messageInput = document.querySelector('#message');
-var messageArea = document.querySelector('#messageArea');
-var ulgroup = document.querySelector('#group');
-var ulusers = document.querySelector('#users');
-var btnSend = document.querySelector('#send');
-var nameRecipiend = document.querySelector('#nameRecipiend');
-var file = document.querySelector('#logo');
-var btnUser = document.getElementById("btn-user");
-var currentUserId = null;
-var currentUserName = null;
-var currentGroupId = 1; //  !=0 - группа, ==0 - user
-var stompClient = null;
-var username = $rootScope.username;
-var senderId = 0;
-var sessionId = "";
-var context = "/app-front/";
-var countUsers = 0;
+    var connectingElement = document.querySelector('.connecting');
+    var messageForm = document.querySelector('#messageForm');
+    var messageInput = document.querySelector('#message');
+    var messageArea = document.querySelector('#messageArea');
+    var ulgroup = document.querySelector('#group');
+    var ulusers = document.querySelector('#users');
+    var btnSend = document.querySelector('#send');
+    var nameRecipiend = document.querySelector('#nameRecipiend');
+    var nameGroup = document.querySelector('#newGroup');
+    var groupUsers = document.querySelector('#groupUsers');
+    var groups = document.querySelector('#groups');
+    var updateGroup = document.querySelector('#updateGroup');
+    var file = document.querySelector('#logo');
+    var btnUser = document.getElementById("btn-user");
+    var currentUserId = null;
+    var currentUserName = null;
+    var currentGroupId = 1; //  !=0 - группа, ==0 - user
+    var stompClient = null;
+    var username = '';
+    var senderId = 0;
+    var sessionId = "";
+    var context = "/chat/";
+    var countUsers = 0;
+    var nickName = '';
+    var userReg = '';
 
-$scope.connect = function(event) { // установить соединение с сервером
-    if (stompClient == null) {
-          var socket = new SockJS('http://localhost:8701/front/ws');
-          stompClient = Stomp.over(socket);
-          stompClient.connect({}, $scope.onConnected, $scope.onError);
+    const contextPathChat = 'http://localhost:8701/chat/api/v1/';
+    const contextPathAuth = 'http://localhost:8701/auth/api/v1/';
+
+    // const contextPathChat = 'http://gateway:8701/chat/api/v1/';
+    //const contextPathAuth = 'http://gateway:8701/auth/api/v1/';
+
+//$scope.userDetails = function(){
+//    $http.get(contextPathAuth+'users/'+ $localStorage.username)
+//       .then(function successCallback(response) {
+//          nickName = response.data.lastName + ' ' + response.data.firstName;
+//          userReg = {userName: $localStorage.username, nickName: nickName};
+//          $scope.regUser(userReg);
+//       }, function errorCallback(response) {
+//          alert(response.data);
+//       });
+//}
+//
+//$scope.regUser = function(userReg){
+//   $http.post(contextPathChat+'registration',JSON.stringify(userReg))
+//          .then(function successCallback(response) {
+//             $scope.connect(event);
+//          }, function errorCallback(response) {
+//             alert(response.data);
+//          });
+//}
+
+    $scope.connect = function (event) { // установить соединение с сервером
+        if (stompClient == null) {
+            var socket = new SockJS('http://localhost:8703/chat/ws');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, $scope.onConnected, $scope.onError);
+        }
     }
-}
 
-$scope.onConnected = function() {
-    //при успешном соединении сделать подписки и зарегистрировать юзера на сервере
-    stompClient.subscribe('/topic/public', $scope.onMessageReceived);
-    stompClient.subscribe('/user/topic/session', $scope.onMessageSession);
-    stompClient.subscribe('/user/topic/history', $scope.onMessageHistory);
-    stompClient.subscribe('/user/topic/list', $scope.onMessageList);
-    stompClient.subscribe('/user/topic/activeusers', $scope.onMessageActiveusers);
-    stompClient.send(context+"register", {},
-        JSON.stringify({senderName: username, type: 'JOIN'})
-    );
-}
+    $scope.onConnected = function () {
+        //при успешном соединении сделать подписки и зарегистрировать юзера на сервере
+        stompClient.subscribe('/topic/public', $scope.onMessageReceived);
+        stompClient.subscribe('/user/topic/session', $scope.onMessageSession);
+        stompClient.subscribe('/user/topic/history', $scope.onMessageHistory);
+        stompClient.subscribe('/user/topic/list', $scope.onMessageList);
+        stompClient.subscribe('/user/topic/activeusers', $scope.onMessageActiveusers);
+        stompClient.send(context + "register", {},
+            JSON.stringify({senderName: $localStorage.username, type: 'JOIN'})
+        );
+    }
 
-$scope.send = function(event) { //послать сообщение
-    var messageContent = messageInput.value.trim();
-    if(messageContent && stompClient ) {
+    $scope.send = function (event) { //послать сообщение
+        var messageContent = messageInput.value.trim();
+        if (messageContent && stompClient) {
+            const message = {
+                senderId: senderId,
+                recipientId: currentUserId,
+                senderName: username,
+                recipientName: currentUserName,
+                message: messageInput.value,
+                groupId: currentGroupId,
+                type: 'CHAT'
+            };
+            if (currentGroupId != null) {
+                stompClient.send(context + "chat/group", {}, JSON.stringify(message));
+            } else {
+                stompClient.send(context + "chat/room", {}, JSON.stringify(message));
+            }
+            messageInput.value = '';
+        }
+    }
+
+    $scope.loadGroup = function (event) { //запросить список всех групп, в которые входит юзер
+        if (stompClient) {
+            stompClient.send(context + "chatgroup", {}, JSON.stringify({senderId: senderId}));
+        }
+    }
+
+    $scope.loadUsers = function (event) { //запросить список всех пользователей
+        if (stompClient) {
+            stompClient.send(context + "chatusers", {}, JSON.stringify({senderId: senderId}));
+        }
+    }
+
+    $scope.onCreateChatLi = function (type, sendId, chatdate, senderName, recipientName, message) {
+        // вывести запись сообщения на экран
+        var messageElement = document.createElement('li');
+        var minut = '';
+        var dateHistory = '';
+        for (let i = 11; i < 16; i++) {
+            minut = minut + chatdate[i];
+        }
+        for (let i = 0; i < 16; i++) {
+            dateHistory = dateHistory + chatdate[i];
+        }
+        messageElement.classList.add('chat-message');
+        var usernameElement = document.createElement('span');
+        if (sendId == senderId) {
+            messageElement.classList.add('userI');
+        } else {
+            messageElement.classList.add('userR');
+            if (type == 'HISTORY') {
+                var usernameText = document.createTextNode(dateHistory + '   ' + senderName);
+                usernameElement.appendChild(usernameText);
+            } else {
+                var usernameText = document.createTextNode(senderName);
+                usernameElement.appendChild(usernameText);
+            }
+        }
+        messageElement.appendChild(usernameElement);
+        var textElement = document.createElement('p');
+        if (type == 'HISTORY' && sendId == senderId) {
+            var messageText = document.createTextNode(message + '   ' + dateHistory);
+
+        } else if (type == 'HISTORY' && sendId != senderId) {
+            var messageText = document.createTextNode(message);
+        } else {
+            var messageText = document.createTextNode(message + '  ' + minut);
+        }
+        textElement.appendChild(messageText);
+        messageElement.appendChild(textElement);
+        messageArea.appendChild(messageElement);
+        messageArea.scrollTop = messageArea.scrollHeight;
+    }
+
+    $scope.onMessageSession = function (payload) {
+        //получить свою сессию и подписаться на нее
+        var message = JSON.parse(payload.body);
+
+        sessionId = message.session;
+        if (sessionId != null) {
+            stompClient.subscribe('/queue/' + sessionId, $scope.onMessageReceived);
+        }
+        $scope.loadSelectGroup();
+        $scope.loadGroup();
+        $scope.loadUsers();
+        document.querySelector("#btn-load-users").disabled = false;
+    }
+
+    $scope.onMessageHistory = function (payload) {
+        // получить историю выбранной группы или пользователя
+        var message = JSON.parse(payload.body);
+        if (message.senderName == username) {
+            messageArea.innerHTML = '';
+            if (message.groupId == null) {
+                for (let i = 0; i < message.chatRoom.length; i++) {
+                    $scope.onCreateChatLi('HISTORY', message.chatRoom[i].senderId, message.chatRoom[i].chatdate,
+                        message.recipientName, message.recipientName, message.chatRoom[i].message);
+                }
+            } else {
+                for (let i = 0; i < message.chatGroup.length; i++) {
+                    $scope.onCreateChatLi('HISTORY', message.chatGroup[i].senderId, message.chatGroup[i].chatdate,
+                        message.chatGroup[i].senderName, message.chatGroup[i].recipientName, message.chatGroup[i].message);
+                }
+            }
+        }
+    }
+
+    $scope.onMessageList = function (payload) {
+        //получить список групп, в которые входит юзер
+        //получить список всех пользователей
+        var message = JSON.parse(payload.body);
+        if ('groups' in message) {
+            $scope.ligroup = message.groups;
+        }
+        if ('users' in message) {
+            $scope.liusers = message.users;
+        }
+    }
+
+    $scope.onMessageActiveusers = function (payload) { //получить пользователей online
+        var message = JSON.parse(payload.body);
+        var list_li = ulusers.querySelectorAll('li');
+        for (let j = 0; j < message.length; j++) {
+            for (let i = 0; i < list_li.length; i++) {
+                if (message[j] == $scope.liusers[i].id) {
+                    list_li[i].querySelector('.btn').style.background = 'green';
+                }
+                if ($scope.liusers[i].count == 0) {
+                    list_li[i].querySelector('#badge').style.visibility = 'hidden';
+                }
+            }
+        }
+        list_li = ulgroup.querySelectorAll('li');
+        for (let i = 0; i < list_li.length; i++) {
+            if ($scope.ligroup[i].count == 0) {
+                list_li[i].querySelector('#badgeGroup').style.visibility = 'hidden';
+            }
+        }
+    }
+
+    $scope.onMessageReceived = function (payload) { //получить сообщение от сервера
+        var message = JSON.parse(payload.body);
+        if (message.type == 'JOIN') {
+            if (username == '') {
+                username = message.senderName;
+                senderId = message.senderId;
+                btnUser.value = message.senderName;
+                stompClient.subscribe('/user/topic/chat', $scope.onMessageReceived);
+                stompClient.send(context + "session", {}, JSON.stringify({senderId: senderId})
+                );
+            } else if (message.senderName != username) {
+                var list_li = ulusers.querySelectorAll('li');
+                for (let i = 0; i < list_li.length; i++) {
+                    if (message.senderId == $scope.liusers[i].id) {
+                        list_li[i].querySelector('.btn').style.background = 'green';
+                    }
+                }
+            }
+
+        } else if (message.type == 'LEAVE') {
+            var list_li = ulusers.querySelectorAll('li');
+            for (let i = 0; i < list_li.length; i++) {
+                if (message.senderName == $scope.liusers[i].id) {
+                    list_li[i].querySelector('.btn').style.background = 'gray';
+                }
+            }
+
+        } else if (message.type == 'CHAT') {
+            if (message.groupId == null) {
+                if (message.senderId == senderId && message.recipientId == currentUserId ||
+                    message.senderId == currentUserId && message.recipientId == senderId) {
+                    $scope.onCreateChatLi('CHAT', message.senderId, message.chatDate,
+                        message.senderName, message.recipientName, message.message);
+                } else {
+                    var list_li = ulusers.querySelectorAll('li');
+                    for (let i = 0; i < list_li.length; i++) {
+                        if (message.senderId == $scope.liusers[i].id) {
+                            list_li[i].querySelector('#badge').style.visibility = 'visible';
+                            $scope.liusers[i].count = $scope.liusers[i].count + 1;
+                        }
+                    }
+                }
+            } else {
+
+                if (message.recipientId == senderId && message.groupId == currentGroupId ||
+                    message.senderId == currentGroupId && message.recipientId == senderId) {
+                    $scope.onCreateChatLi('CHAT', message.senderId, message.chatDate,
+                        message.senderName, message.recipientName, message.message);
+                } else {
+                    var list_li = ulgroup.querySelectorAll('li');
+                    for (let i = 0; i < list_li.length; i++) {
+                        if (message.groupId == $scope.ligroup[i].id) {
+                            list_li[i].querySelector('#badgeGroup').style.visibility = 'visible';
+                            $scope.liusers[i].count = $scope.liusers[i].count + 1;
+                        }
+                    }
+                }
+            }
+        } else if (message.type == 'NEWGROUP' || message.type == 'PUTGROUP') {
+            if (stompClient) {
+                stompClient.send(context + "groups", {}, JSON.stringify({type: 'GROUPS'}));
+            }
+        } else if (message.type == 'GROUPS') {
+            groups.options.length = 1;
+            for (let i = 0; i < message.groups.length; i++) {
+                groups.options[i + 1] = new Option(message.groups[i].title, message.groups[i].id);
+            }
+            groups.selectedIndex = -1;
+            groupUsers.disabled = false;
+//    }else if (message.type == 'PUTGROUP') {
+//            if(stompClient){
+//                 stompClient.send(context+"groups", {}, JSON.stringify({type: 'GROUPS'}));
+//            }
+        }
+    }
+
+    $scope.loadSelectGroup = function () {
+        stompClient.send(context + "groups", {}, JSON.stringify({type: 'GROUPS'}));
+    }
+
+    $scope.btnGroup = function (group) { // при выборе группы загрузить еe историю
+        nameRecipiend.value = group.title;
+        currentGroupId = group.id;
+        currentUserId = null;
+        currentUserName = null;
+        const message = {
+            senderId: senderId,
+            groupId: currentGroupId,
+            senderName: username,
+        };
+        stompClient.send(context + "history", {}, JSON.stringify(message));
+        var list_li = ulgroup.querySelectorAll('li');
+        for (let i = 0; i < list_li.length; i++) {
+            if (group.id == $scope.ligroup[i].id) {
+                $scope.ligroup[i].count = 0;
+                list_li[i].querySelector('#badgeGroup').style.visibility = 'hidden';
+            }
+        }
+    }
+
+    $scope.btnUsers = function (users) { //при выборе пользователя загрузить его историю
+        nameRecipiend.value = users.nickName;
+        currentGroupId = null;
+        currentUserId = users.id;
+        currentUserName = users.nickName;
         const message = {
             senderId: senderId,
             recipientId: currentUserId,
             senderName: username,
             recipientName: currentUserName,
-            message: messageInput.value,
-            groupId: currentGroupId,
-            type: 'CHAT'
-          };
-          stompClient.send(context+"chat", {}, JSON.stringify(message));
-        messageInput.value = '';
+        };
+        stompClient.send(context + "history", {}, JSON.stringify(message));
+        var list_li = ulusers.querySelectorAll('li');
+        for (let i = 0; i < list_li.length; i++) {
+            if (users.id == $scope.liusers[i].id) {
+                $scope.liusers[i].count = 0;
+                list_li[i].querySelector('#badge').style.visibility = 'hidden';
+            }
+        }
     }
-}
 
-$scope.loadGroup = function(event){ //запросить список всех групп, в которые входит юзер
-   if(stompClient) {
-      stompClient.send(context+"chatgroup", {}, JSON.stringify({senderId: senderId}));
-   }
-}
+    $scope.btnLoadUsers = function (event) { //загрузить пользователей online
+        stompClient.send(context + "activeusers", {}, JSON.stringify({}));//загрузить пользователей online
+        document.querySelector("#btn-load-users").style.display = 'none';
+        document.querySelector("#btn-load-users").style.visibility = 'hidden';
+        document.querySelector("#btnCreate").disabled = false;
+    }
 
-$scope.loadUsers = function(event){ //запросить список всех пользователей
-   if(stompClient) {
-      stompClient.send(context+"chatusers", {}, JSON.stringify({senderId: senderId}));
-   }
-}
-
-$scope.onCreateChatLi = function(type, sendId, chatdate, senderName, recipientName, message){
-   // вывести запись сообщения на экран
-   var messageElement = document.createElement('li');
-   var minut = '';
-   var dateHistory = '';
-   for(let i=11; i<16; i++){
-      minut = minut + chatdate[i];
-   }
-   for(let i=0; i<16; i++){
-         dateHistory = dateHistory + chatdate[i];
-      }
-   messageElement.classList.add('chat-message');
-   var usernameElement = document.createElement('span');
-   if(sendId == senderId){
-     messageElement.classList.add('userI');
-   }else{
-      messageElement.classList.add('userR');
-      if(type == 'HISTORY'){
-         var usernameText = document.createTextNode(dateHistory + '   ' + senderName);
-         usernameElement.appendChild(usernameText);
-      }else {
-         var usernameText = document.createTextNode(senderName);
-         usernameElement.appendChild(usernameText);
-      }
-   }
-   messageElement.appendChild(usernameElement);
-   var textElement = document.createElement('p');
-   if(type == 'HISTORY' && sendId == senderId){
-      var messageText = document.createTextNode(message + '   ' + dateHistory);
-
-   }else if(type == 'HISTORY' && sendId != senderId){
-      var messageText = document.createTextNode(message);
-   }else {
-      var messageText = document.createTextNode(message+'  '+minut);
-   }
-   textElement.appendChild(messageText);
-   messageElement.appendChild(textElement);
-   messageArea.appendChild(messageElement);
-   messageArea.scrollTop = messageArea.scrollHeight;
-}
-
-$scope.onMessageSession = function(payload) {
-   //получить свою сессию и подписаться на нее
-   var message = JSON.parse(payload.body);
-
-   sessionId = message.session;
-   console.log("sessionId = "+sessionId);
-   if(sessionId != null){
-      stompClient.subscribe('/queue/'+sessionId, $scope.onMessageReceived);
-   }
-   document.querySelector("#btn-load-users").disabled = false;
-}
-
-$scope.onMessageHistory = function(payload) {
-   // получить историю выбранной группы или пользователя
-   var message = JSON.parse(payload.body);
-   console.log("message = "+payload.body);
-   if (message.senderName == username) {
-      messageArea.innerHTML = '';
-      if(message.groupId == null){
-         for(let i = 0; i < message.chatRoom.length; i++){
-            $scope.onCreateChatLi('HISTORY', message.chatRoom[i].senderId, message.chatRoom[i].chatdate,
-                message.recipientName, message.recipientName, message.chatRoom[i].message);
-         }
-      }else {
-         for(let i = 0; i < message.chatGroup.length; i++){
-            $scope.onCreateChatLi('HISTORY', message.chatGroup[i].senderId, message.chatGroup[i].chatdate,
-                message.chatGroup[i].senderName, message.chatGroup[i].recipientName, message.chatGroup[i].message);
-         }
-      }
-   }
-}
-
-$scope.onMessageList = function(payload) {
-   //получить список групп, в которые входит юзер
-   //получить список всех пользователей
-   var message = JSON.parse(payload.body);
-
-   var buttElement = document.createElement('li');
-   if('groups' in message) {
-         $scope.ligroup = message.groups;
-   }
-   if('users' in message) {
-         $scope.liusers = message.users;
-   }
-}
-
-$scope.onMessageActiveusers = function(payload) { //получить пользователей online
-   var message = JSON.parse(payload.body);
-   var list_li = ulusers.querySelectorAll('li');
-   for(let j=0; j<message.length; j++){
-        for(let i=0; i<list_li.length; i++){
-           if (message[j] == $scope.liusers[i].id){
-              list_li[i].querySelector('.btn').style.background = 'green';
-           }
-           if ($scope.liusers[i].count == 0){
-              list_li[i].querySelector('#badge').style.visibility = 'hidden';
-           }
+    $scope.disconnect = function () {
+        if (stompClient !== null) {
+            stompClient.disconnect();
         }
-   }
-   list_li = ulgroup.querySelectorAll('li');
-        for(let i=0; i<list_li.length; i++){
-           if ($scope.ligroup[i].count == 0){
-              list_li[i].querySelector('#badgeGroup').style.visibility = 'hidden';
-           }
+        currentUserId = null;
+        currentUserName = null;
+        currentGroupId = 1;
+        stompClient = null;
+        username = null;
+        senderId = 0;
+        sessionId = "";
+    }
+
+    $scope.onError = function (error) {
+        connectingElement.textContent = 'Соединение не установлено.';
+        connectingElement.text = 'Соединение не установлено.';
+        connectingElement.style.color = 'red';
+    }
+
+    $scope.createNewGroup = function () {
+        if (stompClient) {
+            stompClient.send(context + "chat/newgroup", {},
+                JSON.stringify({type: 'NEWGROUP', title: newGroup.value}));
         }
-   document.querySelector("#btn-load-users").style.display = 'none';
-   document.querySelector("#btn-load-users").style.visibility = 'hidden';
-}
+    }
 
-$scope.onMessageReceived = function(payload) { //получить сообщение от сервера
-    console.log("onMessageReceived-----------------------------------------");
-    var message = JSON.parse(payload.body);
-    if(message.type == 'JOIN') {
-       if (username == null) {
-         if(message.senderName != null && message.senderId != null) {
-          username = message.senderName;
-          senderId = message.senderId;
-          btnUser.innerText = message.senderName;
-          stompClient.subscribe('/user/topic/chat', $scope.onMessageReceived);
-          $scope.loadGroup();
-          $scope.loadUsers();
-          stompClient.send(context+"session", {}, JSON.stringify({senderId: senderId})
-          );
-          document.querySelector("#btnConnect").disabled = true;
-          document.querySelector("#btnDisconnect").disabled = false;
-          }else{
-             alert("Неверно введен логин");
-          }
-       }else if(message.senderName != username) {
-          var list_li = ulusers.querySelectorAll('li');
-          for(let i=0; i<list_li.length; i++){
-              if (message.senderId == $scope.liusers[i].id){
-                  list_li[i].querySelector('.btn').style.background = 'green';
-              }
-          }
-       }
+    $scope.updateGroup = function () {
+        if (stompClient) {
+            stompClient.send(context + "chat/updatetitle", {},
+                JSON.stringify({
+                    type: 'PUTGROUP',
+                    id: groups.options[groups.selectedIndex].value,
+                    title: updateGroup.value
+                }));
+            console.log("groups.options[groups.selectedIndex].value = " + groups.options[groups.selectedIndex].value);
+            console.log("updateGroup.value = " + updateGroup.value);
+        }
+    }
 
-    } else if (message.type == 'LEAVE') {
-       var list_li = ulusers.querySelectorAll('li');
-       for(let i=0; i<list_li.length; i++){
-          if (message.senderName == $scope.liusers[i].id){
-             list_li[i].querySelector('.btn').style.background = 'gray';
-          }
-       }
+    $scope.addNewUsers = function () {
+        var optionUsers = groupUsers.selectedOptions;
+        for (let i = 0; i < optionUsers.length; i++) {
+            if (stompClient) {
+                stompClient.send(context + "newusers", {},
+                    JSON.stringify({type: 'NEWGROUP', id: groups.value, users: optionUsers[i].value}));
+            }
+        }
+        stompClient.send(context + "activeusers", {}, JSON.stringify({}));//загрузить пользователей online
+        alert("Группа укомплектована.");
+    }
 
-    } else if (message.type == 'CHAT') {
-       if(message.groupId == null){
-          if(message.senderId == senderId && message.recipientId == currentUserId ||
-             message.senderId == currentUserId && message.recipientId == senderId) {
-                $scope.onCreateChatLi('CHAT', message.senderId, message.chatDate,
-                    message.senderName, message.recipientName, message.message);
-          }else {
-             var list_li = ulusers.querySelectorAll('li');
-             for(let i=0; i<list_li.length; i++){
-                if (message.senderId == $scope.liusers[i].id){
-                      list_li[i].querySelector('#badge').style.visibility = 'visible';
-                    $scope.liusers[i].count = $scope.liusers[i].count + 1;
+    $scope.loadUsersNewGroup = function () {
+        $http.get(contextPathChat + 'users/')
+            .then(function successCallback(response) {
+                groupUsers.options.length = 1;
+                for (let i = 0; i < response.data.length; i++) {
+                    groupUsers.options[i + 1] = new Option(response.data[i].nickName,
+                        response.data[i].uuid);
                 }
-             }
-          }
-       }else{
-
-          if(message.recipientId == senderId && message.groupId == currentGroupId ||
-                       message.senderId == currentGroupId && message.recipientId == senderId) {
-                $scope.onCreateChatLi('CHAT', message.senderId, message.chatDate,
-                    message.senderName, message.recipientName, message.message);
-          } else {
-             var list_li = ulgroup.querySelectorAll('li');
-             for(let i=0; i<list_li.length; i++){
-                 if (message.groupId == $scope.ligroup[i].id){
-                       list_li[i].querySelector('#badgeGroup').style.visibility = 'visible';
-                    $scope.liusers[i].count = $scope.liusers[i].count + 1;
-                 }
-             }
-          }
-       }
+                groupUsers.selectedIndex = -1;
+            }, function errorCallback(response) {
+                alert(response.data);
+            });
     }
-}
 
-$scope.btnGroup = function(group){ // при выборе группы загрузить еe историю
-   nameRecipiend.value = group.title;
-   currentGroupId = group.id;
-   currentUserId = null;
-   currentUserName = null;
-   const message = {
-               senderId: senderId,
-               groupId: currentGroupId,
-               senderName: username,
-      };
-   stompClient.send(context+"history", {}, JSON.stringify(message));
-   var list_li = ulgroup.querySelectorAll('li');
-   for(let i=0; i<list_li.length; i++){
-      if (group.id == $scope.ligroup[i].id){
-         $scope.ligroup[i].count = 0;
-         list_li[i].querySelector('#badgeGroup').style.visibility = 'hidden';
-      }
-   }
-}
+    groups.addEventListener('change', function () {
+        updateGroup.value = groups.options[groups.selectedIndex].text;
+    });
 
-$scope.btnUsers = function(users){ //при выборе пользователя загрузить его историю
-   nameRecipiend.value = users.nickName;
-   currentGroupId = null;
-   currentUserId = users.id;
-   currentUserName = users.nickName;
-   const message = {
-            senderId: senderId,
-            recipientId: currentUserId,
-            senderName: username,
-            recipientName: currentUserName,
-   };
-   stompClient.send(context+"history", {}, JSON.stringify(message));
-   var list_li = ulusers.querySelectorAll('li');
-   for(let i=0; i<list_li.length; i++){
-      if (users.id == $scope.liusers[i].id){
-         $scope.liusers[i].count = 0;
-         list_li[i].querySelector('#badge').style.visibility = 'hidden';
-      }
-   }
-}
+    messageForm.addEventListener('submit', send, true)
 
-$scope.btnLoadUsers = function(event){ //загрузить пользователей online
-   stompClient.send(context+"activeusers", {}, JSON.stringify({})
-   );
-}
-
-$scope.sendFile = function(){
-   $("#logo").trigger('click');
-}
-
-$scope.disconnect = function() {
-    console.log("disconnect");
-    if (stompClient !== null) {
-        stompClient.disconnect();
-    }
-    document.querySelector("#btnConnect").disabled = false;
-    document.querySelector("#btnDisconnect").disabled = true;
-    document.querySelector('#name').value = '';
-    currentUserId = null;
-    currentUserName = null;
-    currentGroupId = 1;
-    stompClient = null;
-    username = null;
-    senderId = 0;
-    sessionId = "";
-}
-
-$scope.onError = function(error) {
-    connectingElement.textContent = 'Соединение не установлено.';
-    connectingElement.style.color = 'red';
-}
-
-messageForm.addEventListener('submit', send, true)
-
-$scope.connect(event);
+    $scope.connect(event);
+    $scope.loadUsersNewGroup();
 
 });

@@ -18,6 +18,7 @@ services:
   zookeeper:
     image: confluentinc/cp-zookeeper:5.4.0
     container_name: zookeeper
+    restart: unless-stopped
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -25,15 +26,115 @@ services:
   kafka:
     image: confluentinc/cp-kafka:5.4.0
     container_name: kafka
+    restart: unless-stopped
     ports:
       - "9092:9092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
+
+  discovery:
+    container_name: discovery
+    build:
+        context: ./discovery-service
+    restart: unless-stopped
+    ports:
+      - "8700:8700"
+    depends_on:
+      - kafka
+
+  gateway:
+    container_name: gateway
+    build:
+      context: ./gateway-service
+    restart: on-failure
+    links:
+      - discovery
+    ports:
+      - "8701:8701"
+    depends_on:
+      - discovery
+
+  auth-service:
+    container_name: auth-service
+    build:
+      context: ./auth-service
+    restart: on-failure
+    links:
+      - discovery
+      - kafka
+      - postgres
+    ports:
+      - "8702:8702"
+    depends_on:
+      - postgres
+      - discovery
+      - kafka
+
+  analytic-service:
+    container_name: analytic-service
+    build:
+      context: ./analytic-service
+    restart: on-failure
+    links:
+      - discovery
+      - kafka
+      - postgres
+    ports:
+      - "8705:8705"
+    depends_on:
+      - postgres
+      - discovery
+      - kafka
+
+  chat-service:
+    container_name: chat-service
+    build:
+      context: ./chat-service
+    restart: on-failure
+    ports:
+      - "8703:8703"
+    links:
+      - discovery
+      - kafka
+      - postgres
+    depends_on:
+      - discovery
+      - kafka
+      - postgres
+
+  ticket-service:
+    container_name: ticket-service
+    build:
+      context: ./ticket-service
+    restart: on-failure
+    ports:
+      - "8704:8704"
+    links:
+      - discovery
+      - kafka
+      - postgres
+    depends_on:
+      - discovery
+      - kafka
+      - postgres
+
+  front-service:
+    container_name: front-service
+    build:
+      context: ./front-service
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    links:
+      - gateway
+    depends_on:
+      - discovery
+      - gateway

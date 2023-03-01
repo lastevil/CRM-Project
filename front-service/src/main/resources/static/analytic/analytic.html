@@ -3,43 +3,162 @@
     <nav class="panel-crm" >
       <div class="menu-crm 1">
         <div class="cell-crm" >
-          <button class="btn-bd-primary1"></button>
-          <a class="nav-link  active" href="#!/mytasks"> My tasks </a>
+          <button class="btn-bd-primary1" onclick="panelChoice()"></button>
+          <a class="nav-link  active" href="#!/mytasks"> Задачи </a>
         </div>
-        <div >
+        <div  class="cell-crm">
           <button class="btn-bd-primary1"></button>
-          <a class="nav-link" href="#!/chat"> Chat </a>
+          <a class="nav-link" href="#!/chat"> Чат </a>
+        </div>
+        <div  class="cell-crm">
+          <button class="btn-bd-primary1">   </button>
+          <a class="nav-link" href="#!/user"> Пользователь </a>
         </div>
         <div  >
           <button class="btn-bd-primary1"></button>
-          <a class="nav-link" href="#!/analytic"> Analytic </a>
+          <a class="nav-link" href="#!/analytic"> Аналитика </a>
         </div>
-        <div >
+        <div class="cell-crm">
           <button class="btn-bd-primary1"></button>
-          <a class="nav-link" href="#!/adminpanel"> Admin panel </a>
-        </div>
-      </div>
-      <div class="menu-crm 2">
-        <div class="menu-item1"></div>
-      </div>
-      <div class="menu-crm 3">
-        <div >
-          <button class="btn-bd-primary1">   </button>
-          <a class="nav-link" href="#!/createtask"> Create task </a>
-        </div>
-        <div >
-          <button class="btn-bd-primary1">   </button>
-          <a class="nav-link" href="#!/user"> User </a>
+          <a class="nav-link" href="#!/adminpanel"> Администрирование </a>
         </div>
       </div>
     </nav>
     <div class="page-crm">
-      <div class="pageIndex"></div>
-    </div>
-  </div>
-  <div class="page-crm" >
-    <div class="analytic">
-      <h1>Analytic</h1>
+      <div class="header">
+        <h2 class="title" style="text-align: center;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bar-chart-line" viewBox="0 0 16 16">
+            <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1V2zm1 12h2V2h-2v12zm-3 0V7H7v7h2zm-5 0v-3H2v3h2z"/>
+          </svg>
+          Аналитика
+        </h2>
+      </div>
+      <div class="analitic-content">
+        <div class="menu">
+          <div class="d-grid gap-2" >
+            <button id="btnMyAnalitic" class="btn btn-success" style="background: #8bbf73;" type="button" ng-click="myAnalitic()">Моя статистика</button>
+          </div>
+          <div class="d-grid gap-2" style="background: #8bbf73;">
+            <button id="btnAnaliticDepartment" class="btn btn-success" style="background: #8bbf73;" type="button" ng-click="analiticDepartment()">Статистика отдела</button>
+          </div>
+          <div class="d-grid gap-2" style="background: #8bbf73;">
+            <button id="btnAnaliticOffice" class="btn btn-success" style="background: #8bbf73;" type="button" ng-click="analiticOffice()">Статистика организации</button>
+          </div>
+          <div id="choiceInterval" class="input-group mb-3">
+            <div id="selInterv" >
+              <label id="labelSelInter" for="selInterval" class="col-form-label">Выберите период:</label>
+              <select id="selInterval" class="form-control" >
+                <option value="DAY">день</option>
+                <option value="WEEK">неделю</option>
+                <option value="MONTH">месяц</option>
+                <option value="THREE_MONTH">квартал</option>
+                <option value="HALF_YEAR">полугодие</option>
+                <option value="YEAR">год</option>
+              </select>
+
+            </div>
+          </div>
+          <div id="choiceStatus" class="input-group mb-3">
+            <div style="display: flex;">
+              <label for="selStatus" class="col-form-label">Выберите статус:</label>
+
+              <select id="selStatus" class="form-control" >
+                <option value="BACKLOG">Запланировано</option>
+                <option value="IN_PROGRESS">В работе</option>
+                <option value="DONE">Выполнено</option>
+                <option value="ACCEPTED">Принято</option>
+                <option value="DELETED">Удалено</option>
+                <option value="OVERDUE">Просрочено</option>
+                <option value="THREE_DAYS_LEFT">Осталось 3 дня</option>
+                <option value="TWO_DAYS_LEFT">Осталось 2 дня</option>
+                <option value="TODAY_LEFT">Истечет сегодня</option>
+                <option value="CLOSED">Закрыто</option>
+              </select>
+
+            </div>
+          </div>
+          <div id="choiceDepartment" class="input-group mb-3">
+              <div class="input-group mb-3" style="display: flex;">
+                  <label for="departm" class="col-form-label">Выберите отдел:</label>
+                  <select id="departm" class="form-control"></select>
+              </div>
+          </div>
+        </div>
+        <div class="d-grid gap-2">
+           <div class="diagram" style="display: flex;">
+              <div id="fio">
+                 <div>
+                   <label  for="last" class="col-form-label">Фамилия</label>
+                 </div>
+                 <div class="input-group mb-3">
+                   <input id="last" type="text" class="form-control" style="border: none; text-align: center;" disabled>
+                 </div>
+                 <div>
+                   <label  for="first" class="col-form-label">Имя</label>
+                 </div>
+                 <div class="input-group mb-3">
+                   <input id="first" type="text" class="form-control" style="border: none; text-align: center;" disabled>
+                 </div>
+                 <div>
+                   <label  for="kpi" class="col-form-label">KPI по задачам:</label>
+                 </div>
+                 <div class="input-group mb-3">
+                   <input id="kpi" type="text" class="form-control" style="border: none; text-align: center;" disabled>
+                 </div>
+              </div>
+              <div id="depart">
+                 <div class="input-group mb-3" style="displat: flex;">
+                   <label class="col-form-label">Информация за: </label>
+                   <input id="interv" type="text" class="form-control" style="border: none; text-align: center;" disabled>
+                 </div>
+                 <div class="input-group mb-3" style="displat: flex;">
+                   <label  for="allTicket" class="col-form-label">Всего заявок в отделе:</label>
+                   <input id="allTicket" type="text" class="form-control" style="border: none; text-align: center;" disabled>
+                 </div>
+                 <div class="input-group mb-3" style="displat: flex;">
+                   <label  for="closeTicket" class="col-form-label">Принято:</label>
+                   <input id="closeTicket" type="text" class="form-control" style="border: none; text-align: center;" disabled>
+                 </div>
+                  <div class="input-group mb-3" style="displat: flex;">
+                      <label  for="backlogTicket" class="col-form-label">Запланировано:</label>
+                      <input id="backlogTicket" type="text" class="form-control" style="border: none; text-align: center;" disabled>
+                  </div>
+                 <div class="input-group mb-3" style="displat: flex;">
+                   <label  for="overdue" class="col-form-label">Просрочено:</label>
+                   <input id="overdue" type="text" class="form-control" style="border: none; text-align: center;" disabled>
+                 </div>
+                 <div class="input-group mb-3" style="displat: flex;">
+                   <label  for="inWork" class="col-form-label">В работе:</label>
+                   <input id="inWork" type="text" class="form-control" style="border: none; text-align: center;" disabled>
+                 </div>
+              </div>
+              <div  id="diagramMy"  ></div>
+              <div  id="diagramDepartment"  >
+              <div id="diagramDepart"></div>
+              <nav id="navStore" aria-label="Page navigation example">
+              <ul class="pagination">
+                <li class="page-item">
+                  <a class="page-link" aria-label="Previous" ng-click="prevPage()">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+
+                <li class="page-item" ng-repeat="pageIndex in paginationArray">
+                  <button class="page-link" ng-click="loadProductsPage(pageIndex)">{{pageIndex}}</button>
+                </li>
+
+                <li class="page-item">
+                  <a class="page-link" aria-label="Next" ng-click="nextPage()">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+

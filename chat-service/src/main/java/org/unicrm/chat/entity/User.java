@@ -1,57 +1,37 @@
 package org.unicrm.chat.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
-import java.util.List;
+import java.util.Collection;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private UUID uuid;
 
-    @Column(name = "nicname")
-    private String nicName;
+    @Column(name = "username")
+    private String userName;
 
-    @Column(name = "password")
-    private String password;
+    @Column(name = "nickname")
+    private String nickName;
 
-    @Column(name = "login")
-    private String login;
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinTable(name = "users_groups",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id"))
+    private Collection<Group> groups;
 
-    public User() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getNicName() {
-        return nicName;
-    }
-
-    public void setNicName(String nicName) {
-        this.nicName = nicName;
-    }
 }

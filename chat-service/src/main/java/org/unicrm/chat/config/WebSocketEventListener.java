@@ -1,25 +1,25 @@
 package org.unicrm.chat.config;
 
-import org.unicrm.chat.model.ChatMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
+import org.unicrm.chat.model.ChatMessage;
+import org.unicrm.chat.model.MessageType;
 
 import java.util.*;
 
 @Component
 public class WebSocketEventListener implements ApplicationListener<SessionSubscribeEvent> {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
-    private Map<Long,String> mapSessionId = new HashMap<>();
+    private Map<UUID,String> mapSessionId = new HashMap<>();
 
     @Autowired
     private SimpMessageSendingOperations messagingTemplate;
@@ -32,7 +32,7 @@ public class WebSocketEventListener implements ApplicationListener<SessionSubscr
     public void handleWebSocketConnectListener(SessionSubscribeEvent event){
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         if (headerAccessor.getSessionAttributes().get("username") != null){
-            putSessionId((Long) headerAccessor.getSessionAttributes().get("username"),headerAccessor.getSessionId());
+            putSessionId((UUID) headerAccessor.getSessionAttributes().get("username"),headerAccessor.getSessionId());
         }
 
     }
@@ -42,13 +42,13 @@ public class WebSocketEventListener implements ApplicationListener<SessionSubscr
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 
         String username = String.valueOf(headerAccessor.getSessionAttributes().get("username"));
-        removeSessionId((Long) headerAccessor.getSessionAttributes().get("username"));
+        removeSessionId((UUID) headerAccessor.getSessionAttributes().get("username"));
 
         if(username != null) {
             logger.info("User Disconnected : " + username);
             ChatMessage chatMessage = new ChatMessage();
-            chatMessage.setType(ChatMessage.MessageType.LEAVE);
-            chatMessage.setSender(username);
+            chatMessage.setType(MessageType.LEAVE);
+            chatMessage.setSenderName(username);
 
             messagingTemplate.convertAndSend("/topic/public", chatMessage);
         }
@@ -57,23 +57,23 @@ public class WebSocketEventListener implements ApplicationListener<SessionSubscr
     @Override
     public void onApplicationEvent(SessionSubscribeEvent event) {
     }
-    public void putSessionId(Long id, String sessionId){
+    public void putSessionId(UUID id, String sessionId){
         mapSessionId.put(id, sessionId);
     }
-    public void removeSessionId(Long id){
+    public void removeSessionId(UUID id){
         if (mapSessionId.containsKey(id)) {
             mapSessionId.remove(id);
         }
     }
 
-    public String getSessionId(Long id) {
+    public String getSessionId(UUID id) {
 
         return mapSessionId.get(id);
     }
 
-    public List<Long> findAllIdUsers(){
-        List<Long> list = new ArrayList<>();
-        for (Map.Entry<Long, String> set : mapSessionId.entrySet()){
+    public List<UUID> findAllIdUsers(){
+        List<UUID> list = new ArrayList<>();
+        for (Map.Entry<UUID, String> set : mapSessionId.entrySet()){
             list.add(set.getKey());
         }
         return list;
