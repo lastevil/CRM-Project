@@ -26,6 +26,7 @@ import org.unicrm.auth.validators.UpdatedUserValidator;
 import org.unicrm.auth.validators.UserRegValidator;
 import org.unicrm.auth.validators.UserVerificationValidator;
 
+import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -72,7 +73,7 @@ public class UserService implements UserDetailsService {
         userRegValidator.validate(userRegDto);
         User user = EntityDtoMapper.INSTANCE.toEntity(userRegDto);
         String[] username = userRegDto.getEmail().split("@");
-        if (userRepository.existsUserByUsername(username[0])) throw new ResourceExistsException("This user already exists");
+        if (Boolean.TRUE.equals(userRepository.existsUserByUsername(username[0]))) throw new ResourceExistsException("This user already exists");
         user.setUsername(username[0]);
         user.setPassword(passwordEncoder.encode(userRegDto.getPassword()));
         Role roleUser = roleService.findRoleByName("ROLE_USER");
@@ -83,27 +84,30 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
+    @Transactional
     public void updateUser(UpdatedUserDto updatedUserDto) {
         updatedUserValidator.validate(updatedUserDto);
         applyChangesForUser(updatedUserDto);
         sendUser(updatedUserDto.getUsername());
     }
 
+    @Transactional
     public void userVerification(UserVerificationDto userVerificationDto) {
         userVerificationValidator.validate(userVerificationDto);
         applyUserVerification(userVerificationDto);
         sendUser(userVerificationDto.getUsername());
     }
 
+    @Transactional
     public void changeLogin(String username, String login) {
         applyChangeLogin(username, login);
         sendUser(login);
     }
 
     @Transactional
-    void applyChangesForUser(UpdatedUserDto updatedUserDto) {
+    public void applyChangesForUser(UpdatedUserDto updatedUserDto) {
         User user = findByUsername(updatedUserDto.getUsername());
-        if (user.getStatus() != Status.ACTIVE) throw new RuntimeException("Need to get verified");
+        if (user.getStatus() != Status.ACTIVE) throw new ValidationException("Need to get verified");
         if (updatedUserDto.getEmail() != null) {
             user.setEmail(updatedUserDto.getEmail());
         }
@@ -115,7 +119,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    void applyUserVerification(UserVerificationDto userVerificationDto) {
+    public void applyUserVerification(UserVerificationDto userVerificationDto) {
         User user = findByUsername(userVerificationDto.getUsername());
         try {
             user.setStatus(userVerificationDto.getStatus());
@@ -127,9 +131,9 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    void applyChangeLogin(String username, String login) {
+    public void applyChangeLogin(String username, String login) {
         User user = findByUsername(username);
-        if (login == null || login.isBlank()) throw new RuntimeException("login must not be empty");
+        if (login == null || login.isBlank()) throw new ValidationException("login must not be empty");
         user.setUsername(login);
         userRepository.save(user);
     }
