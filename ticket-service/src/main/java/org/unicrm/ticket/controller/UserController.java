@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.unicrm.ticket.dto.TicketUserDto;
+import org.unicrm.ticket.dto.UserDto;
 import org.unicrm.ticket.services.TicketUserService;
 
 import java.util.List;
@@ -21,13 +21,13 @@ public class UserController {
 
     @Operation(summary = "метод для получения всех пользователей")
     @GetMapping("/tickets/users")
-    public List<TicketUserDto> getAllUsers() {
+    public List<UserDto> getAllUsers() {
         return userService.findAllUsers();
     }
 
     @Operation(summary = "метод для получения пользователей по конкретному отделу")
     @GetMapping("tickets/users/{departmentId}")
-    public List<TicketUserDto> getAllUsersFromDepartment(Long departmentId) {
+    public List<UserDto> getAllUsersFromDepartment(Long departmentId) {
         return userService.findAllUsersByDepartments(departmentId);
     }
 }

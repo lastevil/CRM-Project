@@ -35,15 +35,15 @@ public class TicketResponseDto {
     @Schema(description = "id исполнителя")
     @JsonSerialize(contentUsing = UUIDSerializer.class)
     @JsonDeserialize(contentUsing = UUIDDeserializer.class)
-    private TicketUserDto assignee;
+    private UserDto assignee;
 
     @Schema(description = "id заявителя")
     @JsonSerialize(contentUsing = UUIDSerializer.class)
     @JsonDeserialize(contentUsing = UUIDDeserializer.class)
-    private TicketUserDto reporter;
+    private UserDto reporter;
 
     @Schema(description = "id отдела")
-    private TicketDepartmentDto department;
+    private DepartmentDto department;
 
     @Schema(description = "Дата создания заявки", example = "2023-12-10 14:43")
     private OffsetDateTime createdAt;

@@ -15,7 +15,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TicketUserDto {
+public class UserDto {
 
     @JsonSerialize(contentUsing = UUIDSerializer.class)
     @JsonDeserialize(contentUsing = UUIDDeserializer.class)
@@ -34,5 +34,5 @@ public class TicketUserDto {
     private String lastName;
 
     @Schema(description = "Отдел, к которому приписан пользователь", example = "QA")
-    private TicketDepartmentDto department;
+    private DepartmentDto department;
 }

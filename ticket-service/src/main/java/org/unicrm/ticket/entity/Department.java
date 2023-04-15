@@ -14,7 +14,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Table(schema = "tickets_schema", name = "ticket_departments")
-public class TicketDepartment {
+public class Department {
 
     @Id
     @Column(name = "department_id")
@@ -27,8 +27,8 @@ public class TicketDepartment {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TicketDepartment)) return false;
-        TicketDepartment that = (TicketDepartment) o;
+        if (!(o instanceof Department)) return false;
+        Department that = (Department) o;
         return Objects.equals(id, that.id);
     }
 

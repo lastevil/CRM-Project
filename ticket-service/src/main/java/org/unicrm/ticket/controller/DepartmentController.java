@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.unicrm.ticket.dto.TicketDepartmentDto;
+import org.unicrm.ticket.dto.DepartmentDto;
 import org.unicrm.ticket.services.TicketDepartmentService;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public class DepartmentController {
 
     @Operation(summary = "метод для получения всех отделов")
     @GetMapping()
-    public List<TicketDepartmentDto> getAllDepartments() {
+    public List<DepartmentDto> getAllDepartments() {
         return departmentService.findAllDepartments();
     }
 }

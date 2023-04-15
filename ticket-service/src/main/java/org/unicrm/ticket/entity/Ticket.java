@@ -38,15 +38,15 @@ public class Ticket {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assignee")
-    private TicketUser assignee;
+    private User assignee;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reporter")
-    private TicketUser reporter;
+    private User reporter;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
-    private TicketDepartment department;
+    private Department department;
 
     @Column(name = "created_at")
     @CreationTimestamp

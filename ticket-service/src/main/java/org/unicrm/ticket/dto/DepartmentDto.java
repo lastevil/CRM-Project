@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TicketDepartmentDto {
+public class DepartmentDto {
 
     @Schema(description = "id отдела", example = "1L")
     private Long id;
