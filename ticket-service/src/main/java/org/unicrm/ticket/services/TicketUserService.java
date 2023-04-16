@@ -2,8 +2,8 @@ package org.unicrm.ticket.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.unicrm.ticket.dto.TicketUserDto;
-import org.unicrm.ticket.entity.TicketUser;
+import org.unicrm.ticket.dto.UserDto;
+import org.unicrm.ticket.entity.User;
 import org.unicrm.ticket.exception.ResourceNotFoundException;
 import org.unicrm.ticket.mapper.TicketUserMapper;
 import org.unicrm.ticket.repository.TicketUserRepository;
@@ -19,15 +19,15 @@ public class TicketUserService {
 
     private final TicketUserMapper mapper;
 
-    public TicketUser findUserById(UUID uuid) {
+    public User findUserById(UUID uuid) {
         return ticketUserRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
-    public List<TicketUserDto> findAllUsers() {
+    public List<UserDto> findAllUsers() {
         return ticketUserRepository.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
     }
     
-    public TicketUser findUserByUsername(String username) {
+    public User findUserByUsername(String username) {
         return ticketUserRepository.findByUsername(username);
     }
 
@@ -35,7 +35,7 @@ public class TicketUserService {
         return ticketUserRepository.findUserDepartment(id);
     }
 
-    public List<TicketUserDto> findAllUsersByDepartments(Long departmentId) {
+    public List<UserDto> findAllUsersByDepartments(Long departmentId) {
         return ticketUserRepository.findAllByDepartment(departmentId).stream().map(mapper::toDto).collect(Collectors.toList());
     }
 }

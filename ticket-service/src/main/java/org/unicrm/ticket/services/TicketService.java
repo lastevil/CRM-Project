@@ -16,9 +16,9 @@ import org.unicrm.ticket.dto.TicketResponseDto;
 import org.unicrm.ticket.dto.kafka.KafkaTicketDto;
 import org.unicrm.ticket.dto.kafka.KafkaUserDto;
 import org.unicrm.ticket.entity.Ticket;
-import org.unicrm.ticket.entity.TicketDepartment;
+import org.unicrm.ticket.entity.Department;
 import org.unicrm.ticket.entity.TicketStatus;
-import org.unicrm.ticket.entity.TicketUser;
+import org.unicrm.ticket.entity.User;
 import org.unicrm.ticket.exception.NoPermissionToChangeException;
 import org.unicrm.ticket.exception.ResourceNotFoundException;
 import org.unicrm.ticket.exception.validators.TicketDepartmentValidator;
@@ -51,12 +51,12 @@ public class TicketService {
     public void createOrUpdateUserAndDepartment(KafkaUserDto userDto) {
         departmentValidator.validate(userDto);
         userValidator.validate(userDto);
-        TicketDepartment department = departmentSaveOrUpdate(userDto);
+        Department department = departmentSaveOrUpdate(userDto);
         userSaveOrUpdate(userDto, department);
     }
 
-    private TicketDepartment departmentSaveOrUpdate(KafkaUserDto dto) {
-        TicketDepartment department;
+    private Department departmentSaveOrUpdate(KafkaUserDto dto) {
+        Department department;
         if (!facade.getDepartmentRepository().existsById(dto.getDepartmentId())) {
             department = facade.getDepartmentMapper().toEntity(dto);
             facade.getDepartmentRepository().save(department);
@@ -71,8 +71,8 @@ public class TicketService {
         return department;
     }
 
-    private void userSaveOrUpdate(KafkaUserDto dto, TicketDepartment department) {
-        TicketUser user;
+    private void userSaveOrUpdate(KafkaUserDto dto, Department department) {
+        User user;
         if (!facade.getUserRepository().existsById(dto.getId())) {
             user = facade.getUserMapper().tofromGlobalDto(dto, department);
         } else {
@@ -182,7 +182,7 @@ public class TicketService {
     @Transactional
     public void deleteById(UUID id, String username) {
         Ticket ticket = facade.getTicketRepository().findById(id).orElseThrow(() -> new ResourceNotFoundException("Ticket not found"));
-        TicketUser reporter = userService.findUserByUsername(username);
+        User reporter = userService.findUserByUsername(username);
         if(ticket.getStatus().equals(TicketStatus.BACKLOG) && ticket.getReporter().equals(reporter)) {
             ticket.setStatus(TicketStatus.DELETED);
             kafkaTemplate.send("ticketTopic", UUID.randomUUID(), facade.getTicketMapper().toDto(ticket));
@@ -193,9 +193,9 @@ public class TicketService {
     @Transactional
     public void createTicket(TicketRequestDto ticketDto, Long departmentId, UUID assigneeId, String username) {
         ticketValidator.validateCreation(ticketDto, departmentId, assigneeId, username);
-        TicketUser assignee = userService.findUserById(assigneeId);
-        TicketUser reporter = userService.findUserByUsername(username);
-        TicketDepartment department = departmentService.findDepartmentById(departmentId);
+        User assignee = userService.findUserById(assigneeId);
+        User reporter = userService.findUserByUsername(username);
+        Department department = departmentService.findDepartmentById(departmentId);
         Ticket ticket = facade.getTicketMapper().toEntityFromTicketRequest(ticketDto, assignee, reporter, department);
         ticket.setCreatedAt(LocalDateTime.now());
         ticket.setStatus(TicketStatus.BACKLOG);
@@ -208,12 +208,12 @@ public class TicketService {
         Ticket ticket = facade.getTicketRepository().findById(id).orElseThrow(() -> new ResourceNotFoundException("Ticket not found"));
         TicketStatus status = ticket.getStatus();
         if (departmentId != null) {
-            TicketDepartment department = facade.getDepartmentRepository().findById(departmentId)
+            Department department = facade.getDepartmentRepository().findById(departmentId)
                     .orElseThrow(() -> new ResourceNotFoundException("Department not found"));
             ticket.setDepartment(department);
         }
         if (assigneeId != null) {
-            TicketUser user = facade.getUserRepository().findById(assigneeId)
+            User user = facade.getUserRepository().findById(assigneeId)
                     .orElseThrow(() -> new ResourceNotFoundException("Department not found"));
             ticket.setAssignee(user);
         }
@@ -266,7 +266,7 @@ public class TicketService {
 
     @Transactional
     public void acceptTask(String username, UUID ticketId) {
-        TicketUser user = userService.findUserByUsername(username);
+        User user = userService.findUserByUsername(username);
         Ticket ticket = facade.getTicketRepository().findById(ticketId)
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found"));
         if(ticket.getReporter().equals(user)) {
@@ -280,7 +280,7 @@ public class TicketService {
 
     @Transactional
     public void rejectTicket(UUID ticketId, String username) {
-        TicketUser reporter = userService.findUserByUsername(username);
+        User reporter = userService.findUserByUsername(username);
         Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(()-> new ResourceNotFoundException("Ticket not found"));
         if(ticket.getStatus().equals(TicketStatus.DONE) && ticket.getReporter().equals(reporter)) {
             ticket.setStatus(TicketStatus.IN_PROGRESS);
@@ -292,7 +292,7 @@ public class TicketService {
 
     @Transactional
     public void setTicketDone(UUID ticketId, String username) {
-        TicketUser assignee = userService.findUserByUsername(username);
+        User assignee = userService.findUserByUsername(username);
         Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(()-> new ResourceNotFoundException("Ticket not found"));
         if(ticket.getStatus().equals(TicketStatus.IN_PROGRESS) && ticket.getAssignee().equals(assignee)) {
             ticket.setStatus(TicketStatus.DONE);
@@ -304,7 +304,7 @@ public class TicketService {
 
     @Transactional
     public void startWorkingOnTask(UUID ticketId, String username) {
-        TicketUser assignee = userService.findUserByUsername(username);
+        User assignee = userService.findUserByUsername(username);
         Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(()-> new ResourceNotFoundException("Ticket not found"));
         if(ticket.getStatus().equals(TicketStatus.BACKLOG) && ticket.getAssignee().equals(assignee)) {
             ticket.setStatus(TicketStatus.IN_PROGRESS);
@@ -312,5 +312,41 @@ public class TicketService {
         } else {
             throw new NoPermissionToChangeException("Unable to set status 'IN_PROGRESS' for this task with id: " + ticketId);
         }
+    }
+
+    public Page<TicketResponseDto> findAllByUsername(String username, TicketPage page) {
+        if(page.getPage() < 1) {
+            page.setPage(1);
+        }
+        if(page.getSize() < 1) {
+            page.setSize(10);
+        }
+        Pageable pageable = PageRequest.of(page.getPage() - 1, page.getSize(), Sort.by("updatedAt").descending());
+        return facade.getTicketRepository().findAllByAssigneeUsername(pageable, username)
+                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
+    }
+
+    public Page<TicketResponseDto> findAllByAssigneeUsernameAndStatus(String username, String status, TicketPage page) {
+        if(page.getPage() < 1) {
+            page.setPage(1);
+        }
+        if(page.getSize() < 1) {
+            page.setSize(10);
+        }
+        Pageable pageable = PageRequest.of(page.getPage() - 1, page.getSize(), Sort.by("updatedAt").descending());
+        return ticketRepository.findAllByAssigneeUsernameAndStatus(pageable, username, status)
+                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
+    }
+
+    public Page<TicketResponseDto> findAllByDepartmentAndStatus(Long departmentId, String status, TicketPage page) {
+        if(page.getPage() < 1) {
+            page.setPage(1);
+        }
+        if(page.getSize() < 1) {
+            page.setSize(10);
+        }
+        Pageable pageable = PageRequest.of(page.getPage() - 1, page.getSize(), Sort.by("updatedAt").descending());
+        return ticketRepository.findAllByDepartmentAndStatus(pageable, departmentId, status)
+                .map(ticket -> facade.getTicketMapper().toResponseDtoFromEntity(ticket));
     }
 }

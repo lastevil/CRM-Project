@@ -8,8 +8,8 @@ import org.mapstruct.factory.Mappers;
 import org.unicrm.ticket.dto.*;
 import org.unicrm.ticket.dto.kafka.KafkaTicketDto;
 import org.unicrm.ticket.entity.Ticket;
-import org.unicrm.ticket.entity.TicketDepartment;
-import org.unicrm.ticket.entity.TicketUser;
+import org.unicrm.ticket.entity.Department;
+import org.unicrm.ticket.entity.User;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -48,7 +48,7 @@ public interface TicketMapper {
     @Mapping(target = "department.id", source = "department.id")
     @Mapping(target = "department.title", source = "department.title")
     @Mapping(target = "dueDate", expression = "java(ticketDto.getDueDate().atTime(21, 00, 00))")
-    Ticket toEntityFromTicketRequest(TicketRequestDto ticketDto, TicketUser assignee, TicketUser reporter, TicketDepartment department);
+    Ticket toEntityFromTicketRequest(TicketRequestDto ticketDto, User assignee, User reporter, Department department);
 
     TicketResponseDto toResponseDtoFromEntity(Ticket ticket);
 

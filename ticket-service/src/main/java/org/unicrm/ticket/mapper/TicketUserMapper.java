@@ -3,22 +3,22 @@ package org.unicrm.ticket.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import org.unicrm.ticket.dto.TicketUserDto;
+import org.unicrm.ticket.dto.UserDto;
 import org.unicrm.ticket.dto.kafka.KafkaUserDto;
-import org.unicrm.ticket.entity.TicketDepartment;
-import org.unicrm.ticket.entity.TicketUser;
+import org.unicrm.ticket.entity.Department;
+import org.unicrm.ticket.entity.User;
 
 @Mapper(componentModel = "spring")
 public interface TicketUserMapper {
     TicketUserMapper INSTANCE = Mappers.getMapper(TicketUserMapper.class);
 
-    @Mapping(source = "ticketUserDto.id", target = "id")
+    @Mapping(source = "userDto.id", target = "id")
     @Mapping(source = "department", target = "department")
-    TicketUser toEntity(TicketUserDto ticketUserDto, TicketDepartment department);
+    User toEntity(UserDto userDto, Department department);
 
-    TicketUserDto toDto(TicketUser ticketUser);
+    UserDto toDto(User user);
     
     @Mapping(target = "id", source = "userDto.id")
     @Mapping(target = "department", source = "department")
-    TicketUser tofromGlobalDto(KafkaUserDto userDto, TicketDepartment department);
+    User tofromGlobalDto(KafkaUserDto userDto, Department department);
 }

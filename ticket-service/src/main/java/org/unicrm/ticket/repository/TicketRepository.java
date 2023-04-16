@@ -37,4 +37,13 @@ public interface TicketRepository extends JpaRepository<Ticket, UUID> {
 
     @Query(value = "select t from Ticket t where t.reporter.username = :username")
     Page<Ticket> findTicketsByReporter(Pageable pageable, String username);
+
+    @Query(value = "select t from Ticket t where t.assignee.username = :username")
+    Page<Ticket> findAllByAssigneeUsername(Pageable pageable, String username);
+
+    @Query(value = "select t from Ticket t where t.assignee.username = :username and t.status = :status")
+    Page<Ticket> findAllByAssigneeUsernameAndStatus(Pageable pageable, String username, String status);
+
+    @Query(value = "select t from Ticket t where t.department.id = :departmentId and t.status = :status")
+    Page<Ticket> findAllByDepartmentAndStatus(Pageable pageable, Long departmentId, String status);
 }

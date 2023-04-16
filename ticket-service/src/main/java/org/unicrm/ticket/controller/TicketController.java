@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/tickets")
 @Tag(name = "Заявки", description = "Контроллер для обработки запросов сервиса заявок")
 public class TicketController {
 
@@ -45,38 +45,60 @@ public class TicketController {
         ticketService.update(ticketDto, id, departmentId, assigneeId);
     }
 
+    @Operation(summary = "метод получения заявок по пользователю и отделу")
+    @GetMapping()
+    public Page<TicketResponseDto> getTicketsByUsername(@RequestHeader String username, @Valid TicketPage page) {
+        return ticketService.findAllByUsername(username, page);
+    }
+
     @Operation(summary = "метод удаления конкретной заявки по ее id")
     @DeleteMapping("/{id}")
     public void deleteTicketById(@PathVariable UUID id, @RequestHeader String username) {
         ticketService.deleteById(id, username);
     }
 
-    @Operation(summary = "метод получения списка всех заявок по исполнителю")
-    @GetMapping("/tickets/assignee/{assigneeId}")
+    @Operation(summary = "метод получения списка всех заявок по id исполнителю")
+    @GetMapping("/assignee/{assigneeId}")
     public Page<TicketResponseDto> getAllByAssignee(@Valid TicketPage page, @PathVariable UUID assigneeId) {
         return ticketService.findTicketsByAssignee(assigneeId, page);
     }
 
-    @Operation(summary = "метод для получения списка заявок по исполнителю и статусу")
-    @GetMapping("/tickets/{assigneeId}/{status}")
+    @Operation(summary = "метод для получения списка заявок по id исполнителю и статусу")
+    @GetMapping("/{assigneeId}/{status}")
     public Page<TicketResponseDto> getAllByAssigneeAndStatus(@PathVariable UUID assigneeId, @PathVariable String status, @Valid TicketPage page) {
         return ticketService.findTicketsByAssigneeAndStatus(assigneeId, status, page);
     }
 
+    @Operation(summary = "метод для получения списка заявок по username исполнителя и статусу")
+    @GetMapping("/{status}")
+    public Page<TicketResponseDto> getAllByAssigneeUsernameAndStatus(@RequestHeader String username,
+                                                                     @PathVariable String status,
+                                                                     @Valid TicketPage page) {
+        return ticketService.findAllByAssigneeUsernameAndStatus(username, status, page);
+    }
+
+    @Operation(summary = "метод для получения списка заявок по отделу и статусу")
+    @GetMapping("/{depatments}/{status}")
+    public Page<TicketResponseDto> getAllByDepartmentAndStatus(@PathVariable Long departmentId,
+                                                               @PathVariable String status,
+                                                               @Valid TicketPage page) {
+        return ticketService.findAllByDepartmentAndStatus(departmentId, status, page);
+    }
+
     @Operation(summary = "метод для получения списка заявок по частичному совпадение заголовка")
-    @GetMapping("/tickets/search/{title}")
+    @GetMapping("/search/{title}")
     public Page<TicketResponseDto> getTicketsByTitle(@PathVariable String title, @Valid TicketPage page) {
         return ticketService.findTicketByTitle(page, title);
     }
 
     @Operation(summary = "метод для получения списка заявок по отделу")
-    @GetMapping("/tickets/department/{departmentId}")
+    @GetMapping("/department/{departmentId}")
     public Page<TicketResponseDto> getTicketsByDepartment(@PathVariable Long departmentId, @Valid TicketPage page) {
         return ticketService.findTicketsByDepartment(page, departmentId);
     }
 
     @Operation(summary = "метод получения заявки по статусу")
-    @GetMapping("/tickets/status/{status}")
+    @GetMapping("/status/{status}")
     public Page<TicketResponseDto> getTicketsByStatus(@PathVariable String status, @Valid TicketPage page) {
         return ticketService.findTicketByStatus(page, status);
     }

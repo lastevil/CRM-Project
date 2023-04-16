@@ -14,7 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Table(name = "users_of_ticket")
-public class TicketUser {
+public class User {
 
     @Id
     @Column(name = "id")
@@ -32,14 +32,14 @@ public class TicketUser {
 
    @ManyToOne(fetch = FetchType.LAZY)
    @JoinColumn(name = "department_id")
-   private TicketDepartment department;
+   private Department department;
 
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TicketUser)) return false;
-        TicketUser that = (TicketUser) o;
+        if (!(o instanceof User)) return false;
+        User that = (User) o;
         return getId().equals(that.getId()) && Objects.equals(getUsername(), that.getUsername()) && Objects.equals(getFirstName(), that.getFirstName()) && Objects.equals(getLastName(), that.getLastName()) && Objects.equals(getDepartment(), that.getDepartment());
     }
 
