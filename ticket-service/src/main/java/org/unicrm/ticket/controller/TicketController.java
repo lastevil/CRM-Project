@@ -46,7 +46,7 @@ public class TicketController {
     }
 
     @Operation(summary = "метод получения заявок по пользователю и отделу")
-    @GetMapping()
+    @GetMapping("/user/department")
     public Page<TicketResponseDto> getTicketsByUsername(@RequestHeader String username, @Valid TicketPage page) {
         return ticketService.findAllByUsername(username, page);
     }
