@@ -43,7 +43,7 @@ services:
   discovery:
     container_name: discovery
     build:
-        context: ./discovery-service
+      context: ./discovery-service
     restart: unless-stopped
     ports:
       - "8700:8700"
@@ -94,21 +94,21 @@ services:
       - discovery
       - kafka
 
-  chat-service:
-    container_name: chat-service
-    build:
-      context: ./chat-service
-    restart: on-failure
-    ports:
-      - "8703:8703"
-    links:
-      - discovery
-      - kafka
-      - postgres
-    depends_on:
-      - discovery
-      - kafka
-      - postgres
+  #  chat-service:
+  #    container_name: chat-service
+  #    build:
+  #      context: ./chat-service
+  #    restart: on-failure
+  #    ports:
+  #      - "8703:8703"
+  #    links:
+  #      - discovery
+  #      - kafka
+  #      - postgres
+  #    depends_on:
+  #      - discovery
+  #      - kafka
+  #      - postgres
 
   ticket-service:
     container_name: ticket-service
@@ -126,15 +126,15 @@ services:
       - kafka
       - postgres
 
-  front-service:
-    container_name: front-service
-    build:
-      context: ./front-service
-    restart: on-failure
-    ports:
-      - "8080:8080"
-    links:
-      - gateway
-    depends_on:
-      - discovery
-      - gateway
+#  front-service:
+#    container_name: front-service
+#    build:
+#      context: ./front-service
+#    restart: on-failure
+#    ports:
+#      - "8080:8080"
+#    links:
+#      - gateway
+#    depends_on:
+#      - discovery
+#      - gateway
