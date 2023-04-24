@@ -18,6 +18,7 @@ import org.unicrm.auth.dto.kafka.KafkaUserDto;
 import org.unicrm.auth.entities.Role;
 import org.unicrm.auth.entities.Status;
 import org.unicrm.auth.entities.User;
+import org.unicrm.auth.exceptions.NotActiveAccountException;
 import org.unicrm.auth.exceptions.ResourceExistsException;
 import org.unicrm.auth.exceptions.ResourceNotFoundException;
 import org.unicrm.auth.mappers.EntityDtoMapper;
@@ -49,8 +50,11 @@ public class UserService implements UserDetailsService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = findByUsername(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email);
+        if (user.getStatus() == Status.NOT_ACTIVE) {
+            throw new NotActiveAccountException("Account is not active");
+        }
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), mapRolesToAuthorities(user.getRoles()));
     }
 

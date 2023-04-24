@@ -30,11 +30,11 @@ public class AuthController {
     @Operation(summary = "authorization request")
     public JwtResponse createAuthToken(@RequestBody JwtRequest authRequest) {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
         } catch (BadCredentialsException e) {
-            throw new AuthenticationException("Incorrect username or password");
+            throw new AuthenticationException("Incorrect email or password");
         }
-        UserDetails userDetails = userService.loadUserByUsername(authRequest.getUsername());
+        UserDetails userDetails = userService.loadUserByUsername(authRequest.getEmail());
         String token = jwtTokenUtil.generateToken(userDetails);
         return new JwtResponse(token);
     }

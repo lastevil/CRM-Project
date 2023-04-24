@@ -10,7 +10,7 @@ values ('99e61aa4-b458-42ca-9282-5cb0f097de60',
         CURRENT_TIMESTAMP, 'ACTIVE');
 INSERT INTO users_roles
 values ('99e61aa4-b458-42ca-9282-5cb0f097de60',
-                     2,
+                     3,
                      CURRENT_TIMESTAMP,
                      CURRENT_TIMESTAMP)
 ;

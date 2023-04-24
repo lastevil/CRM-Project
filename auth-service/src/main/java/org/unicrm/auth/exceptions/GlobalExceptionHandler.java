@@ -23,6 +23,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<AppError> catchNotActiveAccountException(NotActiveAccountException e) {
+        log.error(e.getMessage(), e);
+        return new ResponseEntity<>(new AppError(HttpStatus.LOCKED.value(), e.getMessage()), HttpStatus.LOCKED);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<AppError> catchResourceExistException(ResourceExistsException e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(new AppError(HttpStatus.CONFLICT.value(), e.getMessage()), HttpStatus.NOT_FOUND);
