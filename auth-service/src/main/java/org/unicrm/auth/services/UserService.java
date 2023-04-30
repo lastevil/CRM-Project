@@ -50,11 +50,9 @@ public class UserService implements UserDetailsService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email);
-        if (user.getStatus() == Status.NOT_ACTIVE) {
-            throw new NotActiveAccountException("Account is not active");
-        }
+    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+        User user = login.contains("@") ? findUserByEmail(login) : findUserByUsername(login);
+        if (user.getStatus() == Status.NOT_ACTIVE) throw new NotActiveAccountException("Account is not active");
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), mapRolesToAuthorities(user.getRoles()));
     }
 
@@ -64,21 +62,21 @@ public class UserService implements UserDetailsService {
 
     @Transactional(readOnly = true)
     public List<KafkaUserDto> findAll() {
-        return userRepository.findAll().stream().map(EntityDtoMapper.INSTANCE::toDto).collect(Collectors.toList());
+        return userRepository.findAllExceptLocalAdmin("Admin").stream().map(EntityDtoMapper.INSTANCE::toDto).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public KafkaUserDto getByUsername(String username) {
-        return EntityDtoMapper.INSTANCE.toDto(findByUsername(username));
+        return EntityDtoMapper.INSTANCE.toDto(findUserByUsername(username));
     }
 
     @Transactional
     public void saveNewUser(UserRegDto userRegDto) {
         userRegValidator.validate(userRegDto);
         User user = EntityDtoMapper.INSTANCE.toEntity(userRegDto);
-        String[] username = userRegDto.getEmail().split("@");
-        if (Boolean.TRUE.equals(userRepository.existsUserByUsername(username[0]))) throw new ResourceExistsException("This user already exists");
-        user.setUsername(username[0]);
+        if (Boolean.TRUE.equals(userRepository.existsUserByUsername(userRegDto.getLogin()))) throw new ResourceExistsException("User with this login already exists");
+        if (Boolean.TRUE.equals(userRepository.existsUserByEmail(userRegDto.getEmail()))) throw new ResourceExistsException("User with this email already exists");
+        user.setUsername(userRegDto.getLogin());
         user.setPassword(passwordEncoder.encode(userRegDto.getPassword()));
         Role roleUser = roleService.findRoleByName("ROLE_USER");
         List<Role> userRoles = new ArrayList<>();
@@ -110,7 +108,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void applyChangesForUser(UpdatedUserDto updatedUserDto) {
-        User user = findByUsername(updatedUserDto.getUsername());
+        User user = findUserByUsername(updatedUserDto.getUsername());
         if (user.getStatus() != Status.ACTIVE) throw new ValidationException("Need to get verified");
         if (updatedUserDto.getEmail() != null) {
             user.setEmail(updatedUserDto.getEmail());
@@ -124,7 +122,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void applyUserVerification(UserVerificationDto userVerificationDto) {
-        User user = findByUsername(userVerificationDto.getUsername());
+        User user = findUserByUsername(userVerificationDto.getUsername());
         try {
             user.setStatus(userVerificationDto.getStatus());
         } catch (IllegalArgumentException e) {
@@ -136,7 +134,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void applyChangeLogin(String username, String login) {
-        User user = findByUsername(username);
+        User user = findUserByUsername(username);
         if (login == null || login.isBlank()) throw new ValidationException("login must not be empty");
         user.setUsername(login);
         userRepository.save(user);
@@ -144,7 +142,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void addRole(String username, String roleName) {
-        User user = findByUsername(username);
+        User user = findUserByUsername(username);
         user.getRoles().add(roleService.findRoleByName(roleName));
     }
 
@@ -152,22 +150,34 @@ public class UserService implements UserDetailsService {
     public List<KafkaUserDto> findAllByStatusEqualsNoActive() {
         return userRepository.findAllByStatusEquals(Status.NOT_ACTIVE).stream().map(EntityDtoMapper.INSTANCE::toDto).collect(Collectors.toList());
     }
+    @Transactional(readOnly = true)
+    public List<KafkaUserDto> findAllByStatusEqualsActive() {
+        return userRepository.findAllByStatusEqualsAndUsernameIsNot(Status.ACTIVE, "Admin").stream().map(EntityDtoMapper.INSTANCE::toDto).collect(Collectors.toList());
+    }
 
     public UserInfoDto getUserInfo(String username) {
-        User user = findByUsername(username);
+        User user = findUserByUsername(username);
         return EntityDtoMapper.INSTANCE.toInfoDto(user);
     }
 
-    private User findByUsername(String username) {
+    private User findUserByUsername(String username) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
             throw new ResourceNotFoundException(String.format("User '%s' not found", username));
         }
         return user;
     }
+    private User findUserByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new ResourceNotFoundException(String.format("User with email: '%s' not found", email));
+        }
+        return user;
+    }
+
 
     private void sendUser(String username) {
-        User user = findByUsername(username);
+        User user = findUserByUsername(username);
         listUserDtoForSend.add(EntityDtoMapper.INSTANCE.toDto(user));
         senderHandler.sendToKafka(listUserDtoForSend);
     }

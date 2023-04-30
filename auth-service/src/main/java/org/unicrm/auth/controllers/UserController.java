@@ -24,14 +24,14 @@ public class UserController {
     private final UserService userService;
 
     @Operation(summary = "Get user by username")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
     @GetMapping("/users/{username}")
     public KafkaUserDto getUserByUsername(@PathVariable String username) {
         return userService.getByUsername(username);
     }
 
     @Operation(summary = "Getting a list of all users")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
     @GetMapping("/users")
     public List<KafkaUserDto> getAllUsers() {
         return userService.findAll();
@@ -45,34 +45,42 @@ public class UserController {
     }
 
     @Operation(summary = "Request to add rights for users")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
     @GetMapping("/users/roles/{username}/{roleName}")
     public void addRoleToUser(@PathVariable String username, @PathVariable String roleName) {
         userService.addRole(username, roleName);
     }
 
     @Operation(summary = "Checking, setting the status and department of the user. Sending users to other services")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
     @PostMapping("users/verification")
     public void userVerification(@RequestBody UserVerificationDto userVerificationDto){
         userService.userVerification(userVerificationDto);
     }
 
     @Operation(summary = "Request to get all inactive users")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
     @GetMapping("/users/not_active")
     public List<KafkaUserDto> findAllByStatusEqualsNoActive() {
         return userService.findAllByStatusEqualsNoActive();
     }
 
+    @Operation(summary = "Request to get all active users")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
+    @GetMapping("/users/active")
+    public List<KafkaUserDto> findAllByStatusEqualsActive() {
+        return userService.findAllByStatusEqualsActive();
+    }
+
     @Operation(summary = "Request to change login by administrator")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
     @GetMapping("/users/{username}/change/{login}")
     public void changeLogin(@PathVariable String username, @PathVariable String login) {
         userService.changeLogin(username, login);
     }
 
     @Operation(summary = "User information request")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/users/{username}/info")
     public UserInfoDto getUserInfo(@PathVariable String username) {
         return userService.getUserInfo(username);

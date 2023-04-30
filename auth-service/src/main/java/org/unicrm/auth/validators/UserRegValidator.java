@@ -24,6 +24,7 @@ public class UserRegValidator {
 
         List<String> errors = new ArrayList<>();
 
+        if (userRegDto.getLogin() == null || userRegDto.getLogin().isBlank()) errors.add("Login must not be empty");
         if (userRegDto.getFirstName() == null || userRegDto.getFirstName().isBlank()) errors.add("First name must not be empty");
         if (userRegDto.getLastName() == null || userRegDto.getLastName().isBlank()) errors.add("Last name must not be empty");
         if (userRegDto.getPassword() == null || userRegDto.getPassword().isBlank()) errors.add("Password must not be empty");

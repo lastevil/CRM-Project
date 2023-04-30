@@ -4,10 +4,12 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.unicrm.auth.dto.DepartmentDto;
+import org.unicrm.auth.dto.RoleDto;
 import org.unicrm.auth.dto.UserInfoDto;
 import org.unicrm.auth.dto.UserRegDto;
 import org.unicrm.auth.dto.kafka.KafkaUserDto;
 import org.unicrm.auth.entities.Department;
+import org.unicrm.auth.entities.Role;
 import org.unicrm.auth.entities.User;
 
 @Mapper
@@ -31,4 +33,6 @@ public interface EntityDtoMapper {
     DepartmentDto toDto(Department department);
 
     Department toEntity(DepartmentDto departmentDto);
+
+    RoleDto toDto(Role role);
 }
