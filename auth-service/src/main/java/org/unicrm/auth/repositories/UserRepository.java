@@ -7,9 +7,10 @@ import org.unicrm.auth.entities.Status;
 import org.unicrm.auth.entities.User;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, UUID> {
 
     User findByUsername(String username);
 

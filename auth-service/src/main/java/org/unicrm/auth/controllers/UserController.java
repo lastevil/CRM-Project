@@ -13,6 +13,7 @@ import org.unicrm.auth.dto.kafka.KafkaUserDto;
 import org.unicrm.auth.services.UserService;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,14 +27,14 @@ public class UserController {
     @Operation(summary = "Get user by username")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
     @GetMapping("/users/{username}")
-    public KafkaUserDto getUserByUsername(@PathVariable String username) {
+    public UserInfoDto getUserByUsername(@PathVariable String username) {
         return userService.getByUsername(username);
     }
 
     @Operation(summary = "Getting a list of all users")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
     @GetMapping("/users")
-    public List<KafkaUserDto> getAllUsers() {
+    public List<UserInfoDto> getAllUsers() {
         return userService.findAll();
     }
 
@@ -61,14 +62,14 @@ public class UserController {
     @Operation(summary = "Request to get all inactive users")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
     @GetMapping("/users/not_active")
-    public List<KafkaUserDto> findAllByStatusEqualsNoActive() {
+    public List<UserInfoDto> findAllByStatusEqualsNoActive() {
         return userService.findAllByStatusEqualsNoActive();
     }
 
     @Operation(summary = "Request to get all active users")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
     @GetMapping("/users/active")
-    public List<KafkaUserDto> findAllByStatusEqualsActive() {
+    public List<UserInfoDto> findAllByStatusEqualsActive() {
         return userService.findAllByStatusEqualsActive();
     }
 
@@ -84,5 +85,17 @@ public class UserController {
     @GetMapping("/users/{username}/info")
     public UserInfoDto getUserInfo(@PathVariable String username) {
         return userService.getUserInfo(username);
+    }
+
+    @Operation(summary = "User activation")
+    @PostMapping("/users/activate")
+    public void activateUser(@RequestParam UUID userUuid) {
+        userService.activateUser(userUuid);
+    }
+
+    @Operation(summary = "User deactivation")
+    @PostMapping("/users/activate")
+    public void deactivateUser(@RequestParam UUID userUuid) {
+        userService.deactivateUser(userUuid);
     }
 }

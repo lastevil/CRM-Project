@@ -31,6 +31,7 @@ import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,13 +62,13 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
-    public List<KafkaUserDto> findAll() {
-        return userRepository.findAllExceptLocalAdmin("Admin").stream().map(EntityDtoMapper.INSTANCE::toDto).collect(Collectors.toList());
+    public List<UserInfoDto> findAll() {
+        return userRepository.findAllExceptLocalAdmin("Admin").stream().map(EntityDtoMapper.INSTANCE::toInfoDto).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public KafkaUserDto getByUsername(String username) {
-        return EntityDtoMapper.INSTANCE.toDto(findUserByUsername(username));
+    public UserInfoDto getByUsername(String username) {
+        return EntityDtoMapper.INSTANCE.toInfoDto(findUserByUsername(username));
     }
 
     @Transactional
@@ -133,6 +134,15 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
+    public void activateUser(UUID uuid) {
+        findUserById(uuid).setStatus(Status.ACTIVE);
+    }
+    @Transactional
+    public void deactivateUser(UUID uuid) {
+        findUserById(uuid).setStatus(Status.NOT_ACTIVE);
+    }
+
+    @Transactional
     public void applyChangeLogin(String username, String login) {
         User user = findUserByUsername(username);
         if (login == null || login.isBlank()) throw new ValidationException("login must not be empty");
@@ -147,12 +157,12 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
-    public List<KafkaUserDto> findAllByStatusEqualsNoActive() {
-        return userRepository.findAllByStatusEquals(Status.NOT_ACTIVE).stream().map(EntityDtoMapper.INSTANCE::toDto).collect(Collectors.toList());
+    public List<UserInfoDto> findAllByStatusEqualsNoActive() {
+        return userRepository.findAllByStatusEquals(Status.NOT_ACTIVE).stream().map(EntityDtoMapper.INSTANCE::toInfoDto).collect(Collectors.toList());
     }
     @Transactional(readOnly = true)
-    public List<KafkaUserDto> findAllByStatusEqualsActive() {
-        return userRepository.findAllByStatusEqualsAndUsernameIsNot(Status.ACTIVE, "Admin").stream().map(EntityDtoMapper.INSTANCE::toDto).collect(Collectors.toList());
+    public List<UserInfoDto> findAllByStatusEqualsActive() {
+        return userRepository.findAllByStatusEqualsAndUsernameIsNot(Status.ACTIVE, "Admin").stream().map(EntityDtoMapper.INSTANCE::toInfoDto).collect(Collectors.toList());
     }
 
     public UserInfoDto getUserInfo(String username) {
@@ -173,6 +183,9 @@ public class UserService implements UserDetailsService {
             throw new ResourceNotFoundException(String.format("User with email: '%s' not found", email));
         }
         return user;
+    }
+    private User findUserById(UUID uuid) {
+        return userRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException(String.format("User with id:'%s' not found", uuid)));
     }
 
 
