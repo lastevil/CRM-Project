@@ -94,7 +94,7 @@ public class UserController {
     }
 
     @Operation(summary = "User deactivation")
-    @PostMapping("/users/activate")
+    @PostMapping("/users/deactivate")
     public void deactivateUser(@RequestParam UUID userUuid) {
         userService.deactivateUser(userUuid);
     }
