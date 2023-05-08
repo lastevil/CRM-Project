@@ -165,11 +165,6 @@ public class UserService implements UserDetailsService {
         return userRepository.findAllByStatusEqualsAndUsernameIsNot(Status.ACTIVE, "Admin").stream().map(EntityDtoMapper.INSTANCE::toInfoDto).collect(Collectors.toList());
     }
 
-    public UserInfoDto getUserInfo(String username) {
-        User user = findUserByUsername(username);
-        return EntityDtoMapper.INSTANCE.toInfoDto(user);
-    }
-
     private User findUserByUsername(String username) {
         User user = userRepository.findByUsername(username);
         if (user == null) {

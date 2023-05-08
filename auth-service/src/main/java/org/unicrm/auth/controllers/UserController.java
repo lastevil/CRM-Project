@@ -80,20 +80,15 @@ public class UserController {
         userService.changeLogin(username, login);
     }
 
-    @Operation(summary = "User information request")
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/users/{username}/info")
-    public UserInfoDto getUserInfo(@PathVariable String username) {
-        return userService.getUserInfo(username);
-    }
-
     @Operation(summary = "User activation")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
     @PostMapping("/users/activate")
     public void activateUser(@RequestParam UUID userUuid) {
         userService.activateUser(userUuid);
     }
 
     @Operation(summary = "User deactivation")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
     @PostMapping("/users/deactivate")
     public void deactivateUser(@RequestParam UUID userUuid) {
         userService.deactivateUser(userUuid);
