@@ -8,8 +8,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.unicrm.auth.dto.UpdatedUserDto;
 import org.unicrm.auth.dto.UserInfoDto;
-import org.unicrm.auth.dto.UserVerificationDto;
-import org.unicrm.auth.dto.kafka.KafkaUserDto;
 import org.unicrm.auth.services.UserService;
 
 import java.util.List;
@@ -50,13 +48,6 @@ public class UserController {
     @PutMapping("/users/roles/{username}/{roleName}")
     public void addRoleToUser(@PathVariable String username, @PathVariable String roleName) {
         userService.addRole(username, roleName);
-    }
-
-    @Operation(summary = "Checking, setting the status and department of the user. Sending users to other services")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
-    @PostMapping("users/verification")
-    public void userVerification(@RequestBody UserVerificationDto userVerificationDto){
-        userService.userVerification(userVerificationDto);
     }
 
     @Operation(summary = "Request to get all inactive users")

@@ -95,13 +95,6 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void userVerification(UserVerificationDto userVerificationDto) {
-        userVerificationValidator.validate(userVerificationDto);
-        applyUserVerification(userVerificationDto);
-        sendUser(userVerificationDto.getUsername());
-    }
-
-    @Transactional
     public void changeLogin(String username, String login) {
         applyChangeLogin(username, login);
         sendUser(login);
