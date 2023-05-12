@@ -40,14 +40,14 @@ public class UserController {
 
     @Operation(summary = "Request to change user data")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    @PostMapping("/users/update")
+    @PutMapping("/users/update")
     public void updateUser(@RequestBody UpdatedUserDto updatedUserDto) {
         userService.updateUser(updatedUserDto);
     }
 
     @Operation(summary = "Request to add rights for users")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
-    @GetMapping("/users/roles/{username}/{roleName}")
+    @PutMapping("/users/roles/{username}/{roleName}")
     public void addRoleToUser(@PathVariable String username, @PathVariable String roleName) {
         userService.addRole(username, roleName);
     }
@@ -75,21 +75,21 @@ public class UserController {
 
     @Operation(summary = "Request to change login by administrator")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
-    @GetMapping("/users/{username}/change/{login}")
+    @PutMapping("/users/{username}/change/{login}")
     public void changeLogin(@PathVariable String username, @PathVariable String login) {
         userService.changeLogin(username, login);
     }
 
     @Operation(summary = "User activation")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
-    @PostMapping("/users/activate")
+    @PutMapping("/users/activate")
     public void activateUser(@RequestParam UUID userUuid) {
         userService.activateUser(userUuid);
     }
 
     @Operation(summary = "User deactivation")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
-    @PostMapping("/users/deactivate")
+    @PutMapping("/users/deactivate")
     public void deactivateUser(@RequestParam UUID userUuid) {
         userService.deactivateUser(userUuid);
     }
