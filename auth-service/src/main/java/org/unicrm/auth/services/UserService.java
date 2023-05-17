@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.unicrm.auth.dto.UpdatedUserDto;
 import org.unicrm.auth.dto.UserInfoDto;
 import org.unicrm.auth.dto.UserRegDto;
-import org.unicrm.auth.dto.UserVerificationDto;
 import org.unicrm.auth.dto.kafka.KafkaUserDto;
 import org.unicrm.auth.entities.Role;
 import org.unicrm.auth.entities.Status;
@@ -115,18 +114,6 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void applyUserVerification(UserVerificationDto userVerificationDto) {
-        User user = findUserByUsername(userVerificationDto.getUsername());
-        try {
-            user.setStatus(userVerificationDto.getStatus());
-        } catch (IllegalArgumentException e) {
-            throw new ResourceNotFoundException("incorrect status selected");
-        }
-        user.setDepartment(departmentService.findDepartmentByTitle(userVerificationDto.getDepartmentTitle()));
-        userRepository.save(user);
-    }
-
-    @Transactional
     public void activateUser(UUID uuid) {
         findUserById(uuid).setStatus(Status.ACTIVE);
     }
@@ -176,10 +163,17 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException(String.format("User with id:'%s' not found", uuid)));
     }
 
-
     private void sendUser(String username) {
         User user = findUserByUsername(username);
         listUserDtoForSend.add(EntityDtoMapper.INSTANCE.toDto(user));
         senderHandler.sendToKafka(listUserDtoForSend);
+    }
+
+    @Transactional
+    public void changeDepartment(UUID userUuid, Long departmentId) {
+        User user = findUserById(userUuid);
+        if (user.getStatus() != Status.ACTIVE) activateUser(userUuid);
+        user.setDepartment(departmentService.findDepartmentById(departmentId));
+        userRepository.save(user);
     }
 }

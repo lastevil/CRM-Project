@@ -28,6 +28,7 @@ public interface EntityDtoMapper {
     @Mapping(source = "uuid", target = "id")
     @Mapping(source = "department.title", target = "departmentTitle")
     @Mapping(source = "department.id", target = "departmentId")
+    @Mapping(source = "username", target = "login")
     UserInfoDto toInfoDto(User user);
 
     DepartmentDto toDto(Department department);

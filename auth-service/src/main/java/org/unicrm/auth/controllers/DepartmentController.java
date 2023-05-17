@@ -33,4 +33,5 @@ public class DepartmentController {
     public void addOrUpdateDepartment(@RequestBody DepartmentDto departmentDto) {
         departmentService.addOrUpdateDepartment(departmentDto);
     }
+
 }

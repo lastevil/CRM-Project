@@ -29,6 +29,11 @@ public class DepartmentService {
         return department;
     }
 
+    @Transactional(readOnly = true)
+    public Department findDepartmentById(Long departmentId) {
+        return departmentRepository.findById(departmentId).orElseThrow(() -> new ResourceNotFoundException(String.format("Department '%d' not found", departmentId)));
+    }
+
     public List<DepartmentDto> findAll() {
        return departmentRepository.findAll().stream().map(EntityDtoMapper.INSTANCE::toDto).collect(Collectors.toList());
     }

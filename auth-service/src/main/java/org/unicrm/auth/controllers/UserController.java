@@ -84,4 +84,12 @@ public class UserController {
     public void deactivateUser(@RequestParam UUID userUuid) {
         userService.deactivateUser(userUuid);
     }
+
+    @Operation(summary = "Add or change a department")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
+    @PutMapping("/users/departments/change")
+    public void changeDepartmentToUser(UUID userUuid, Long departmentId) {
+        userService.changeDepartment(userUuid, departmentId);
+    }
+
 }
