@@ -88,8 +88,7 @@ public class UserController {
     @Operation(summary = "Add or change a department to user")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
     @PutMapping("/users/departments/change")
-    public void changeDepartmentToUser(@RequestParam("userId") UUID userUuid, @RequestParam("departmentId") Long departmentId) {
-        userService.changeDepartment(userUuid, departmentId);
+    public void changeDepartmentToUser(@RequestParam UUID userId, @RequestParam Long departmentId) {
+        userService.changeDepartment(userId, departmentId);
     }
-
 }
