@@ -19,11 +19,11 @@ public class TicketController {
 
     private final TicketService ticketService;
 
-    @Operation(summary = "метод для получения всех заявок")
-    @GetMapping()
-    public Page<TicketResponseDto> getAllTickets(@Valid TicketPage page) {
-        return ticketService.findAll(page);
-    }
+//    @Operation(summary = "метод для получения всех заявок")
+//    @GetMapping()
+//    public Page<TicketResponseDto> getAllTickets(@Valid TicketPage page) {
+//        return ticketService.findAll(page);
+//    }
 
     @Operation(summary = "метод для получения конкретной заявки по ее id")
     @GetMapping("/{id}")
@@ -41,54 +41,79 @@ public class TicketController {
     @Operation(summary = "метод для обновления заявки")
     @PutMapping("/update/{id}/{departmentId}/{assigneeId}")
     public void updateTicket(@RequestBody TicketRequestDto ticketDto, @PathVariable UUID id, @PathVariable(required = false) Long departmentId,
-                             @PathVariable(required = false) UUID assigneeId) {
-        ticketService.update(ticketDto, id, departmentId, assigneeId);
+                             @PathVariable(required = false) UUID assigneeId, @RequestHeader String username,
+                             @RequestHeader String role) {
+        ticketService.update(ticketDto, id, departmentId, assigneeId, username, role);
     }
 
-    @Operation(summary = "метод получения заявок по пользователю и отделу")
-    @GetMapping("/user/department")
+    @Operation(summary = "метод получения заявок по пользователю")
+    @GetMapping("/user")
     public Page<TicketResponseDto> getTicketsByUsername(@RequestHeader String username, @Valid TicketPage page) {
         return ticketService.findAllByUsername(username, page);
     }
 
-    @Operation(summary = "метод удаления конкретной заявки по ее id")
-    @DeleteMapping("/{id}")
-    public void deleteTicketById(@PathVariable UUID id, @RequestHeader String username) {
-        ticketService.deleteById(id, username);
+    @Operation(summary = "метод получения заявок по пользователю и отделу")
+    @GetMapping("/user/{departmentId}")
+    public Page<TicketResponseDto> getTicketsByUsernameAndDepartment(@RequestHeader String username,
+                                                                     @RequestHeader String role,
+                                                                     @PathVariable Long departmentId,
+                                                                     @Valid TicketPage page) {
+        return ticketService.findAllByUsernameAndDepartment(username, role, departmentId, page);
     }
 
-    @Operation(summary = "метод получения списка всех заявок по id исполнителю")
+    @Operation(summary = "метод получения заявок по пользователю и статусу")
+    @GetMapping("/user/{departmentId}")
+    public Page<TicketResponseDto> getTicketsByUsernameAndStatus(@RequestHeader String username,
+                                                                     @RequestHeader String role,
+                                                                     @PathVariable String status,
+                                                                     @Valid TicketPage page) {
+        return ticketService.findAllByAssigneeUsernameAndStatus(username, role, status, page);
+    }
+
+    @Operation(summary = "метод удаления конкретной заявки по ее id")
+    @DeleteMapping("/{id}")
+    public void deleteTicketById(@PathVariable UUID id, @RequestHeader String username, @RequestHeader String role) {
+        ticketService.deleteById(id, username, role);
+    }
+
+    @Operation(summary = "метод получения списка всех заявок по id исполнителя")
     @GetMapping("/assignee/{assigneeId}")
-    public Page<TicketResponseDto> getAllByAssignee(@Valid TicketPage page, @PathVariable UUID assigneeId) {
-        return ticketService.findTicketsByAssignee(assigneeId, page);
+    public Page<TicketResponseDto> getAllByAssignee(@Valid TicketPage page,
+                                                    @RequestHeader String role, @PathVariable UUID assigneeId) {
+        return ticketService.findTicketsByAssignee(role, assigneeId, page);
     }
 
     @Operation(summary = "метод для получения списка заявок по id исполнителю и статусу")
     @GetMapping("/{assigneeId}/{status}")
-    public Page<TicketResponseDto> getAllByAssigneeAndStatus(@PathVariable UUID assigneeId, @PathVariable String status, @Valid TicketPage page) {
-        return ticketService.findTicketsByAssigneeAndStatus(assigneeId, status, page);
+    public Page<TicketResponseDto> getAllByAssigneeAndStatus(@RequestHeader String role, @PathVariable UUID assigneeId,
+                                                             @PathVariable String status, @Valid TicketPage page) {
+        return ticketService.findTicketsByAssigneeAndStatus(role, assigneeId, status, page);
     }
 
     @Operation(summary = "метод для получения списка заявок по username исполнителя и статусу")
     @GetMapping("/{status}")
-    public Page<TicketResponseDto> getAllByAssigneeUsernameAndStatus(@RequestHeader String username,
-                                                                     @PathVariable String status,
-                                                                     @Valid TicketPage page) {
-        return ticketService.findAllByAssigneeUsernameAndStatus(username, status, page);
-    }
-
-    @Operation(summary = "метод для получения списка заявок по отделу и статусу")
-    @GetMapping("/{depatments}/{status}")
-    public Page<TicketResponseDto> getAllByDepartmentAndStatus(@PathVariable Long departmentId,
-                                                               @PathVariable String status,
-                                                               @Valid TicketPage page) {
-        return ticketService.findAllByDepartmentAndStatus(departmentId, status, page);
+    public Page<TicketResponseDto> getAllByAssigneeUsernameAndStatus(
+            @RequestHeader String username,
+            @RequestHeader String role,
+            @PathVariable String status,
+            @Valid TicketPage page) {
+        return ticketService.findAllByAssigneeUsernameAndStatus(username, role, status, page);
     }
 
     @Operation(summary = "метод для получения списка заявок по частичному совпадение заголовка")
     @GetMapping("/search/{title}")
-    public Page<TicketResponseDto> getTicketsByTitle(@PathVariable String title, @Valid TicketPage page) {
-        return ticketService.findTicketByTitle(page, title);
+    public Page<TicketResponseDto> getTicketsByTitle(@RequestHeader String role, @PathVariable String title,
+                                                     @Valid TicketPage page) {
+        return ticketService.findTicketByTitle(role, page, title);
+    }
+
+    @Operation(summary = "метод для получения списка заявок по частичному совпадение заголовка")
+    @GetMapping("/search/user/{title}")
+    public Page<TicketResponseDto> getTicketsByTitle(@RequestHeader String username,
+                                                     @RequestHeader String role,
+                                                     @PathVariable String title,
+                                                     @Valid TicketPage page) {
+        return ticketService.findTicketByUsernameAndTitle(username, role, page, title);
     }
 
     @Operation(summary = "метод для получения списка заявок по отделу")
@@ -104,31 +129,33 @@ public class TicketController {
     }
 
     @Operation(summary = "метод для передачи заявки в работу и присвоения статуса IN_PROGRESS")
-    @PostMapping("/ticket/progress/{ticketId}")
+    @PutMapping("/ticket/progress/{ticketId}")
     public void takeTicketToWork(@PathVariable UUID ticketId, @RequestHeader String username) {
         ticketService.startWorkingOnTask(ticketId, username);
     }
 
     @Operation(summary = "метод для принятия заявки и передачи в статус ACCEPTED")
-    @PostMapping("/ticket/accept/{ticketId}")
+    @PutMapping("/ticket/accept/{ticketId}")
     public void acceptTicket(@RequestHeader String username, @PathVariable UUID ticketId) {
         ticketService.acceptTask(username, ticketId);
     }
 
     @Operation(summary = "метод для выборки заявок по ответственному")
     @GetMapping("/ticket/reporter/{reporter}")
-    public Page<TicketResponseDto> getTicketsByReporter(@Valid TicketPage page, @PathVariable String reporter) {
-        return ticketService.findAllByReporter(page, reporter);
+    public Page<TicketResponseDto> getTicketsByReporter(@RequestHeader String role,
+                                                        @Valid TicketPage page,
+                                                        @PathVariable String reporter) {
+        return ticketService.findAllByReporter(role, page, reporter);
     }
 
     @Operation(summary = "метод для отклонения выполненной заявки")
-    @PostMapping("/ticket/reject/{ticketId}/{reporter}")
-    public void rejectTicket(@PathVariable UUID ticketId, @PathVariable String reporter) {
-        ticketService.rejectTicket(ticketId, reporter);
+    @PutMapping("/ticket/reject/{ticketId}/{reporter}")
+    public void rejectTicket(@PathVariable UUID ticketId, @RequestHeader String username) {
+        ticketService.rejectTicket(ticketId, username);
     }
 
     @Operation(summary = "метод для перевода заявки в статус DONE")
-    @PostMapping("/ticket/done/{ticketId}")
+    @PutMapping ("/ticket/done/{ticketId}")
     public void setTicketDone(@PathVariable UUID ticketId, @RequestHeader String username) {
         ticketService.setTicketDone(ticketId, username);
     }

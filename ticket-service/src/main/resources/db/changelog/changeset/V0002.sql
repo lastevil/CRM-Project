@@ -1,0 +1,2 @@
+ALTER TABLE users_of_ticket
+ADD COLUMN status VARCHAR(25) NOT NULL;
