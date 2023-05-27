@@ -34,4 +34,11 @@ public class DepartmentController {
         departmentService.addOrUpdateDepartment(departmentDto);
     }
 
+    @Operation(summary = "Request to delete a department")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
+    @DeleteMapping("/departments/{id}")
+    public void deleteDepartment(@PathVariable Long id) {
+        departmentService.deleteDepartment(id);
+    }
+
 }

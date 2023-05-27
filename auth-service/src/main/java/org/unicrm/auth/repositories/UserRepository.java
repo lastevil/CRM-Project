@@ -3,6 +3,7 @@ package org.unicrm.auth.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.unicrm.auth.entities.Department;
 import org.unicrm.auth.entities.Status;
 import org.unicrm.auth.entities.User;
 
@@ -20,8 +21,10 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     List<User> findAllByStatusEqualsAndUsernameIsNot (Status status, String username);
 
-    @Query(value = "select u from User u where u.username <>:username")
+    @Query(value = "select u from User u where u.username <>:username order by u.username")
     List<User> findAllExceptLocalAdmin(String username);
+
+    List<User> findAllByDepartment(Department department);
 
     Boolean existsUserByUsername(String username);
 

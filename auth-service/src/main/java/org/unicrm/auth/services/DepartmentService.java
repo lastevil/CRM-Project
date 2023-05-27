@@ -2,10 +2,13 @@ package org.unicrm.auth.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.unicrm.auth.dto.DepartmentDto;
 import org.unicrm.auth.entities.Department;
+import org.unicrm.auth.entities.User;
+import org.unicrm.auth.exceptions.ResourceExistsException;
 import org.unicrm.auth.exceptions.ResourceNotFoundException;
 import org.unicrm.auth.mappers.EntityDtoMapper;
 import org.unicrm.auth.repositories.DepartmentRepository;
@@ -19,6 +22,7 @@ import java.util.stream.Collectors;
 public class DepartmentService {
 
     private final DepartmentRepository departmentRepository;
+    private final ApplicationContext context;
 
     @Transactional(readOnly = true)
     public Department findDepartmentByTitle(String departmentTitle) {
@@ -47,6 +51,18 @@ public class DepartmentService {
         } else {
             Department department = departmentRepository.findById(departmentDto.getId()).orElseThrow(() -> new ResourceNotFoundException("Department with id: " + departmentDto.getId() + " not found"));
             department.setTitle(departmentDto.getTitle());
+        }
+    }
+
+    @Transactional
+    public void deleteDepartment(Long id) {
+        Department department = findDepartmentById(id);
+        UserService userService = context.getBean(UserService.class);
+        List<User> users = userService.findAllByDepartment(department);
+        if (users.isEmpty()) {
+            departmentRepository.deleteById(id);
+        } else {
+            throw new ResourceExistsException("Department is not empty");
         }
     }
 }

@@ -14,6 +14,7 @@ import org.unicrm.auth.dto.UpdatedUserDto;
 import org.unicrm.auth.dto.UserInfoDto;
 import org.unicrm.auth.dto.UserRegDto;
 import org.unicrm.auth.dto.kafka.KafkaUserDto;
+import org.unicrm.auth.entities.Department;
 import org.unicrm.auth.entities.Role;
 import org.unicrm.auth.entities.Status;
 import org.unicrm.auth.entities.User;
@@ -175,5 +176,10 @@ public class UserService implements UserDetailsService {
         if (user.getStatus() != Status.ACTIVE) activateUser(userUuid);
         user.setDepartment(departmentService.findDepartmentById(departmentId));
         userRepository.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public List<User> findAllByDepartment(Department department) {
+        return userRepository.findAllByDepartment(department);
     }
 }

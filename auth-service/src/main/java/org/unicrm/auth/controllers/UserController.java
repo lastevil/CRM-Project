@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @Operation(summary = "Request to change user data")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
     @PutMapping("/users/update")
     public void updateUser(@RequestBody UpdatedUserDto updatedUserDto) {
         userService.updateUser(updatedUserDto);
