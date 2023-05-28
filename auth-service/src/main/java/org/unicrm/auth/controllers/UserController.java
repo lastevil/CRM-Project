@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.unicrm.auth.dto.UpdatedUserDto;
 import org.unicrm.auth.dto.UserInfoDto;
+import org.unicrm.auth.dto.UserRolesDto;
 import org.unicrm.auth.services.UserService;
 
 import java.util.List;
@@ -90,5 +91,12 @@ public class UserController {
     @PutMapping("/users/departments/change")
     public void changeDepartmentToUser(@RequestParam UUID userId, @RequestParam Long departmentId) {
         userService.changeDepartment(userId, departmentId);
+    }
+
+    @Operation(summary = "Getting a list of all users by department")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
+    @GetMapping("/users/{departmentId}")
+    public List<UserRolesDto> getAllUsersByDepartment(@PathVariable Long departmentId) {
+        return userService.findAllByDepartment(departmentId);
     }
 }

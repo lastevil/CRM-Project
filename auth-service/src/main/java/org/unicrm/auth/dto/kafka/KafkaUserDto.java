@@ -2,6 +2,7 @@ package org.unicrm.auth.dto.kafka;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.unicrm.auth.entities.Status;
 
 import java.util.UUID;
 
@@ -15,4 +16,5 @@ public class KafkaUserDto {
     private String lastName;
     private Long departmentId;
     private String departmentTitle;
+    private Status status;
 }

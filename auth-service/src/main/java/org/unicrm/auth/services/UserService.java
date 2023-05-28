@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.unicrm.auth.dto.UpdatedUserDto;
 import org.unicrm.auth.dto.UserInfoDto;
 import org.unicrm.auth.dto.UserRegDto;
+import org.unicrm.auth.dto.UserRolesDto;
 import org.unicrm.auth.dto.kafka.KafkaUserDto;
 import org.unicrm.auth.entities.Department;
 import org.unicrm.auth.entities.Role;
@@ -176,6 +177,13 @@ public class UserService implements UserDetailsService {
         if (user.getStatus() != Status.ACTIVE) activateUser(userUuid);
         user.setDepartment(departmentService.findDepartmentById(departmentId));
         userRepository.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserRolesDto> findAllByDepartment(Long departmentId) {
+        List<User> users = findAllByDepartment(departmentService.findDepartmentById(departmentId));
+        List<UserRolesDto> userRolesDtos = users.stream().map(EntityDtoMapper.INSTANCE::toUserRolesDto).collect(Collectors.toList());
+        return userRolesDtos;
     }
 
     @Transactional(readOnly = true)
