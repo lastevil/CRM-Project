@@ -14,5 +14,6 @@ public class KafkaUserDto {
     private String lastName;
     private Long departmentId;
     private String departmentTitle;
+    private String status;
 
 }
