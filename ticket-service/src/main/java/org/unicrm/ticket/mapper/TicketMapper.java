@@ -20,6 +20,7 @@ public interface TicketMapper {
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "title", source = "title")
+    @Mapping(target = "status", source = "ticket.status")
     @Mapping(target = "assigneeId", source = "assignee.id")
     @Mapping(target = "assigneeDepartmentId", source = "department.id")
     @Mapping(target = "reporterId", source = "reporter.id")
@@ -38,6 +39,7 @@ public interface TicketMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "title", source = "ticketDto.title")
     @Mapping(target = "description", source = "ticketDto.description")
+    @Mapping(target = "status", source = "ticketDto.status")
     @Mapping(target = "assignee.firstName", source = "assignee.firstName")
     @Mapping(target = "assignee.lastName", source = "assignee.lastName")
     @Mapping(target = "assignee.id", source = "assignee.id")
