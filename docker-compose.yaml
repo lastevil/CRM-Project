@@ -43,7 +43,8 @@ services:
   discovery:
     container_name: discovery
     build:
-      context: ./discovery-service
+      context: ./
+      dockerfile: discovery.Dockerfile
     restart: unless-stopped
     ports:
       - "8700:8700"
@@ -53,7 +54,8 @@ services:
   gateway:
     container_name: gateway
     build:
-      context: ./gateway-service
+      context: ./
+      dockerfile: gateway.Dockerfile
     restart: on-failure
     links:
       - discovery
@@ -65,7 +67,8 @@ services:
   auth-service:
     container_name: auth-service
     build:
-      context: ./auth-service
+      context: ./
+      dockerfile: auth.Dockerfile
     restart: on-failure
     links:
       - discovery
@@ -81,7 +84,8 @@ services:
   analytic-service:
     container_name: analytic-service
     build:
-      context: ./analytic-service
+      context: ./
+      dockerfile: analytic.Dockerfile
     restart: on-failure
     links:
       - discovery
@@ -113,7 +117,8 @@ services:
   ticket-service:
     container_name: ticket-service
     build:
-      context: ./ticket-service
+      context: ./
+      dockerfile: ticket.Dockerfile
     restart: on-failure
     ports:
       - "8704:8704"
