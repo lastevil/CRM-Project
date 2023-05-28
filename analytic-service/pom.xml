@@ -8,7 +8,6 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <parent>
-        <relativePath>../pom.xml</relativePath>
         <groupId>org.unicrm</groupId>
         <artifactId>CRM-Project</artifactId>
         <version>1.0.0</version>
