@@ -182,8 +182,7 @@ public class UserService implements UserDetailsService {
     @Transactional(readOnly = true)
     public List<UserRolesDto> findAllByDepartment(Long departmentId) {
         List<User> users = findAllByDepartment(departmentService.findDepartmentById(departmentId));
-        List<UserRolesDto> userRolesDtos = users.stream().map(EntityDtoMapper.INSTANCE::toUserRolesDto).collect(Collectors.toList());
-        return userRolesDtos;
+        return users.stream().map(EntityDtoMapper.INSTANCE::toUserRolesDto).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
