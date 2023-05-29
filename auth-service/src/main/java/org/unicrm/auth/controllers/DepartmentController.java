@@ -21,16 +21,24 @@ public class DepartmentController {
     private final DepartmentService departmentService;
 
     @Operation(summary = "Getting a list of departments")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
     @GetMapping("/departments")
     public List<DepartmentDto> getAllDepartment() {
         return departmentService.findAll();
     }
 
     @Operation(summary = "Request to add or change a department")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
     @PostMapping("/departments")
     public void addOrUpdateDepartment(@RequestBody DepartmentDto departmentDto) {
         departmentService.addOrUpdateDepartment(departmentDto);
     }
+
+    @Operation(summary = "Request to delete a department")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
+    @DeleteMapping("/departments/{id}")
+    public void deleteDepartment(@PathVariable Long id) {
+        departmentService.deleteDepartment(id);
+    }
+
 }

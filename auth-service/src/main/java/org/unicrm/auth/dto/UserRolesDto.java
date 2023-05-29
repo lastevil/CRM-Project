@@ -2,22 +2,17 @@ package org.unicrm.auth.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.unicrm.auth.entities.Status;
 
+import java.util.List;
 import java.util.UUID;
-
 
 @Data
 @NoArgsConstructor
-public class UserInfoDto {
+public class UserRolesDto {
 
     private UUID id;
-    private String login;
     private String firstName;
     private String lastName;
-    private String email;
-    private Long departmentId;
-    private String departmentTitle;
-    private Status status;
+    private List<RoleDto> roles;
 
 }

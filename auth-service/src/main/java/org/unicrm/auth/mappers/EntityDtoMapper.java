@@ -3,12 +3,13 @@ package org.unicrm.auth.mappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import org.unicrm.auth.dto.DepartmentDto;
-import org.unicrm.auth.dto.UserInfoDto;
-import org.unicrm.auth.dto.UserRegDto;
+import org.unicrm.auth.dto.*;
 import org.unicrm.auth.dto.kafka.KafkaUserDto;
 import org.unicrm.auth.entities.Department;
+import org.unicrm.auth.entities.Role;
 import org.unicrm.auth.entities.User;
+
+import java.util.List;
 
 @Mapper
 public interface EntityDtoMapper {
@@ -26,9 +27,17 @@ public interface EntityDtoMapper {
     @Mapping(source = "uuid", target = "id")
     @Mapping(source = "department.title", target = "departmentTitle")
     @Mapping(source = "department.id", target = "departmentId")
+    @Mapping(source = "username", target = "login")
     UserInfoDto toInfoDto(User user);
+
+    List<RoleDto> toListDto(List<Role> roles);
+
+    @Mapping(target = "roles", expression = "java(toListDto(user.getRoles()))")
+    UserRolesDto toUserRolesDto(User user);
 
     DepartmentDto toDto(Department department);
 
     Department toEntity(DepartmentDto departmentDto);
+
+    RoleDto toDto(Role role);
 }

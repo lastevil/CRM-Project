@@ -3,20 +3,20 @@ package org.unicrm.auth.exceptions;
 import java.util.List;
 
 public class FieldsValidationError {
-    private List<String> errorFieldsMessages;
+    private List<String> message;
 
     public FieldsValidationError() {
     }
 
-    public FieldsValidationError(List<String> errorFieldsMessages) {
-        this.errorFieldsMessages = errorFieldsMessages;
+    public FieldsValidationError(List<String> message) {
+        this.message = message;
     }
 
-    public List<String> getErrorFieldsMessages() {
-        return errorFieldsMessages;
+    public List<String> getMessage() {
+        return message;
     }
 
-    public void setErrorFieldsMessages(List<String> errorFieldsMessages) {
-        this.errorFieldsMessages = errorFieldsMessages;
+    public void setMessage(List<String> message) {
+        this.message = message;
     }
 }
