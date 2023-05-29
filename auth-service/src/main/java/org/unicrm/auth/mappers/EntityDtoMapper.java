@@ -9,6 +9,8 @@ import org.unicrm.auth.entities.Department;
 import org.unicrm.auth.entities.Role;
 import org.unicrm.auth.entities.User;
 
+import java.util.List;
+
 @Mapper
 public interface EntityDtoMapper {
     EntityDtoMapper INSTANCE = Mappers.getMapper(EntityDtoMapper.class);
@@ -28,7 +30,9 @@ public interface EntityDtoMapper {
     @Mapping(source = "username", target = "login")
     UserInfoDto toInfoDto(User user);
 
-    @Mapping(target = "roles", expression = "java(toDto(user.roles))")
+    List<RoleDto> toListDto(List<Role> roles);
+
+    @Mapping(target = "roles", expression = "java(toListDto(user.getRoles()))")
     UserRolesDto toUserRolesDto(User user);
 
     DepartmentDto toDto(Department department);

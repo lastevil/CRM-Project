@@ -46,9 +46,16 @@ public class UserController {
 
     @Operation(summary = "Request to add rights for users")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
-    @PutMapping("/users/roles/{username}/{roleName}")
-    public void addRoleToUser(@PathVariable String username, @PathVariable String roleName) {
-        userService.addRole(username, roleName);
+    @PutMapping("/users/roles/{userId}/{roleName}")
+    public void addRoleToUser(@PathVariable UUID userId, @PathVariable String roleName) {
+        userService.addRole(userId, roleName);
+    }
+
+    @Operation(summary = "Request to remove rights for users")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
+    @DeleteMapping("/users/roles/{userId}/{roleName}")
+    public void deleteRoleToUser(@PathVariable UUID userId, @PathVariable String roleName) {
+        userService.deleteRole(userId, roleName);
     }
 
     @Operation(summary = "Request to get all inactive users")
@@ -67,9 +74,9 @@ public class UserController {
 
     @Operation(summary = "Request to change login by administrator")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
-    @PutMapping("/users/{username}/change/{login}")
-    public void changeLogin(@PathVariable String username, @PathVariable String login) {
-        userService.changeLogin(username, login);
+    @PutMapping("/users/{userId}/change/{login}")
+    public void changeLogin(@PathVariable UUID userId, @PathVariable String login) {
+        userService.changeLogin(userId, login);
     }
 
     @Operation(summary = "User activation")
@@ -95,7 +102,7 @@ public class UserController {
 
     @Operation(summary = "Getting a list of all users by department")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LOCAL_ADMIN')")
-    @GetMapping("/users/{departmentId}")
+    @GetMapping("/users/department/{departmentId}")
     public List<UserRolesDto> getAllUsersByDepartment(@PathVariable Long departmentId) {
         return userService.findAllByDepartment(departmentId);
     }

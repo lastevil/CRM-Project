@@ -84,7 +84,7 @@ public class UserService implements UserDetailsService {
         List<Role> userRoles = new ArrayList<>();
         userRoles.add(roleUser);
         user.setRoles(userRoles);
-        user.setStatus(Status.NOT_ACTIVE);
+        user.setStatus(Status.NEW);
         userRepository.save(user);
     }
 
@@ -96,8 +96,8 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void changeLogin(String username, String login) {
-        applyChangeLogin(username, login);
+    public void changeLogin(UUID userId, String login) {
+        applyChangeLogin(userId, login);
         sendUser(login);
     }
 
@@ -125,17 +125,23 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void applyChangeLogin(String username, String login) {
-        User user = findUserByUsername(username);
+    public void applyChangeLogin(UUID userId, String login) {
+        User user = findUserById(userId);
         if (login == null || login.isBlank()) throw new ValidationException("login must not be empty");
         user.setUsername(login);
         userRepository.save(user);
     }
 
     @Transactional
-    public void addRole(String username, String roleName) {
-        User user = findUserByUsername(username);
+    public void addRole(UUID userId, String roleName) {
+        User user = findUserById(userId);
         user.getRoles().add(roleService.findRoleByName(roleName));
+    }
+
+    @Transactional
+    public void deleteRole(UUID userId, String roleName) {
+        User user = findUserById(userId);
+        if (!user.getRoles().remove(roleService.findRoleByName(roleName))) throw new ResourceNotFoundException("The user does not have these rights");
     }
 
     @Transactional(readOnly = true)
@@ -189,4 +195,5 @@ public class UserService implements UserDetailsService {
     public List<User> findAllByDepartment(Department department) {
         return userRepository.findAllByDepartment(department);
     }
+
 }
