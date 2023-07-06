@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.unicrm.ticket.entity.Ticket;
 import org.unicrm.ticket.entity.TicketStatus;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -32,6 +33,13 @@ public interface TicketRepository extends JpaRepository<Ticket, UUID> {
     @Query(value = "select * from tickets_schema.tickets where title ilike concat('%', :title, '%') order by updated_at desc", nativeQuery = true)
     Page<Ticket> findTicketsByTitle(Pageable pageable, String title);
 
+
+    @Query(value = "select * from tickets_schema.tickets where (assignee = :userId or reporter = :userId) and title" +
+            " " +
+            "ilike concat('%', :title, '%') order by updated_at desc", nativeQuery = true)
+    Page<Ticket> findTicketsByUserAndTitle(Pageable pageable, UUID userId, String title);
+
+
     @Query(value = "select t from Ticket t where t.status = :status")
     Page<Ticket> findTicketsByStatus(Pageable pageable, TicketStatus status);
 
@@ -41,9 +49,13 @@ public interface TicketRepository extends JpaRepository<Ticket, UUID> {
     @Query(value = "select t from Ticket t where t.assignee.username = :username")
     Page<Ticket> findAllByAssigneeUsername(Pageable pageable, String username);
 
+    @Query(value = "select t from Ticket t where t.assignee.username = :username and t.department = :departmentId")
+    Page<Ticket> findAllByAssigneeUsernameAndDepartment(Pageable pageable, String username, Long departmentId);
+
     @Query(value = "select t from Ticket t where t.assignee.username = :username and t.status = :status")
     Page<Ticket> findAllByAssigneeUsernameAndStatus(Pageable pageable, String username, String status);
 
     @Query(value = "select t from Ticket t where t.department.id = :departmentId and t.status = :status")
     Page<Ticket> findAllByDepartmentAndStatus(Pageable pageable, Long departmentId, String status);
+
 }

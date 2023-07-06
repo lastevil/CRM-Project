@@ -14,11 +14,14 @@ public interface TicketUserMapper {
 
     @Mapping(source = "userDto.id", target = "id")
     @Mapping(source = "department", target = "department")
+    @Mapping(source = "userDto.status", target = "status")
     User toEntity(UserDto userDto, Department department);
+
 
     UserDto toDto(User user);
     
-    @Mapping(target = "id", source = "userDto.id")
-    @Mapping(target = "department", source = "department")
-    User tofromGlobalDto(KafkaUserDto userDto, Department department);
+    @Mapping(source = "userDto.id", target = "id")
+    @Mapping(source = "department", target = "department")
+    @Mapping(source = "userDto.status", target = "status")
+    User toEntityfromGlobalDto(KafkaUserDto userDto, Department department);
 }

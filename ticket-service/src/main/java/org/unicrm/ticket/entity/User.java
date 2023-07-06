@@ -34,6 +34,10 @@ public class User {
    @JoinColumn(name = "department_id")
    private Department department;
 
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
+
 
     @Override
     public boolean equals(Object o) {

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.unicrm.ticket.entity.UserStatus;
 
 import java.util.UUID;
 
@@ -35,4 +36,7 @@ public class UserDto {
 
     @Schema(description = "Отдел, к которому приписан пользователь", example = "QA")
     private DepartmentDto department;
+
+    @Schema(description = "Статус пользователя", example = "ACTIVE")
+    private UserStatus status;
 }
